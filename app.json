@@ -7,36 +7,83 @@
     "icon": "./assets/images/icon.png",
     "scheme": "snapdrama",
     "userInterfaceStyle": "automatic",
+    "backgroundColor": "#09011c",
+    "runtimeVersion": {
+      "policy": "appVersion"
+    },
+    "updates": {
+      "url": "https://u.expo.dev/ef46aeac-09f6-45b5-b3ea-8619cc8ec838"
+    },
     "ios": {
-      "icon": "./assets/expo.icon"
+      "supportsTablet": false,
+      "bundleIdentifier": "com.ayoubghcoding.SnapDrama"
     },
     "android": {
+      "package": "com.ayoubghcoding.SnapDrama",
+      "versionCode": 1,
       "adaptiveIcon": {
-        "backgroundColor": "#E6F4FE",
-        "foregroundImage": "./assets/images/android-icon-foreground.png",
-        "backgroundImage": "./assets/images/android-icon-background.png",
-        "monochromeImage": "./assets/images/android-icon-monochrome.png"
-      },
-      "predictiveBackGestureEnabled": false
-    },
-    "web": {
-      "output": "static",
-      "favicon": "./assets/images/favicon.png"
+        "foregroundImage": "./assets/images/adaptive-icon.png",
+        "monochromeImage": "./assets/images/monochrome-icon.png"
+      }
     },
     "plugins": [
       "expo-router",
       [
         "expo-splash-screen",
         {
-          "backgroundColor": "#208AEF",
+          "backgroundColor": "#09011c",
           "image": "./assets/images/splash-icon.png",
-          "imageWidth": 76
+          "imageWidth": 288
         }
-      ]
+      ],
+      [
+        "expo-font",
+        {
+          "fonts": [
+            "./assets/fonts/BricolageGrotesque-Light.ttf",
+            "./assets/fonts/BricolageGrotesque-Regular.ttf",
+            "./assets/fonts/BricolageGrotesque-Medium.ttf",
+            "./assets/fonts/BricolageGrotesque-Semibold.ttf",
+            "./assets/fonts/BricolageGrotesque-Bold.ttf"
+          ]
+        }
+      ],
+      [
+        "expo-video",
+        {
+          "supportsBackgroundPlayback": false,
+          "supportsPictureInPicture": false
+        }
+      ],
+      "expo-image",
+      "expo-sqlite",
+      "expo-secure-store",
+      [
+        "expo-notifications",
+        {
+          "icon": "./assets/images/notification-icon.png",
+          "color": "#7C3AED"
+        }
+      ],
+      [
+        "expo-image-picker",
+        {
+          "photosPermission": "SnapDrama uses your photos to set your profile picture.",
+          "cameraPermission": false,
+          "microphonePermission": false
+        }
+      ],
+      "expo-localization"
     ],
     "experiments": {
       "typedRoutes": true,
       "reactCompiler": true
-    }
+    },
+    "extra": {
+      "eas": {
+        "projectId": "ef46aeac-09f6-45b5-b3ea-8619cc8ec838"
+      }
+    },
+    "owner": "ayoubghcoding"
   }
 }
