@@ -1,18 +1,16 @@
-import { StatusBar } from "expo-status-bar";
 import { ScreenPlaceholder } from "../../components/ScreenPlaceholder";
-import { darkColors } from "../../constants/colors";
+import { useTheme } from "../../hooks/useTheme";
 
-// Video feed screen: always dark, whatever the phone theme.
+// For you follows the phone theme like the other tabs (user decision, v0.1.9).
+// The status bar follows automatically (<StatusBar style="auto" /> in the root layout).
 export default function ForYouScreen() {
+  const colors = useTheme();
   return (
-    <>
-      <StatusBar style="light" />
-      <ScreenPlaceholder
-        title="For you"
-        subtitle="The vertical trending feed goes here (always dark)."
-        icon="play-circle"
-        colors={darkColors}
-      />
-    </>
+    <ScreenPlaceholder
+      title="For you"
+      subtitle="The vertical trending feed goes here."
+      icon="play-circle"
+      colors={colors}
+    />
   );
 }

@@ -5,20 +5,20 @@
 
 // Brand palette (from the brief / logo)
 export const palette = {
-  violet: "#7C3AED", // Electric Violet (gradient start)
-  indigo: "#6366F1", // Indigo (gradient end)
-  glow: "#8B5CF6", // Vibrant purple border / glow
-  deep: "#09011c", // App deep background (matches the logo background)
-  card: "#19112C", // Card & container background
-  white: "#FFFFFF",
-  slate: "#94A3B8", // Secondary text
-  lavender: "#A78BFA", // Muted accent text
-  canvas: "#D8C9F3", // Canvas (light surfaces)
-  danger: "#EF4444", // Delete / destructive
+  violet: '#7C3AED', // Electric Violet (gradient start)
+  indigo: '#6366F1', // Indigo (gradient end)
+  glow: '#8B5CF6', // Vibrant purple border / glow
+  deep: '#09011c', // App deep background (matches the logo background)
+  card: '#19112C', // Card & container background
+  white: '#FFFFFF',
+  slate: '#94A3B8', // Secondary text
+  lavender: '#A78BFA', // Muted accent text
+  canvas: '#D8C9F3', // Canvas (light surfaces)
+  danger: '#EF4444', // Delete / destructive
 } as const;
 
 export type ThemeColors = {
-  scheme: "light" | "dark";
+  scheme: 'light' | 'dark';
   background: string; // screen background
   surface: string; // cards, sheets, modals
   surfaceAlt: string; // chips, inputs, skeleton base
@@ -34,7 +34,8 @@ export type ThemeColors = {
   danger: string;
   onDanger: string;
   overlay: string; // modal backdrop
-  tabBar: string; // floating pill background (white in both themes, like the design)
+  tabBar: string; // floating pill background (white in light, dark card in dark)
+  tabBarBorder: string; // thin outline of the pill (violet glow in dark)
   tabIcon: string; // inactive tab icon (outline)
   tabCutout: string; // details drawn inside the solid active icon
   tabInactive: string;
@@ -43,11 +44,11 @@ export type ThemeColors = {
 };
 
 export const darkColors: ThemeColors = {
-  scheme: "dark",
+  scheme: 'dark',
   background: palette.deep,
   surface: palette.card,
-  surfaceAlt: "#241A3D",
-  border: "rgba(139, 92, 246, 0.22)",
+  surfaceAlt: '#241A3D',
+  border: 'rgba(139, 92, 246, 0.22)',
   text: palette.white,
   textMuted: palette.slate,
   textAccent: palette.lavender,
@@ -58,36 +59,38 @@ export const darkColors: ThemeColors = {
   onPrimary: palette.white,
   danger: palette.danger,
   onDanger: palette.white,
-  overlay: "rgba(5, 0, 16, 0.72)",
-  tabBar: palette.white,
-  tabIcon: palette.card,
+  overlay: 'rgba(5, 0, 16, 0.72)',
+  tabBar: palette.card,
+  tabBarBorder: 'rgba(139, 92, 246, 0.35)',
+  tabIcon: palette.lavender,
   tabCutout: palette.violet,
-  tabInactive: "#6B6585",
-  skeleton: "#1D1433",
-  skeletonHighlight: "#2A1F47",
+  tabInactive: '#6B6585',
+  skeleton: '#1D1433',
+  skeletonHighlight: '#2A1F47',
 };
 
 export const lightColors: ThemeColors = {
-  scheme: "light",
-  background: "#F6F2FD",
+  scheme: 'light',
+  background: '#F6F2FD',
   surface: palette.white,
   surfaceAlt: palette.canvas,
-  border: "#E3D8F6",
+  border: '#E3D8F6',
   text: palette.card,
-  textMuted: "#64748B",
+  textMuted: '#64748B',
   textAccent: palette.violet,
   primary: palette.violet,
   primaryAlt: palette.indigo,
   glow: palette.glow,
   gradient: [palette.violet, palette.indigo],
   onPrimary: palette.white,
-  danger: "#DC2626",
+  danger: '#DC2626',
   onDanger: palette.white,
-  overlay: "rgba(25, 17, 44, 0.45)",
+  overlay: 'rgba(25, 17, 44, 0.45)',
   tabBar: palette.white,
+  tabBarBorder: 'transparent',
   tabIcon: palette.card,
   tabCutout: palette.violet,
-  tabInactive: "#9A93B5",
-  skeleton: "#EAE2F8",
-  skeletonHighlight: "#F4EFFC",
+  tabInactive: '#9A93B5',
+  skeleton: '#EAE2F8',
+  skeletonHighlight: '#F4EFFC',
 };

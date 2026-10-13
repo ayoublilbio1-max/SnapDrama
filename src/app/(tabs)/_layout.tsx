@@ -1,61 +1,133 @@
-import { TabList, Tabs, TabSlot, TabTrigger } from "expo-router/ui";
-import { StyleSheet } from "react-native";
+import { Tabs } from "expo-router";
+import { useEffect, useState } from "react";
+import { StyleSheet, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { TabBarButton } from "../../components/TabBarButton";
+import type { TabIconName } from "../../components/TabIcons";
 import { TAB_BAR_GAP, TAB_BAR_HEIGHT } from "../../constants/layout";
 import { useTheme } from "../../hooks/useTheme";
 
+// Props that expo-router's <Tabs> passes to a custom tabBar (no extra package import needed)
+type TabBarProps = Parameters<
+  NonNullable<React.ComponentProps<typeof Tabs>["tabBar"]>
+>[0];
+
 /**
- * Custom floating pill tab bar (headless expo-router tabs).
- * RULE: every screen file in (tabs) must have one TabTrigger here.
+ * Tab config. RULE: every screen file in (tabs) must have an entry here
+ * (key = file name without .tsx) AND a <Tabs.Screen> below.
  */
-export default function TabsLayout() {
+const TAB_CONFIG: Record<string, { icon: TabIconName; label: string }> = {
+  index: { icon: "home", label: "Home" },
+  "for-you": { icon: "shorts", label: "For you" },
+  rewards: { icon: "rewards", label: "Rewards" },
+  "my-list": { icon: "mylist", label: "My list" },
+  profile: { icon: "profile", label: "Profile" },
+};
+
+/** Floating white pill bar drawn over the screens. */
+function PillTabBar({ state, navigation }: TabBarProps) {
   const colors = useTheme();
   const insets = useSafeAreaInsets();
+  const activeName = state.routes[state.index]?.name;
+  const [barWidth, setBarWidth] = useState(0);
+
+  // Exact widths: the active pill gets a fixed share, the other tabs split the rest equally.
+  const tabCount = state.routes.filter((r) => TAB_CONFIG[r.name]).length;
+  const inner = Math.max(0, barWidth - BAR_PADDING * 2 - GAP * (tabCount - 1));
+  const activeWidth = Math.min(ACTIVE_MAX, inner * 0.42);
+  const idleWidth =
+    tabCount > 1 ? (inner - activeWidth) / (tabCount - 1) : inner;
+
+  useEffect(() => {
+    if (__DEV__ && barWidth > 0)
+      console.log(
+        `[tabs] bar shown — active "${activeName}", ${tabCount} tabs, bar ${Math.round(barWidth)}dp, ` +
+          `active ${Math.round(activeWidth)}dp, others ${Math.round(idleWidth)}dp`,
+      );
+  }, [activeName, tabCount, barWidth, activeWidth, idleWidth]);
 
   return (
-    <Tabs>
-      <TabSlot />
-      <TabList
+    <View
+      pointerEvents="box-none"
+      style={[styles.wrap, { bottom: insets.bottom + TAB_BAR_GAP }]}
+    >
+      <View
         style={[
           styles.bar,
-          {
-            backgroundColor: colors.tabBar,
-            bottom: insets.bottom + TAB_BAR_GAP,
-          },
+          { backgroundColor: colors.tabBar, borderColor: colors.tabBarBorder },
         ]}
+        onLayout={(e) => setBarWidth(e.nativeEvent.layout.width)}
       >
-        <TabTrigger name="index" href="/" asChild>
-          <TabBarButton icon="home" label="Home" colors={colors} />
-        </TabTrigger>
-        <TabTrigger name="for-you" href="/for-you" asChild>
-          <TabBarButton icon="shorts" label="For you" colors={colors} />
-        </TabTrigger>
-        <TabTrigger name="rewards" href="/rewards" asChild>
-          <TabBarButton icon="rewards" label="Rewards" colors={colors} />
-        </TabTrigger>
-        <TabTrigger name="my-list" href="/my-list" asChild>
-          <TabBarButton icon="mylist" label="My list" colors={colors} />
-        </TabTrigger>
-        <TabTrigger name="profile" href="/profile" asChild>
-          <TabBarButton icon="profile" label="Profile" colors={colors} />
-        </TabTrigger>
-      </TabList>
+        {barWidth > 0 &&
+          state.routes.map((route, i) => {
+            const cfg = TAB_CONFIG[route.name];
+            if (!cfg) {
+              if (__DEV__)
+                console.log(
+                  `[tabs] no TAB_CONFIG entry for "${route.name}" — skipped`,
+                );
+              return null;
+            }
+            const focused = state.index === i;
+            return (
+              <TabBarButton
+                key={route.key}
+                icon={cfg.icon}
+                label={cfg.label}
+                colors={colors}
+                isFocused={focused}
+                width={focused ? activeWidth : idleWidth}
+                onPress={() => {
+                  const event = navigation.emit({
+                    type: "tabPress",
+                    target: route.key,
+                    canPreventDefault: true,
+                  });
+                  if (!focused && !event.defaultPrevented)
+                    navigation.navigate(route.name, route.params);
+                }}
+              />
+            );
+          })}
+      </View>
+    </View>
+  );
+}
+
+export default function TabsLayout() {
+  return (
+    <Tabs
+      tabBar={(props) => <PillTabBar {...props} />}
+      screenOptions={{ headerShown: false }}
+    >
+      <Tabs.Screen name="index" />
+      <Tabs.Screen name="for-you" />
+      <Tabs.Screen name="rewards" />
+      <Tabs.Screen name="my-list" />
+      <Tabs.Screen name="profile" />
     </Tabs>
   );
 }
 
+const BAR_PADDING = 6;
+const GAP = 2;
+const ACTIVE_MAX = 140;
+
 const styles = StyleSheet.create({
-  bar: {
+  wrap: {
     position: "absolute",
     left: 16,
     right: 16,
+  },
+  bar: {
     height: TAB_BAR_HEIGHT,
     borderRadius: TAB_BAR_HEIGHT / 2,
-    paddingHorizontal: 6,
+    paddingHorizontal: BAR_PADDING,
     flexDirection: "row",
     alignItems: "center",
-    gap: 2,
+    gap: GAP,
+    overflow: "hidden",
+    borderWidth: 1,
     // soft shadow so the white pill also stands out on the light theme
     elevation: 10,
     shadowColor: "#000",
