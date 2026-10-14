@@ -3,7 +3,7 @@ import * as Haptics from "expo-haptics";
 import { Image } from "expo-image";
 import { LinearGradient } from "expo-linear-gradient";
 import { useLocalSearchParams, useRouter } from "expo-router";
-import { useCallback, useState } from "react";
+import { useCallback, useRef, useState } from "react";
 import {
   Pressable,
   ScrollView,
@@ -15,6 +15,7 @@ import {
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { AppText } from "../../components/AppText";
 import { CoinIcon } from "../../components/CoinIcon";
+import { CoverViewer, type Rect } from "../../components/CoverViewer";
 import { EmptyState } from "../../components/EmptyState";
 import { EpisodeGrid, type EpisodeState } from "../../components/EpisodeGrid";
 import { InfoModal } from "../../components/InfoModal";
@@ -48,6 +49,9 @@ export default function SeriesScreen() {
   const [rateOpen, setRateOpen] = useState(false);
   const [expanded, setExpanded] = useState(false);
   const [notice, setNotice] = useState<Notice>(null);
+  const coverRef = useRef<View>(null);
+  const [coverFrom, setCoverFrom] = useState<Rect | null>(null);
+  const [coverOpen, setCoverOpen] = useState(false);
 
   const onEpisode = useCallback(
     (n: number, state: EpisodeState) => {
@@ -196,25 +200,49 @@ export default function SeriesScreen() {
       >
         {/* cover + main info */}
         <View style={styles.top}>
-          <View
-            style={[
-              styles.cover,
-              {
-                width: coverW,
-                height: coverH,
-                backgroundColor: colors.skeleton,
-                borderColor: colors.glow,
-              },
-            ]}
+          <Pressable
+            onPress={() => {
+              // measure where the cover is, so the viewer grows out of it
+              coverRef.current?.measureInWindow((x, y, width, height) => {
+                setCoverFrom({ x, y, width, height });
+                setCoverOpen(true);
+              });
+            }}
+            accessibilityRole="imagebutton"
+            accessibilityLabel="View cover"
           >
-            <Image
-              source={{ uri: series.cover }}
-              style={StyleSheet.absoluteFill}
-              contentFit="cover"
-              cachePolicy="memory-disk"
-              transition={150}
-            />
-          </View>
+            <View
+              ref={coverRef}
+              collapsable={false}
+              style={[
+                styles.cover,
+                {
+                  width: coverW,
+                  height: coverH,
+                  backgroundColor: colors.skeleton,
+                  borderColor: colors.glow,
+                  opacity: coverOpen ? 0 : 1, // the viewer "carries" the cover out of its place
+                },
+              ]}
+            >
+              <Image
+                source={{ uri: series.cover }}
+                style={StyleSheet.absoluteFill}
+                contentFit="cover"
+                cachePolicy="memory-disk"
+                transition={150}
+              />
+              <View
+                style={[styles.zoomHint, { backgroundColor: colors.overlay }]}
+              >
+                <Ionicons
+                  name="expand-outline"
+                  size={14}
+                  color={colors.onPrimary}
+                />
+              </View>
+            </View>
+          </Pressable>
           <View style={styles.info}>
             <AppText weight="bold" size={20} numberOfLines={3}>
               {series.title}
@@ -399,6 +427,12 @@ export default function SeriesScreen() {
         }}
         onClose={() => setRateOpen(false)}
       />
+      <CoverViewer
+        visible={coverOpen}
+        uri={series.cover}
+        from={coverFrom}
+        onClose={() => setCoverOpen(false)}
+      />
       <InfoModal
         visible={!!notice}
         icon={notice?.icon}
@@ -468,6 +502,16 @@ const styles = StyleSheet.create({
   },
   top: { flexDirection: "row", gap: 16, marginTop: 6 },
   cover: { borderRadius: 16, overflow: "hidden", borderWidth: 1 },
+  zoomHint: {
+    position: "absolute",
+    right: 6,
+    bottom: 6,
+    width: 24,
+    height: 24,
+    borderRadius: 12,
+    alignItems: "center",
+    justifyContent: "center",
+  },
   info: { flex: 1, gap: 6, justifyContent: "flex-end" },
   ratingRow: {
     flexDirection: "row",
