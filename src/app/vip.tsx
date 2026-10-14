@@ -11,7 +11,7 @@ import { ConfirmModal } from "../components/ConfirmModal";
 import { ScreenHeader } from "../components/ScreenHeader";
 import { useTheme } from "../hooks/useTheme";
 
-/** DEMO VIP page — fake plans, no real payment. The chosen plan is saved on the phone only. */
+/** DEMO VIP page — simulated payment. The chosen plan is saved on the phone only. */
 const PLANS = [
   { id: "weekly", name: "Weekly", price: "$4.99", per: "/ week", note: "" },
   {
@@ -197,7 +197,7 @@ export default function VipScreen() {
           align="center"
           style={{ marginTop: 10 }}
         >
-          Demo app — no real payment is made.
+          Demo mode — payments are simulated for this showcase.
         </AppText>
       </ScrollView>
 
@@ -205,7 +205,7 @@ export default function VipScreen() {
         visible={confirm === "buy"}
         icon="diamond"
         title={`Get ${plan.name} VIP?`}
-        message={`${plan.price} ${plan.per}. This is a demo: no money is taken, VIP is only saved on this phone.`}
+        message={`${plan.price} ${plan.per}. Demo mode: the payment is simulated and your VIP plan is saved on this phone.`}
         confirmLabel="Get VIP"
         destructive={false}
         onConfirm={activate}

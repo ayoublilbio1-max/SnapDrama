@@ -1,7 +1,8 @@
 import { useLocalSearchParams, useRouter } from "expo-router";
-import { useCallback, useMemo } from "react";
+import { useCallback, useMemo, useState } from "react";
 import { View } from "react-native";
 import { ScreenHeader } from "../components/ScreenHeader";
+import { SearchField, matchesQuery } from "../components/SearchField";
 import { SeriesGrid } from "../components/SeriesGrid";
 import { HOME_ROWS, seriesForFilter, seriesForSource } from "../constants/home";
 import { seriesByTag, useCatalog } from "../data/catalog";
@@ -14,6 +15,7 @@ import { useTheme } from "../hooks/useTheme";
  *   kind=row      value=<HOME_ROWS id>    (See all)
  *   kind=filter   value=new|hot|anime|popular
  *   kind=category value=<tag>             (from the Categories page)
+ * The search bar searches ONLY the series of this page.
  */
 export default function BrowseScreen() {
   const colors = useTheme();
@@ -25,8 +27,9 @@ export default function BrowseScreen() {
   }>();
   const { catalog } = useCatalog();
   const continueList = useContinueWatching();
+  const [q, setQ] = useState("");
 
-  const items = useMemo(() => {
+  const all = useMemo(() => {
     let list: Series[] = [];
     if (kind === "row") {
       const def = HOME_ROWS.find((r) => r.id === value);
@@ -41,16 +44,39 @@ export default function BrowseScreen() {
     return list;
   }, [catalog, kind, value, continueList]);
 
-  const open = useCallback(
-    (s: Series) =>
-      router.push({ pathname: "/series/[id]", params: { id: s.id } }),
-    [router],
+  const query = q.trim();
+  const items = useMemo(
+    () => (query ? all.filter((s) => matchesQuery(s, query)) : all),
+    [all, query],
   );
+
+  const open = useCallback(
+    (s: Series) => {
+      if (__DEV__ && query)
+        console.log(`[browse] "${query}" in ${value} → open ${s.id}`);
+      router.push({ pathname: "/series/[id]", params: { id: s.id } });
+    },
+    [router, query, value],
+  );
+
+  const pageName = title ?? value ?? "";
 
   return (
     <View style={{ flex: 1, backgroundColor: colors.background }}>
-      <ScreenHeader title={title ?? value} />
-      <SeriesGrid items={items} onOpen={open} />
+      <ScreenHeader title={pageName} />
+      {all.length > 0 && (
+        <SearchField
+          value={q}
+          onChange={setQ}
+          placeholder={`Search in ${pageName}`}
+          style={{ marginHorizontal: 16, marginBottom: 14 }}
+        />
+      )}
+      <SeriesGrid
+        items={items}
+        onOpen={open}
+        emptyText={query ? `No series for "${query}"` : undefined}
+      />
     </View>
   );
 }

@@ -5,8 +5,11 @@ import { useTheme } from "../hooks/useTheme";
 import { AppText } from "./AppText";
 import { CoinIcon } from "./CoinIcon";
 
-// eslint-disable-next-line @typescript-eslint/no-require-imports
-const LOGO = require("../../assets/images/logo-mark.png");
+// Two versions of the logo mark: white play triangle (dark theme) / dark play triangle (light theme)
+/* eslint-disable @typescript-eslint/no-require-imports */
+const LOGO_DARK = require("../../assets/images/logo-mark-dark.webp");
+const LOGO_LIGHT = require("../../assets/images/logo-mark-light.webp");
+/* eslint-enable @typescript-eslint/no-require-imports */
 
 /** Home top bar: logo + name · VIP (gold coin) · search. */
 export function HomeHeader({
@@ -20,7 +23,7 @@ export function HomeHeader({
   return (
     <View style={styles.row}>
       <Image
-        source={LOGO}
+        source={colors.scheme === "dark" ? LOGO_DARK : LOGO_LIGHT}
         style={styles.logo}
         contentFit="contain"
         cachePolicy="memory"
