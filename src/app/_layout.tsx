@@ -9,11 +9,13 @@ import { AppState, Platform } from "react-native";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { KeyboardProvider } from "react-native-keyboard-controller";
 import { CatalogProvider, useCatalog } from "../data/catalog";
+import { preloadUserState } from "../data/userStore";
 import { useTheme } from "../hooks/useTheme";
 
 // Outside the component (brief §5): keep the splash until the app is ready.
 SplashScreen.preventAutoHideAsync().catch(() => {});
 SplashScreen.setOptions({ duration: 300, fade: true });
+preloadUserState(); // saves / ratings ready before the first series page
 
 const t0 = Date.now();
 let splashHidden = false; // module-level guard → hideAsync() runs ONCE only
@@ -47,7 +49,7 @@ export default function RootLayout() {
   const colors = useTheme();
 
   useEffect(() => {
-    if (__DEV__) console.log(`[app] start — theme ${colors.scheme}`);
+    if (__DEV__) console.log(`[app] theme ${colors.scheme}`);
   }, [colors.scheme]);
 
   // Android buttons/gesture bar: hidden all the time. Swiping up from the bottom shows it for a moment.

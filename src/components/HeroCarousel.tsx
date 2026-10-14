@@ -1,14 +1,15 @@
 import Ionicons from "@expo/vector-icons/Ionicons";
 import { Image } from "expo-image";
-import { memo, useCallback, useEffect, useRef, useState } from "react";
+import { useFocusEffect } from "expo-router";
+import { memo, useCallback, useEffect, useMemo, useRef, useState } from "react";
 import {
-    Animated,
-    Pressable,
-    StyleSheet,
-    View,
-    useWindowDimensions,
-    type NativeScrollEvent,
-    type NativeSyntheticEvent,
+  Animated,
+  Pressable,
+  StyleSheet,
+  View,
+  useWindowDimensions,
+  type NativeScrollEvent,
+  type NativeSyntheticEvent,
 } from "react-native";
 import { freeLabel } from "../data/catalog";
 import type { Series } from "../data/types";
@@ -18,7 +19,15 @@ import { AppText } from "./AppText";
 const AUTO_MS = 4500;
 const GAP = 14;
 
-/** Big swiping banner (top trending series), centre card bigger, dots under it, auto-advances. */
+function Separator() {
+  return <View style={{ width: GAP }} />;
+}
+
+/**
+ * Big swiping banner (hero series), centre card bigger, dots under it, auto-advances.
+ * Performance: the list is built once (useMemo) and does NOT re-render when the active dot changes;
+ * auto-advance pauses while the user drags and while Home is not on screen.
+ */
 export const HeroCarousel = memo(function HeroCarousel({
   items,
   onOpen,
@@ -37,7 +46,9 @@ export const HeroCarousel = memo(function HeroCarousel({
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const listRef = useRef<any>(null);
   const [index, setIndex] = useState(0);
+  const indexRef = useRef(0);
   const dragging = useRef(false);
+  const focused = useRef(true);
 
   // Prefetch the hero covers so swiping never shows an empty card
   useEffect(() => {
@@ -56,23 +67,41 @@ export const HeroCarousel = memo(function HeroCarousel({
       .catch(() => {});
   }, [items]);
 
-  // Auto-advance (paused while the user drags)
+  // Pause auto-advance when Home is not on screen (series page open, other tab…)
+  useFocusEffect(
+    useCallback(() => {
+      focused.current = true;
+      return () => {
+        focused.current = false;
+      };
+    }, []),
+  );
+
+  // One timer for the whole life of the carousel (not re-created on every slide)
   useEffect(() => {
     if (items.length < 2) return;
     const id = setInterval(() => {
-      if (dragging.current) return;
-      const next = (index + 1) % items.length;
+      if (dragging.current || !focused.current) return;
+      const next = (indexRef.current + 1) % items.length;
       listRef.current?.scrollToOffset({ offset: next * step, animated: true });
+      indexRef.current = next;
       setIndex(next);
     }, AUTO_MS);
     return () => clearInterval(id);
-  }, [index, items.length, step]);
+  }, [items.length, step]);
 
   const onMomentumEnd = useCallback(
     (e: NativeSyntheticEvent<NativeScrollEvent>) => {
       dragging.current = false;
-      const i = Math.round(e.nativeEvent.contentOffset.x / step);
-      setIndex(Math.max(0, Math.min(items.length - 1, i)));
+      const i = Math.max(
+        0,
+        Math.min(
+          items.length - 1,
+          Math.round(e.nativeEvent.contentOffset.x / step),
+        ),
+      );
+      indexRef.current = i;
+      setIndex(i);
     },
     [step, items.length],
   );
@@ -135,23 +164,25 @@ export const HeroCarousel = memo(function HeroCarousel({
     [cardW, cardH, step, scrollX, colors, onOpen],
   );
 
-  if (!items.length) return null;
-  const active = items[index];
-
-  return (
-    <View style={styles.root}>
+  // Built once per items/size/theme — changing the active dot does not touch the list
+  const list = useMemo(
+    () => (
       <Animated.FlatList
         ref={listRef}
         horizontal
         data={items}
-        keyExtractor={(s) => s.id}
+        keyExtractor={(s: Series) => s.id}
         renderItem={renderItem}
         showsHorizontalScrollIndicator={false}
         snapToInterval={step}
         decelerationRate="fast"
         contentContainerStyle={{ paddingHorizontal: side }}
-        ItemSeparatorComponent={() => <View style={{ width: GAP }} />}
-        getItemLayout={(_, i) => ({ length: step, offset: step * i, index: i })}
+        ItemSeparatorComponent={Separator}
+        getItemLayout={(_: unknown, i: number) => ({
+          length: step,
+          offset: step * i,
+          index: i,
+        })}
         onScroll={Animated.event(
           [{ nativeEvent: { contentOffset: { x: scrollX } } }],
           { useNativeDriver: true },
@@ -160,8 +191,19 @@ export const HeroCarousel = memo(function HeroCarousel({
         onScrollBeginDrag={() => (dragging.current = true)}
         onMomentumScrollEnd={onMomentumEnd}
         initialNumToRender={3}
+        maxToRenderPerBatch={3}
         windowSize={5}
       />
+    ),
+    [items, renderItem, step, side, scrollX, onMomentumEnd],
+  );
+
+  if (!items.length) return null;
+  const active = items[index];
+
+  return (
+    <View style={styles.root}>
+      {list}
 
       <View style={styles.dots}>
         {items.map((s, i) => (

@@ -56,8 +56,21 @@ export const HOME_ROWS: HomeRowDef[] = [
   },
 ];
 
-/** Hero carousel: the first N series of most-trending (by trendingRank). */
+/** Hero carousel: these series first (in this order), then the rest of most-trending by trendingRank. */
+export const HERO_FIRST = [
+  "sold-to-the-mafia-queen",
+  "plaything-of-the-mafia-king",
+  "mrs-ceo-strictly-unprofessional",
+];
 export const HERO_COUNT = 10;
+
+export function heroSeries(trending: Series[]): Series[] {
+  const first = HERO_FIRST.map((id) =>
+    trending.find((s) => s.id === id),
+  ).filter((s): s is Series => !!s);
+  const rest = trending.filter((s) => !HERO_FIRST.includes(s.id));
+  return [...first, ...rest].slice(0, HERO_COUNT);
+}
 
 /** Filter chips under the header. "popular" = Home itself; the others open their own page. */
 export const FILTERS = [
@@ -72,14 +85,20 @@ export type FilterId = (typeof FILTERS)[number]["id"];
 /** Categories page. Each one lists the series that have this tag in catalog.json. */
 export const CATEGORIES = [
   "Romance",
-  "Revenge",
   "Billionaire",
+  "Revenge",
   "Forbidden Love",
-  "Mafia",
   "CEO",
-  "Werewolf",
+  "Mafia",
   "Secret Identity",
   "Enemies to Lovers",
+  "Bodyguard",
+  "Age Gap",
+  "High School",
+  "Thriller",
+  "Fake Marriage",
+  "LGBTQ+",
+  "Werewolf",
   "Anime",
 ];
 

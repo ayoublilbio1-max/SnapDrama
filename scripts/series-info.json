@@ -1,0 +1,292 @@
+{
+  "_readme": "Your series details. scripts/make-catalog.mjs copies title, description, totalEpisodes and tags from here into catalog.json (they win over everything else). Edit, then run the script.",
+  "series": {
+    "the-billionaires-private-dancer": {
+      "title": "The Billionaire's Private Dancer",
+      "description": "A stripper takes a billionaire widower's discreet deal to save her grandmother's home: dance nights, an allowance, and one rule: no sex. His patience turns out to be the most dangerous thing of all.",
+      "totalEpisodes": 48,
+      "tags": [
+        "Romance",
+        "Billionaire",
+        "Contract Deal",
+        "Hot",
+        "Recommended"
+      ]
+    },
+    "wet-hot-boys": {
+      "title": "Wet Hot Boys",
+      "description": "A scholarship swimmer who refuses to hide falls for the closeted golden boy he's built to beat. Between a scheming girlfriend and a ruthless father, loving in secret may cost them both everything.",
+      "totalEpisodes": 50,
+      "tags": [
+        "Romance",
+        "LGBTQ+",
+        "Forbidden Love",
+        "Sports",
+        "Hot"
+      ]
+    },
+    "tamed-by-my-dads-best-friend": {
+      "title": "Tamed by My Dad's Best Friend",
+      "description": "A college girl falls for her father's brooding best friend, the ex-bodyguard who moves in to guard her from a stalker. He swore never to cross the line. She's determined to make him break it.",
+      "totalEpisodes": 53,
+      "tags": [
+        "Romance",
+        "Forbidden Love",
+        "Age Gap",
+        "Bodyguard",
+        "Hot",
+        "Recommended"
+      ]
+    },
+    "lessons-in-love-and-hate": {
+      "title": "Lessons in Love and Hate",
+      "description": "When unpopular valedictorian Peyton is forced to tutor the school's rich new bad boy, sparks fly. But a jealous queen bee is watching, and one viral moment could destroy them both.",
+      "totalEpisodes": 48,
+      "tags": [
+        "Romance",
+        "Enemies to Lovers",
+        "High School",
+        "New"
+      ]
+    },
+    "sold-to-the-mafia-queen": {
+      "title": "Sold to the Mafia Queen",
+      "description": "When a struggling waitress is gambled away by her boyfriend at an illegal poker table, she's claimed by the ruthless queen of the underworld, only to discover that the most dangerous woman she's ever met may also be the only one who ever truly saved her.",
+      "totalEpisodes": 51,
+      "tags": [
+        "Mafia",
+        "Romance",
+        "LGBTQ+",
+        "Forbidden Love",
+        "Hot",
+        "Recommended"
+      ]
+    },
+    "mrs-ceo-strictly-unprofessional": {
+      "title": "Mrs. CEO: Strictly Unprofessional",
+      "description": "After her husband's betrayal, a powerful CEO falls for her young, dominant assistant.",
+      "totalEpisodes": 50,
+      "tags": [
+        "CEO",
+        "Romance",
+        "Age Gap",
+        "Revenge",
+        "Hot"
+      ]
+    },
+    "surrender-to-my-exs-dad": {
+      "title": "Surrender to My Ex's Dad",
+      "description": "On her 22nd birthday, Ellie catches her boyfriend cheating, then falls for his father, a powerful CEO. A scandalous affair turns into forbidden love as secrets, betrayal and passion spiral out of control.",
+      "totalEpisodes": 50,
+      "tags": [
+        "Forbidden Love",
+        "CEO",
+        "Age Gap",
+        "Revenge",
+        "Hot",
+        "Recommended"
+      ]
+    },
+    "dear-stranger-i-love-you": {
+      "title": "Dear Stranger, I Love You",
+      "description": "Mia runs a secret essay app. When jock Brad discovers her identity, he blackmails her into writing love letters. But as feelings blur and secrets spread, Mia risks losing everything, including her heart.",
+      "totalEpisodes": 57,
+      "tags": [
+        "Romance",
+        "Secret Identity",
+        "Enemies to Lovers",
+        "High School",
+        "New",
+        "Recommended"
+      ]
+    },
+    "risky-love-with-my-boyfriends-dad": {
+      "title": "Risky Love with My Boyfriend's Dad",
+      "description": "My boyfriend is a loser, but his father… is a beast. He saved me from a nightmare when my own boyfriend wouldn't even pick up the phone. Now I'm trapped in his house, sleeping in his shirt, and feeling his scorching gaze on my skin. Mr. Burke is a brilliant surgeon by day, but a dangerous man by night. He says I'm too young. He says this is a mistake. But if I'm such a mistake, why does he grip my waist so tight when we're alone?",
+      "totalEpisodes": 56,
+      "tags": [
+        "Forbidden Love",
+        "Age Gap",
+        "Romance",
+        "Hot"
+      ]
+    },
+    "plaything-of-the-mafia-king": {
+      "title": "Plaything of the Mafia King",
+      "description": "To find her missing sister, a college girl becomes a mafia don's collared plaything, and falls for the dangerous man she came to destroy. She has three weeks before she owes him her body.",
+      "totalEpisodes": 54,
+      "tags": [
+        "Mafia",
+        "Forbidden Love",
+        "Revenge",
+        "Romance",
+        "Hot",
+        "Recommended"
+      ]
+    },
+    "my-lumberjack-lover-is-a-billionaire": {
+      "title": "My Lumberjack Lover Is a Billionaire",
+      "description": "Stranded at a cabin after a car crash, a high-strung CEO falls for the gruff woodsman who saved her, never suspecting he's a billionaire in hiding, or that her job depends on stealing his land.",
+      "totalEpisodes": 47,
+      "tags": [
+        "Billionaire",
+        "Secret Identity",
+        "CEO",
+        "Romance"
+      ]
+    },
+    "the-sound-of-us": {
+      "title": "The Sound of Us",
+      "description": "After bodyguard Logan saves pop star Mila from a shooter, she falls for the one man she can't have. But when her manager plots to kill her, only his protection and their dangerous love can save her.",
+      "totalEpisodes": 52,
+      "tags": [
+        "Bodyguard",
+        "Romance",
+        "Thriller",
+        "New"
+      ]
+    },
+    "the-quarterbacks-secret-princess": {
+      "title": "The Quarterback's Secret Princess",
+      "description": "A princess goes undercover at a suburban high school for one normal year. A star football player with a hidden camera and secrets of his own threatens to expose everything, starting with her heart.",
+      "totalEpisodes": 49,
+      "tags": [
+        "Secret Identity",
+        "Royalty",
+        "High School",
+        "Romance",
+        "New",
+        "Recommended"
+      ]
+    },
+    "the-janitor-owns-everything": {
+      "title": "The Janitor Owns Everything",
+      "description": "Billionaire heir Marcus Hale swaps his tailored suits for a janitor's uniform to expose the corruption rotting his father's empire. The disguise becomes a dangerous trap when he meets Sofie, a bullied secretary who sees the man behind the mop. While office tyrants plot to steal his inheritance and frame him for a crime, Marcus and Sofie launch a high-stakes counterstrike. To save the company, the \"invisible\" girl must transform into a ruthless CEO. In this world of corporate predators, only one question remains: how far will you go for the one who saw you when no one else did?",
+      "totalEpisodes": 61,
+      "tags": [
+        "Billionaire",
+        "Secret Identity",
+        "Revenge",
+        "CEO",
+        "Recommended"
+      ]
+    },
+    "chained-to-my-nemesis": {
+      "title": "Chained to My Nemesis",
+      "description": "Spoiled heir Shane is handcuffed to his childhood victim Tessa for one week. Pass the test, get the inheritance. Fail, and his ruthless uncle wins everything, including the right to ruin them both.",
+      "totalEpisodes": 54,
+      "tags": [
+        "Enemies to Lovers",
+        "Billionaire",
+        "Revenge",
+        "Romance",
+        "Recommended"
+      ]
+    },
+    "he-ruined-me-now-i-have-to-save-him": {
+      "title": "He Ruined Me… Now I Have to Save Him",
+      "description": "Spy Brielle swore never to work for the Browns, the family she blames for her father's death. But when she's forced to protect heir Ethan Brown, secrets unravel, and an unexpected bond forms.",
+      "totalEpisodes": 60,
+      "tags": [
+        "Revenge",
+        "Enemies to Lovers",
+        "Bodyguard",
+        "Thriller"
+      ]
+    },
+    "the-billionaire-i-must-ruin": {
+      "title": "The Billionaire I Must Ruin",
+      "description": "Anya infiltrates billionaire Damien's world to destroy him, but falling for him was never part of the plan. As love and revenge collide, she must choose between justice and the man she swore to ruin.",
+      "totalEpisodes": 60,
+      "tags": [
+        "Billionaire",
+        "Revenge",
+        "Forbidden Love",
+        "Romance"
+      ]
+    },
+    "falling-for-the-man-i-destroyed": {
+      "title": "Falling for the Man I Destroyed",
+      "description": "Alexander Knight, a shadowy businessman, draws journalist Anne Sinclair into his world of blurred morality. Betrayed by Max, a vengeful informant, Alexander falls as Anne battles her love and her integrity.",
+      "totalEpisodes": 60,
+      "tags": [
+        "Revenge",
+        "Thriller",
+        "Romance"
+      ]
+    },
+    "the-dumb-billionaire-heiress-in-love-part-ii": {
+      "title": "The Dumb Billionaire Heiress in Love: Part II",
+      "description": "Antonio accidentally shoots Isabella, who wakes from a six-month coma with no memory. While Stella impersonates her and secretly drains the family fortune in her name, Isabella must piece her life back together and take back everything that was stolen.",
+      "totalEpisodes": 50,
+      "tags": [
+        "Billionaire",
+        "Revenge",
+        "Secret Identity"
+      ]
+    },
+    "rosy-psycho": {
+      "title": "Rosy Psycho",
+      "description": "Raised in love and abundance, Gigi Philips grows up as a ray of sunshine, heiress to ROSE, the cosmetics empire her parents James and Laura built. But behind the perfect family and the sweetest smile, something dark is blooming, and nobody sees it coming.",
+      "totalEpisodes": 49,
+      "tags": [
+        "Thriller",
+        "Revenge",
+        "Billionaire"
+      ]
+    },
+    "the-phoenix-conspiracy": {
+      "title": "The Phoenix Conspiracy",
+      "description": "A private investigator is pulled into the dangerous web of a covert organization led by an enigmatic figure known as Phoenix. When he falls for a woman married to one of its members, every secret becomes a threat to both their lives.",
+      "totalEpisodes": 48,
+      "tags": [
+        "Thriller",
+        "Forbidden Love",
+        "Mystery"
+      ]
+    },
+    "my-handsome-bodyguard": {
+      "title": "My Handsome Bodyguard",
+      "description": "Lea, the spoiled daughter of one of the world's most feared mafia bosses, loses her father in a tragic plane crash and takes over his empire. Surrounded by enemies, she must trust the one man assigned to keep her alive: her handsome new bodyguard.",
+      "totalEpisodes": 50,
+      "tags": [
+        "Mafia",
+        "Bodyguard",
+        "Romance"
+      ]
+    },
+    "twisted-fates": {
+      "title": "Twisted Fates",
+      "description": "Finch, a hardworking middle-class man, is drawn into a world where love and desire collide. Every choice he makes ripples through the lives of the people he holds dearest, until fate twists everything he thought he knew.",
+      "totalEpisodes": 49,
+      "tags": [
+        "Forbidden Love",
+        "Romance",
+        "Drama"
+      ]
+    },
+    "my-knockout-fake-husband": {
+      "title": "My Knockout Fake Husband",
+      "description": "Senate candidate Nora West fakes a marriage with underground fighter Luke Maddox and his daughter Skye to improve her campaign image. As their arrangement becomes real, secrets threaten everything.",
+      "totalEpisodes": 53,
+      "tags": [
+        "Fake Marriage",
+        "Romance",
+        "Single Dad",
+        "New"
+      ]
+    },
+    "the-bookworm-and-the-billionaire": {
+      "title": "The Bookworm and the Billionaire",
+      "description": "A romance writer helps her boss date a reclusive billionaire author. Falling for him is forbidden.",
+      "totalEpisodes": 52,
+      "tags": [
+        "Billionaire",
+        "Forbidden Love",
+        "Workplace",
+        "Romance",
+        "New"
+      ]
+    }
+  }
+}

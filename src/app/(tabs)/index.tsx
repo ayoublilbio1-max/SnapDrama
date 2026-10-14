@@ -9,8 +9,8 @@ import { HomeRow } from "../../components/HomeRow";
 import { HomeSkeleton } from "../../components/Skeleton";
 import {
   FILTERS,
-  HERO_COUNT,
   HOME_ROWS,
+  heroSeries,
   seriesForSource,
   type FilterId,
   type HomeRowDef,
@@ -28,10 +28,7 @@ export default function HomeScreen() {
   const { catalog, status, source } = useCatalog();
   const continueList = useContinueWatching();
 
-  const hero = useMemo(
-    () => getTrending(catalog).slice(0, HERO_COUNT),
-    [catalog],
-  );
+  const hero = useMemo(() => heroSeries(getTrending(catalog)), [catalog]);
   const rows = useMemo(
     () =>
       HOME_ROWS.map((def) => ({
@@ -51,7 +48,8 @@ export default function HomeScreen() {
       `[home] catalog v${catalog.version} (${source}) — hero ${hero.length} · ${filled.join(", ")}`,
     );
     console.log(`[home] empty rows: ${empty.join(", ") || "none"}`);
-  }, [rows, hero.length, catalog.version, source, status]);
+    console.log(`[home] hero order: ${hero.map((s) => s.id).join(", ")}`);
+  }, [rows, hero, catalog.version, source, status]);
 
   // Stable callbacks → memoized rows/cards don't re-render on every Home render
   const openSeries = useCallback(

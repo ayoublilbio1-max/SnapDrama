@@ -18,6 +18,7 @@ import path from "node:path";
 const SERIES_DIR = "D:\\Expo prject\\snapdrama_files\\series";
 const OUTPUT_FILE = path.join("assets", "data", "catalog.json");
 const ENV_FILE = ".env.local"; // contains BUNNY_STREAM_API_KEY=...
+const INFO_FILE = path.join("scripts", "series-info.json"); // your titles, descriptions, totalEpisodes, tags
 
 const BUNNY_LIBRARY_ID = "777815";
 const BUNNY_CDN = "https://vz-fd1254e9-985.b-cdn.net";
@@ -258,13 +259,34 @@ async function main() {
     (prev?.series ?? []).map((s) => [s.id, s]),
   );
 
+  // 3b) Your series details (win over the previous catalog and the defaults)
+  let info = {};
+  if (fs.existsSync(INFO_FILE)) {
+    try {
+      info = JSON.parse(fs.readFileSync(INFO_FILE, "utf8")).series ?? {};
+      log(
+        `  series info: ${Object.keys(info).length} series from ${INFO_FILE}`,
+      );
+      for (const k of Object.keys(info))
+        if (!local[k])
+          warn(`series-info.json has "${k}" but no folder with that name`);
+    } catch (e) {
+      throw new Error(`${INFO_FILE} is not valid JSON: ${e.message}`);
+    }
+  } else {
+    warn(`${INFO_FILE} not found — titles come from folder names`);
+  }
+
   // 4) Build
   const report = [];
+  const notesMissingInfo = [];
   const r2ToCheck = [];
   const series = slugs.map((slug) => {
     const L = local[slug];
     const B = bunnyBySlug[slug] ?? {};
     const old = prevById[slug] ?? {};
+    const inf = info[slug] ?? {};
+    if (!info[slug]) notesMissingInfo.push(slug);
     const oldEps = Object.fromEntries(
       (old.episodes ?? []).map((e) => [e.n, e]),
     );
@@ -332,10 +354,10 @@ async function main() {
       old.ratingCount ?? Math.round(seeded(slug, "rc", 2500, 32000));
     return {
       id: slug,
-      title: old.title ?? titleFromSlug(slug),
+      title: inf.title ?? old.title ?? titleFromSlug(slug),
       cover: r2("cover.webp"),
-      tags: old.tags ?? [],
-      description: old.description ?? "",
+      tags: inf.tags ?? old.tags ?? [],
+      description: inf.description ?? old.description ?? "",
       rating: old.rating ?? Math.round(seeded(slug, "r", 4.4, 4.9) * 10) / 10,
       ratingCount,
       saveCount:
@@ -343,8 +365,10 @@ async function main() {
       shareCount:
         old.shareCount ?? Math.round(seeded(slug, "share", 3000, 35000)),
       freeEpisodes: old.freeEpisodes ?? freeFound,
-      totalEpisodes:
-        old.totalEpisodes ?? Math.max(DEFAULT_TOTAL_EPISODES, freeFound),
+      totalEpisodes: Math.max(
+        inf.totalEpisodes ?? old.totalEpisodes ?? DEFAULT_TOTAL_EPISODES,
+        freeFound,
+      ),
       group: rankIdx >= 0 ? "most-trending" : OTHER_GROUP,
       ...(rankIdx >= 0 ? { trending: true, trendingRank: rankIdx + 1 } : {}),
       ...(trailer ? { trailer } : {}),
@@ -352,6 +376,8 @@ async function main() {
     };
   });
 
+  if (notesMissingInfo.length)
+    warn(`no details in series-info.json for: ${notesMissingInfo.join(", ")}`);
   for (const s of MOST_TRENDING)
     if (!local[s])
       warn(`MOST_TRENDING has "${s}" but no folder with that name`);
