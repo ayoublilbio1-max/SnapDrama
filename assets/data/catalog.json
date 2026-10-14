@@ -1,0 +1,1525 @@
+{
+  "version": 1,
+  "generatedAt": "2026-10-14T00:26:12.286Z",
+  "coinsPerEpisode": 50,
+  "series": [
+    {
+      "id": "chained-to-my-nemesis",
+      "title": "Chained to My Nemesis",
+      "cover": "https://pub-c7de44ea8bf04b1aba53119c94c35d96.r2.dev/series/chained-to-my-nemesis/cover.webp",
+      "tags": [],
+      "description": "",
+      "rating": 4.5,
+      "ratingCount": 2975,
+      "saveCount": 94310,
+      "shareCount": 21278,
+      "freeEpisodes": 5,
+      "totalEpisodes": 60,
+      "group": "most-trending",
+      "trending": true,
+      "trendingRank": 1,
+      "trailer": {
+        "duration": 18,
+        "hlsUrl": "https://vz-fd1254e9-985.b-cdn.net/9fec3320-2dee-4f37-9354-8cfea40bac15/playlist.m3u8",
+        "thumbUrl": "https://vz-fd1254e9-985.b-cdn.net/9fec3320-2dee-4f37-9354-8cfea40bac15/thumbnail.jpg",
+        "mp4Url": "https://pub-c7de44ea8bf04b1aba53119c94c35d96.r2.dev/series/chained-to-my-nemesis/trailer.mp4"
+      },
+      "episodes": [
+        {
+          "n": 1,
+          "title": "Episode 1",
+          "duration": 121,
+          "likeCount": 107810,
+          "hlsUrl": "https://vz-fd1254e9-985.b-cdn.net/a4aec981-78d4-4e58-877a-660dfe41ca4f/playlist.m3u8",
+          "thumbUrl": "https://vz-fd1254e9-985.b-cdn.net/a4aec981-78d4-4e58-877a-660dfe41ca4f/thumbnail.jpg",
+          "mp4Url": "https://pub-c7de44ea8bf04b1aba53119c94c35d96.r2.dev/series/chained-to-my-nemesis/ep_01.mp4"
+        },
+        {
+          "n": 2,
+          "title": "Episode 2",
+          "duration": 82,
+          "likeCount": 40357,
+          "hlsUrl": "https://vz-fd1254e9-985.b-cdn.net/22b43c34-e9b6-4428-af06-9ddc55e7edc4/playlist.m3u8",
+          "thumbUrl": "https://vz-fd1254e9-985.b-cdn.net/22b43c34-e9b6-4428-af06-9ddc55e7edc4/thumbnail.jpg",
+          "mp4Url": "https://pub-c7de44ea8bf04b1aba53119c94c35d96.r2.dev/series/chained-to-my-nemesis/ep_02.mp4"
+        },
+        {
+          "n": 3,
+          "title": "Episode 3",
+          "duration": 114,
+          "likeCount": 120234,
+          "hlsUrl": "https://vz-fd1254e9-985.b-cdn.net/4af23bda-0c2e-4ec2-96dc-461502dc5a51/playlist.m3u8",
+          "thumbUrl": "https://vz-fd1254e9-985.b-cdn.net/4af23bda-0c2e-4ec2-96dc-461502dc5a51/thumbnail.jpg",
+          "mp4Url": "https://pub-c7de44ea8bf04b1aba53119c94c35d96.r2.dev/series/chained-to-my-nemesis/ep_03.mp4"
+        },
+        {
+          "n": 4,
+          "title": "Episode 4",
+          "duration": 63,
+          "likeCount": 183128,
+          "hlsUrl": "https://vz-fd1254e9-985.b-cdn.net/d5c238ee-9510-4fb3-a421-94ec49c9b866/playlist.m3u8",
+          "thumbUrl": "https://vz-fd1254e9-985.b-cdn.net/d5c238ee-9510-4fb3-a421-94ec49c9b866/thumbnail.jpg",
+          "mp4Url": "https://pub-c7de44ea8bf04b1aba53119c94c35d96.r2.dev/series/chained-to-my-nemesis/ep_04.mp4"
+        },
+        {
+          "n": 5,
+          "title": "Episode 5",
+          "duration": 47,
+          "likeCount": 127402,
+          "hlsUrl": "https://vz-fd1254e9-985.b-cdn.net/c3e8a497-7fca-4c1a-a7c4-3e977033eab1/playlist.m3u8",
+          "thumbUrl": "https://vz-fd1254e9-985.b-cdn.net/c3e8a497-7fca-4c1a-a7c4-3e977033eab1/thumbnail.jpg",
+          "mp4Url": "https://pub-c7de44ea8bf04b1aba53119c94c35d96.r2.dev/series/chained-to-my-nemesis/ep_05.mp4"
+        }
+      ]
+    },
+    {
+      "id": "dear-stranger-i-love-you",
+      "title": "Dear Stranger, I Love You",
+      "cover": "https://pub-c7de44ea8bf04b1aba53119c94c35d96.r2.dev/series/dear-stranger-i-love-you/cover.webp",
+      "tags": [],
+      "description": "",
+      "rating": 4.9,
+      "ratingCount": 26530,
+      "saveCount": 177734,
+      "shareCount": 30673,
+      "freeEpisodes": 5,
+      "totalEpisodes": 60,
+      "group": "most-trending",
+      "trending": true,
+      "trendingRank": 2,
+      "trailer": {
+        "duration": 43,
+        "hlsUrl": "https://vz-fd1254e9-985.b-cdn.net/98591123-b41c-4dcb-9986-363339d342bb/playlist.m3u8",
+        "thumbUrl": "https://vz-fd1254e9-985.b-cdn.net/98591123-b41c-4dcb-9986-363339d342bb/thumbnail.jpg",
+        "mp4Url": "https://pub-c7de44ea8bf04b1aba53119c94c35d96.r2.dev/series/dear-stranger-i-love-you/trailer.mp4"
+      },
+      "episodes": [
+        {
+          "n": 1,
+          "title": "Episode 1",
+          "duration": 91,
+          "likeCount": 149621,
+          "hlsUrl": "https://vz-fd1254e9-985.b-cdn.net/26e3d9b3-077c-4914-8ef4-368c894a1d04/playlist.m3u8",
+          "thumbUrl": "https://vz-fd1254e9-985.b-cdn.net/26e3d9b3-077c-4914-8ef4-368c894a1d04/thumbnail.jpg",
+          "mp4Url": "https://pub-c7de44ea8bf04b1aba53119c94c35d96.r2.dev/series/dear-stranger-i-love-you/ep_01.mp4"
+        },
+        {
+          "n": 2,
+          "title": "Episode 2",
+          "duration": 92,
+          "likeCount": 202761,
+          "hlsUrl": "https://vz-fd1254e9-985.b-cdn.net/db30253d-a2ea-4550-bc10-e0c8502e9e9b/playlist.m3u8",
+          "thumbUrl": "https://vz-fd1254e9-985.b-cdn.net/db30253d-a2ea-4550-bc10-e0c8502e9e9b/thumbnail.jpg",
+          "mp4Url": "https://pub-c7de44ea8bf04b1aba53119c94c35d96.r2.dev/series/dear-stranger-i-love-you/ep_02.mp4"
+        },
+        {
+          "n": 3,
+          "title": "Episode 3",
+          "duration": 103,
+          "likeCount": 146138,
+          "hlsUrl": "https://vz-fd1254e9-985.b-cdn.net/26adb2a3-1517-4371-b923-06a3a3b6f8f7/playlist.m3u8",
+          "thumbUrl": "https://vz-fd1254e9-985.b-cdn.net/26adb2a3-1517-4371-b923-06a3a3b6f8f7/thumbnail.jpg",
+          "mp4Url": "https://pub-c7de44ea8bf04b1aba53119c94c35d96.r2.dev/series/dear-stranger-i-love-you/ep_03.mp4"
+        },
+        {
+          "n": 4,
+          "title": "Episode 4",
+          "duration": 92,
+          "likeCount": 109353,
+          "hlsUrl": "https://vz-fd1254e9-985.b-cdn.net/b005269c-d8e4-4d4e-a237-43fcb1abfc31/playlist.m3u8",
+          "thumbUrl": "https://vz-fd1254e9-985.b-cdn.net/b005269c-d8e4-4d4e-a237-43fcb1abfc31/thumbnail.jpg",
+          "mp4Url": "https://pub-c7de44ea8bf04b1aba53119c94c35d96.r2.dev/series/dear-stranger-i-love-you/ep_04.mp4"
+        },
+        {
+          "n": 5,
+          "title": "Episode 5",
+          "duration": 127,
+          "likeCount": 41806,
+          "hlsUrl": "https://vz-fd1254e9-985.b-cdn.net/27c98780-23fb-4d7d-bb18-924c19107230/playlist.m3u8",
+          "thumbUrl": "https://vz-fd1254e9-985.b-cdn.net/27c98780-23fb-4d7d-bb18-924c19107230/thumbnail.jpg",
+          "mp4Url": "https://pub-c7de44ea8bf04b1aba53119c94c35d96.r2.dev/series/dear-stranger-i-love-you/ep_05.mp4"
+        }
+      ]
+    },
+    {
+      "id": "falling-for-the-man-i-destroyed",
+      "title": "Falling for the Man I Destroyed",
+      "cover": "https://pub-c7de44ea8bf04b1aba53119c94c35d96.r2.dev/series/falling-for-the-man-i-destroyed/cover.webp",
+      "tags": [],
+      "description": "",
+      "rating": 4.6,
+      "ratingCount": 21663,
+      "saveCount": 177837,
+      "shareCount": 25314,
+      "freeEpisodes": 0,
+      "totalEpisodes": 60,
+      "group": "limited-time-deals",
+      "trailer": {
+        "duration": 68,
+        "hlsUrl": "https://vz-fd1254e9-985.b-cdn.net/794a0cc8-c106-4716-96b4-b3b36e2c7212/playlist.m3u8",
+        "thumbUrl": "https://vz-fd1254e9-985.b-cdn.net/794a0cc8-c106-4716-96b4-b3b36e2c7212/thumbnail.jpg",
+        "mp4Url": "https://pub-c7de44ea8bf04b1aba53119c94c35d96.r2.dev/series/falling-for-the-man-i-destroyed/trailer.mp4"
+      },
+      "episodes": []
+    },
+    {
+      "id": "he-ruined-me-now-i-have-to-save-him",
+      "title": "He Ruined Me, Now I Have to Save Him",
+      "cover": "https://pub-c7de44ea8bf04b1aba53119c94c35d96.r2.dev/series/he-ruined-me-now-i-have-to-save-him/cover.webp",
+      "tags": [],
+      "description": "",
+      "rating": 4.7,
+      "ratingCount": 30555,
+      "saveCount": 199982,
+      "shareCount": 9971,
+      "freeEpisodes": 0,
+      "totalEpisodes": 60,
+      "group": "limited-time-deals",
+      "trailer": {
+        "duration": 62,
+        "hlsUrl": "https://vz-fd1254e9-985.b-cdn.net/72345f27-0a19-4266-bbfb-42f73ab9e48c/playlist.m3u8",
+        "thumbUrl": "https://vz-fd1254e9-985.b-cdn.net/72345f27-0a19-4266-bbfb-42f73ab9e48c/thumbnail.jpg",
+        "mp4Url": "https://pub-c7de44ea8bf04b1aba53119c94c35d96.r2.dev/series/he-ruined-me-now-i-have-to-save-him/trailer.mp4"
+      },
+      "episodes": []
+    },
+    {
+      "id": "lessons-in-love-and-hate",
+      "title": "Lessons in Love and Hate",
+      "cover": "https://pub-c7de44ea8bf04b1aba53119c94c35d96.r2.dev/series/lessons-in-love-and-hate/cover.webp",
+      "tags": [],
+      "description": "",
+      "rating": 4.6,
+      "ratingCount": 19737,
+      "saveCount": 185257,
+      "shareCount": 9748,
+      "freeEpisodes": 5,
+      "totalEpisodes": 60,
+      "group": "most-trending",
+      "trending": true,
+      "trendingRank": 3,
+      "trailer": {
+        "duration": 27,
+        "hlsUrl": "https://vz-fd1254e9-985.b-cdn.net/bf4f56da-9cb0-4ead-ac32-092ff3b3bf16/playlist.m3u8",
+        "thumbUrl": "https://vz-fd1254e9-985.b-cdn.net/bf4f56da-9cb0-4ead-ac32-092ff3b3bf16/thumbnail.jpg",
+        "mp4Url": "https://pub-c7de44ea8bf04b1aba53119c94c35d96.r2.dev/series/lessons-in-love-and-hate/trailer.mp4"
+      },
+      "episodes": [
+        {
+          "n": 1,
+          "title": "Episode 1",
+          "duration": 75,
+          "likeCount": 46131,
+          "hlsUrl": "https://vz-fd1254e9-985.b-cdn.net/7d0a6aaa-ff8e-4678-ad6a-53b527b83ed6/playlist.m3u8",
+          "thumbUrl": "https://vz-fd1254e9-985.b-cdn.net/7d0a6aaa-ff8e-4678-ad6a-53b527b83ed6/thumbnail.jpg",
+          "mp4Url": "https://pub-c7de44ea8bf04b1aba53119c94c35d96.r2.dev/series/lessons-in-love-and-hate/ep_01.mp4"
+        },
+        {
+          "n": 2,
+          "title": "Episode 2",
+          "duration": 78,
+          "likeCount": 209810,
+          "hlsUrl": "https://vz-fd1254e9-985.b-cdn.net/04bffb13-71ba-4d60-8bb5-9e342afc7bb8/playlist.m3u8",
+          "thumbUrl": "https://vz-fd1254e9-985.b-cdn.net/04bffb13-71ba-4d60-8bb5-9e342afc7bb8/thumbnail.jpg",
+          "mp4Url": "https://pub-c7de44ea8bf04b1aba53119c94c35d96.r2.dev/series/lessons-in-love-and-hate/ep_02.mp4"
+        },
+        {
+          "n": 3,
+          "title": "Episode 3",
+          "duration": 71,
+          "likeCount": 49065,
+          "hlsUrl": "https://vz-fd1254e9-985.b-cdn.net/d183a209-c0d0-427b-846c-a0ed179679f1/playlist.m3u8",
+          "thumbUrl": "https://vz-fd1254e9-985.b-cdn.net/d183a209-c0d0-427b-846c-a0ed179679f1/thumbnail.jpg",
+          "mp4Url": "https://pub-c7de44ea8bf04b1aba53119c94c35d96.r2.dev/series/lessons-in-love-and-hate/ep_03.mp4"
+        },
+        {
+          "n": 4,
+          "title": "Episode 4",
+          "duration": 128,
+          "likeCount": 132975,
+          "hlsUrl": "https://vz-fd1254e9-985.b-cdn.net/2018ac7b-eff4-4861-ae62-23430d0be59c/playlist.m3u8",
+          "thumbUrl": "https://vz-fd1254e9-985.b-cdn.net/2018ac7b-eff4-4861-ae62-23430d0be59c/thumbnail.jpg",
+          "mp4Url": "https://pub-c7de44ea8bf04b1aba53119c94c35d96.r2.dev/series/lessons-in-love-and-hate/ep_04.mp4"
+        },
+        {
+          "n": 5,
+          "title": "Episode 5",
+          "duration": 58,
+          "likeCount": 166541,
+          "hlsUrl": "https://vz-fd1254e9-985.b-cdn.net/29ba7332-854b-4d5d-92a9-0059e06384bc/playlist.m3u8",
+          "thumbUrl": "https://vz-fd1254e9-985.b-cdn.net/29ba7332-854b-4d5d-92a9-0059e06384bc/thumbnail.jpg",
+          "mp4Url": "https://pub-c7de44ea8bf04b1aba53119c94c35d96.r2.dev/series/lessons-in-love-and-hate/ep_05.mp4"
+        }
+      ]
+    },
+    {
+      "id": "mrs-ceo-strictly-unprofessional",
+      "title": "Mrs. CEO: Strictly Unprofessional",
+      "cover": "https://pub-c7de44ea8bf04b1aba53119c94c35d96.r2.dev/series/mrs-ceo-strictly-unprofessional/cover.webp",
+      "tags": [],
+      "description": "",
+      "rating": 4.6,
+      "ratingCount": 11139,
+      "saveCount": 147268,
+      "shareCount": 11035,
+      "freeEpisodes": 5,
+      "totalEpisodes": 60,
+      "group": "most-trending",
+      "trending": true,
+      "trendingRank": 4,
+      "trailer": {
+        "duration": 32,
+        "hlsUrl": "https://vz-fd1254e9-985.b-cdn.net/250fe193-306d-41bd-9bdd-3a7439bc4b00/playlist.m3u8",
+        "thumbUrl": "https://vz-fd1254e9-985.b-cdn.net/250fe193-306d-41bd-9bdd-3a7439bc4b00/thumbnail.jpg",
+        "mp4Url": "https://pub-c7de44ea8bf04b1aba53119c94c35d96.r2.dev/series/mrs-ceo-strictly-unprofessional/trailer.mp4"
+      },
+      "episodes": [
+        {
+          "n": 1,
+          "title": "Episode 1",
+          "duration": 145,
+          "likeCount": 181813,
+          "hlsUrl": "https://vz-fd1254e9-985.b-cdn.net/96651f41-fb5c-48f6-abf2-4c2014b57662/playlist.m3u8",
+          "thumbUrl": "https://vz-fd1254e9-985.b-cdn.net/96651f41-fb5c-48f6-abf2-4c2014b57662/thumbnail.jpg",
+          "mp4Url": "https://pub-c7de44ea8bf04b1aba53119c94c35d96.r2.dev/series/mrs-ceo-strictly-unprofessional/ep_01.mp4"
+        },
+        {
+          "n": 2,
+          "title": "Episode 2",
+          "duration": 81,
+          "likeCount": 58021,
+          "hlsUrl": "https://vz-fd1254e9-985.b-cdn.net/88d56e4a-d646-4243-81d3-7e1ab2decb81/playlist.m3u8",
+          "thumbUrl": "https://vz-fd1254e9-985.b-cdn.net/88d56e4a-d646-4243-81d3-7e1ab2decb81/thumbnail.jpg",
+          "mp4Url": "https://pub-c7de44ea8bf04b1aba53119c94c35d96.r2.dev/series/mrs-ceo-strictly-unprofessional/ep_02.mp4"
+        },
+        {
+          "n": 3,
+          "title": "Episode 3",
+          "duration": 104,
+          "likeCount": 62487,
+          "hlsUrl": "https://vz-fd1254e9-985.b-cdn.net/0a9cc68c-d023-4810-9a57-62fe140871fe/playlist.m3u8",
+          "thumbUrl": "https://vz-fd1254e9-985.b-cdn.net/0a9cc68c-d023-4810-9a57-62fe140871fe/thumbnail.jpg",
+          "mp4Url": "https://pub-c7de44ea8bf04b1aba53119c94c35d96.r2.dev/series/mrs-ceo-strictly-unprofessional/ep_03.mp4"
+        },
+        {
+          "n": 4,
+          "title": "Episode 4",
+          "duration": 101,
+          "likeCount": 150021,
+          "hlsUrl": "https://vz-fd1254e9-985.b-cdn.net/003ba985-13b9-43e1-9899-c1d30ec1dd2d/playlist.m3u8",
+          "thumbUrl": "https://vz-fd1254e9-985.b-cdn.net/003ba985-13b9-43e1-9899-c1d30ec1dd2d/thumbnail.jpg",
+          "mp4Url": "https://pub-c7de44ea8bf04b1aba53119c94c35d96.r2.dev/series/mrs-ceo-strictly-unprofessional/ep_04.mp4"
+        },
+        {
+          "n": 5,
+          "title": "Episode 5",
+          "duration": 86,
+          "likeCount": 45421,
+          "hlsUrl": "https://vz-fd1254e9-985.b-cdn.net/dcde7067-9768-4fc6-8b53-1d29946f865a/playlist.m3u8",
+          "thumbUrl": "https://vz-fd1254e9-985.b-cdn.net/dcde7067-9768-4fc6-8b53-1d29946f865a/thumbnail.jpg",
+          "mp4Url": "https://pub-c7de44ea8bf04b1aba53119c94c35d96.r2.dev/series/mrs-ceo-strictly-unprofessional/ep_05.mp4"
+        }
+      ]
+    },
+    {
+      "id": "my-handsome-bodyguard",
+      "title": "My Handsome Bodyguard",
+      "cover": "https://pub-c7de44ea8bf04b1aba53119c94c35d96.r2.dev/series/my-handsome-bodyguard/cover.webp",
+      "tags": [],
+      "description": "",
+      "rating": 4.5,
+      "ratingCount": 26232,
+      "saveCount": 200571,
+      "shareCount": 33418,
+      "freeEpisodes": 0,
+      "totalEpisodes": 60,
+      "group": "limited-time-deals",
+      "trailer": {
+        "duration": 92,
+        "hlsUrl": "https://vz-fd1254e9-985.b-cdn.net/487b6214-70e3-4bb1-ba89-c087091f0bd5/playlist.m3u8",
+        "thumbUrl": "https://vz-fd1254e9-985.b-cdn.net/487b6214-70e3-4bb1-ba89-c087091f0bd5/thumbnail.jpg",
+        "mp4Url": "https://pub-c7de44ea8bf04b1aba53119c94c35d96.r2.dev/series/my-handsome-bodyguard/trailer.mp4"
+      },
+      "episodes": []
+    },
+    {
+      "id": "my-knockout-fake-husband",
+      "title": "My Knockout Fake Husband",
+      "cover": "https://pub-c7de44ea8bf04b1aba53119c94c35d96.r2.dev/series/my-knockout-fake-husband/cover.webp",
+      "tags": [],
+      "description": "",
+      "rating": 4.6,
+      "ratingCount": 30415,
+      "saveCount": 93165,
+      "shareCount": 28080,
+      "freeEpisodes": 5,
+      "totalEpisodes": 60,
+      "group": "most-trending",
+      "trending": true,
+      "trendingRank": 5,
+      "trailer": {
+        "duration": 39,
+        "hlsUrl": "https://vz-fd1254e9-985.b-cdn.net/637da607-4e54-4f9c-8fd4-420a76b65bad/playlist.m3u8",
+        "thumbUrl": "https://vz-fd1254e9-985.b-cdn.net/637da607-4e54-4f9c-8fd4-420a76b65bad/thumbnail.jpg",
+        "mp4Url": "https://pub-c7de44ea8bf04b1aba53119c94c35d96.r2.dev/series/my-knockout-fake-husband/trailer.mp4"
+      },
+      "episodes": [
+        {
+          "n": 1,
+          "title": "Episode 1",
+          "duration": 140,
+          "likeCount": 207729,
+          "hlsUrl": "https://vz-fd1254e9-985.b-cdn.net/709dd414-4c41-4a92-86a5-725519ea752c/playlist.m3u8",
+          "thumbUrl": "https://vz-fd1254e9-985.b-cdn.net/709dd414-4c41-4a92-86a5-725519ea752c/thumbnail.jpg",
+          "mp4Url": "https://pub-c7de44ea8bf04b1aba53119c94c35d96.r2.dev/series/my-knockout-fake-husband/ep_01.mp4"
+        },
+        {
+          "n": 2,
+          "title": "Episode 2",
+          "duration": 100,
+          "likeCount": 184278,
+          "hlsUrl": "https://vz-fd1254e9-985.b-cdn.net/ed60c7c1-4789-493f-8b87-d95cc962c782/playlist.m3u8",
+          "thumbUrl": "https://vz-fd1254e9-985.b-cdn.net/ed60c7c1-4789-493f-8b87-d95cc962c782/thumbnail.jpg",
+          "mp4Url": "https://pub-c7de44ea8bf04b1aba53119c94c35d96.r2.dev/series/my-knockout-fake-husband/ep_02.mp4"
+        },
+        {
+          "n": 3,
+          "title": "Episode 3",
+          "duration": 112,
+          "likeCount": 99289,
+          "hlsUrl": "https://vz-fd1254e9-985.b-cdn.net/41741d14-16f2-4d80-89b2-c056dd8662d1/playlist.m3u8",
+          "thumbUrl": "https://vz-fd1254e9-985.b-cdn.net/41741d14-16f2-4d80-89b2-c056dd8662d1/thumbnail.jpg",
+          "mp4Url": "https://pub-c7de44ea8bf04b1aba53119c94c35d96.r2.dev/series/my-knockout-fake-husband/ep_03.mp4"
+        },
+        {
+          "n": 4,
+          "title": "Episode 4",
+          "duration": 70,
+          "likeCount": 85674,
+          "hlsUrl": "https://vz-fd1254e9-985.b-cdn.net/8be517ac-232d-451f-8f9b-3b6f2f53f3dc/playlist.m3u8",
+          "thumbUrl": "https://vz-fd1254e9-985.b-cdn.net/8be517ac-232d-451f-8f9b-3b6f2f53f3dc/thumbnail.jpg",
+          "mp4Url": "https://pub-c7de44ea8bf04b1aba53119c94c35d96.r2.dev/series/my-knockout-fake-husband/ep_04.mp4"
+        },
+        {
+          "n": 5,
+          "title": "Episode 5",
+          "duration": 77,
+          "likeCount": 81431,
+          "hlsUrl": "https://vz-fd1254e9-985.b-cdn.net/d1886c8b-1a4c-4c9f-8800-85623f07a46b/playlist.m3u8",
+          "thumbUrl": "https://vz-fd1254e9-985.b-cdn.net/d1886c8b-1a4c-4c9f-8800-85623f07a46b/thumbnail.jpg",
+          "mp4Url": "https://pub-c7de44ea8bf04b1aba53119c94c35d96.r2.dev/series/my-knockout-fake-husband/ep_05.mp4"
+        }
+      ]
+    },
+    {
+      "id": "my-lumberjack-lover-is-a-billionaire",
+      "title": "My Lumberjack Lover is a Billionaire",
+      "cover": "https://pub-c7de44ea8bf04b1aba53119c94c35d96.r2.dev/series/my-lumberjack-lover-is-a-billionaire/cover.webp",
+      "tags": [],
+      "description": "",
+      "rating": 4.4,
+      "ratingCount": 22906,
+      "saveCount": 149967,
+      "shareCount": 21370,
+      "freeEpisodes": 5,
+      "totalEpisodes": 60,
+      "group": "most-trending",
+      "trending": true,
+      "trendingRank": 6,
+      "trailer": {
+        "duration": 52,
+        "hlsUrl": "https://vz-fd1254e9-985.b-cdn.net/a38e9556-e32e-418d-84c0-78a4a17c7248/playlist.m3u8",
+        "thumbUrl": "https://vz-fd1254e9-985.b-cdn.net/a38e9556-e32e-418d-84c0-78a4a17c7248/thumbnail.jpg",
+        "mp4Url": "https://pub-c7de44ea8bf04b1aba53119c94c35d96.r2.dev/series/my-lumberjack-lover-is-a-billionaire/trailer.mp4"
+      },
+      "episodes": [
+        {
+          "n": 1,
+          "title": "Episode 1",
+          "duration": 107,
+          "likeCount": 93991,
+          "hlsUrl": "https://vz-fd1254e9-985.b-cdn.net/0496214e-c446-438b-a269-a90fcbc7141f/playlist.m3u8",
+          "thumbUrl": "https://vz-fd1254e9-985.b-cdn.net/0496214e-c446-438b-a269-a90fcbc7141f/thumbnail.jpg",
+          "mp4Url": "https://pub-c7de44ea8bf04b1aba53119c94c35d96.r2.dev/series/my-lumberjack-lover-is-a-billionaire/ep_01.mp4"
+        },
+        {
+          "n": 2,
+          "title": "Episode 2",
+          "duration": 77,
+          "likeCount": 87797,
+          "hlsUrl": "https://vz-fd1254e9-985.b-cdn.net/a368b88c-050c-4bad-b01d-bc1af39d0396/playlist.m3u8",
+          "thumbUrl": "https://vz-fd1254e9-985.b-cdn.net/a368b88c-050c-4bad-b01d-bc1af39d0396/thumbnail.jpg",
+          "mp4Url": "https://pub-c7de44ea8bf04b1aba53119c94c35d96.r2.dev/series/my-lumberjack-lover-is-a-billionaire/ep_02.mp4"
+        },
+        {
+          "n": 3,
+          "title": "Episode 3",
+          "duration": 61,
+          "likeCount": 129077,
+          "hlsUrl": "https://vz-fd1254e9-985.b-cdn.net/e7ac4f45-2e48-4671-968f-7fc544c62ab0/playlist.m3u8",
+          "thumbUrl": "https://vz-fd1254e9-985.b-cdn.net/e7ac4f45-2e48-4671-968f-7fc544c62ab0/thumbnail.jpg",
+          "mp4Url": "https://pub-c7de44ea8bf04b1aba53119c94c35d96.r2.dev/series/my-lumberjack-lover-is-a-billionaire/ep_03.mp4"
+        },
+        {
+          "n": 4,
+          "title": "Episode 4",
+          "duration": 72,
+          "likeCount": 160536,
+          "hlsUrl": "https://vz-fd1254e9-985.b-cdn.net/9004ebbd-af92-4d64-85b4-5dbbbdc5e0b8/playlist.m3u8",
+          "thumbUrl": "https://vz-fd1254e9-985.b-cdn.net/9004ebbd-af92-4d64-85b4-5dbbbdc5e0b8/thumbnail.jpg",
+          "mp4Url": "https://pub-c7de44ea8bf04b1aba53119c94c35d96.r2.dev/series/my-lumberjack-lover-is-a-billionaire/ep_04.mp4"
+        },
+        {
+          "n": 5,
+          "title": "Episode 5",
+          "duration": 85,
+          "likeCount": 54655,
+          "hlsUrl": "https://vz-fd1254e9-985.b-cdn.net/fb42f4b8-74f0-49b1-aaae-74bd05812682/playlist.m3u8",
+          "thumbUrl": "https://vz-fd1254e9-985.b-cdn.net/fb42f4b8-74f0-49b1-aaae-74bd05812682/thumbnail.jpg",
+          "mp4Url": "https://pub-c7de44ea8bf04b1aba53119c94c35d96.r2.dev/series/my-lumberjack-lover-is-a-billionaire/ep_05.mp4"
+        }
+      ]
+    },
+    {
+      "id": "plaything-of-the-mafia-king",
+      "title": "Plaything of the Mafia King",
+      "cover": "https://pub-c7de44ea8bf04b1aba53119c94c35d96.r2.dev/series/plaything-of-the-mafia-king/cover.webp",
+      "tags": [],
+      "description": "",
+      "rating": 4.5,
+      "ratingCount": 7817,
+      "saveCount": 68560,
+      "shareCount": 27592,
+      "freeEpisodes": 5,
+      "totalEpisodes": 60,
+      "group": "most-trending",
+      "trending": true,
+      "trendingRank": 7,
+      "episodes": [
+        {
+          "n": 1,
+          "title": "Episode 1",
+          "duration": 94,
+          "likeCount": 42296,
+          "hlsUrl": "https://vz-fd1254e9-985.b-cdn.net/81e113d4-ffaa-4f91-8f3c-ba476f8cefbf/playlist.m3u8",
+          "thumbUrl": "https://vz-fd1254e9-985.b-cdn.net/81e113d4-ffaa-4f91-8f3c-ba476f8cefbf/thumbnail.jpg",
+          "mp4Url": "https://pub-c7de44ea8bf04b1aba53119c94c35d96.r2.dev/series/plaything-of-the-mafia-king/ep_01.mp4"
+        },
+        {
+          "n": 2,
+          "title": "Episode 2",
+          "duration": 142,
+          "likeCount": 224544,
+          "hlsUrl": "https://vz-fd1254e9-985.b-cdn.net/bbc234b8-0e3f-4144-a7fd-68e5a090f59c/playlist.m3u8",
+          "thumbUrl": "https://vz-fd1254e9-985.b-cdn.net/bbc234b8-0e3f-4144-a7fd-68e5a090f59c/thumbnail.jpg",
+          "mp4Url": "https://pub-c7de44ea8bf04b1aba53119c94c35d96.r2.dev/series/plaything-of-the-mafia-king/ep_02.mp4"
+        },
+        {
+          "n": 3,
+          "title": "Episode 3",
+          "duration": 106,
+          "likeCount": 78605,
+          "hlsUrl": "https://vz-fd1254e9-985.b-cdn.net/827bf214-81e7-4a75-9378-6d3f008b33a3/playlist.m3u8",
+          "thumbUrl": "https://vz-fd1254e9-985.b-cdn.net/827bf214-81e7-4a75-9378-6d3f008b33a3/thumbnail.jpg",
+          "mp4Url": "https://pub-c7de44ea8bf04b1aba53119c94c35d96.r2.dev/series/plaything-of-the-mafia-king/ep_03.mp4"
+        },
+        {
+          "n": 4,
+          "title": "Episode 4",
+          "duration": 62,
+          "likeCount": 155279,
+          "hlsUrl": "https://vz-fd1254e9-985.b-cdn.net/0356e6af-9623-4203-b891-17f7a8d62e90/playlist.m3u8",
+          "thumbUrl": "https://vz-fd1254e9-985.b-cdn.net/0356e6af-9623-4203-b891-17f7a8d62e90/thumbnail.jpg",
+          "mp4Url": "https://pub-c7de44ea8bf04b1aba53119c94c35d96.r2.dev/series/plaything-of-the-mafia-king/ep_04.mp4"
+        },
+        {
+          "n": 5,
+          "title": "Episode 5",
+          "duration": 153,
+          "likeCount": 42676,
+          "hlsUrl": "https://vz-fd1254e9-985.b-cdn.net/d7b02cc9-2201-423d-8b93-4c228028d1d8/playlist.m3u8",
+          "thumbUrl": "https://vz-fd1254e9-985.b-cdn.net/d7b02cc9-2201-423d-8b93-4c228028d1d8/thumbnail.jpg",
+          "mp4Url": "https://pub-c7de44ea8bf04b1aba53119c94c35d96.r2.dev/series/plaything-of-the-mafia-king/ep_05.mp4"
+        }
+      ]
+    },
+    {
+      "id": "risky-love-with-my-boyfriends-dad",
+      "title": "Risky Love with My Boyfriend's Dad",
+      "cover": "https://pub-c7de44ea8bf04b1aba53119c94c35d96.r2.dev/series/risky-love-with-my-boyfriends-dad/cover.webp",
+      "tags": [],
+      "description": "",
+      "rating": 4.7,
+      "ratingCount": 11886,
+      "saveCount": 48063,
+      "shareCount": 10976,
+      "freeEpisodes": 5,
+      "totalEpisodes": 60,
+      "group": "most-trending",
+      "trending": true,
+      "trendingRank": 8,
+      "trailer": {
+        "duration": 57,
+        "hlsUrl": "https://vz-fd1254e9-985.b-cdn.net/c94511ef-7fe1-45b0-a4c9-e9a074566b85/playlist.m3u8",
+        "thumbUrl": "https://vz-fd1254e9-985.b-cdn.net/c94511ef-7fe1-45b0-a4c9-e9a074566b85/thumbnail.jpg",
+        "mp4Url": "https://pub-c7de44ea8bf04b1aba53119c94c35d96.r2.dev/series/risky-love-with-my-boyfriends-dad/trailer.mp4"
+      },
+      "episodes": [
+        {
+          "n": 1,
+          "title": "Episode 1",
+          "duration": 77,
+          "likeCount": 135141,
+          "hlsUrl": "https://vz-fd1254e9-985.b-cdn.net/cff0b382-89e5-45c2-8a66-f3fa7d0cb436/playlist.m3u8",
+          "thumbUrl": "https://vz-fd1254e9-985.b-cdn.net/cff0b382-89e5-45c2-8a66-f3fa7d0cb436/thumbnail.jpg",
+          "mp4Url": "https://pub-c7de44ea8bf04b1aba53119c94c35d96.r2.dev/series/risky-love-with-my-boyfriends-dad/ep_01.mp4"
+        },
+        {
+          "n": 2,
+          "title": "Episode 2",
+          "duration": 54,
+          "likeCount": 39235,
+          "hlsUrl": "https://vz-fd1254e9-985.b-cdn.net/aedbb63e-dfdb-46b4-8915-4ecab5f47d93/playlist.m3u8",
+          "thumbUrl": "https://vz-fd1254e9-985.b-cdn.net/aedbb63e-dfdb-46b4-8915-4ecab5f47d93/thumbnail.jpg",
+          "mp4Url": "https://pub-c7de44ea8bf04b1aba53119c94c35d96.r2.dev/series/risky-love-with-my-boyfriends-dad/ep_02.mp4"
+        },
+        {
+          "n": 3,
+          "title": "Episode 3",
+          "duration": 78,
+          "likeCount": 51552,
+          "hlsUrl": "https://vz-fd1254e9-985.b-cdn.net/cb3c0a13-f9c2-4d83-b21b-9726b400e583/playlist.m3u8",
+          "thumbUrl": "https://vz-fd1254e9-985.b-cdn.net/cb3c0a13-f9c2-4d83-b21b-9726b400e583/thumbnail.jpg",
+          "mp4Url": "https://pub-c7de44ea8bf04b1aba53119c94c35d96.r2.dev/series/risky-love-with-my-boyfriends-dad/ep_03.mp4"
+        },
+        {
+          "n": 4,
+          "title": "Episode 4",
+          "duration": 100,
+          "likeCount": 175648,
+          "hlsUrl": "https://vz-fd1254e9-985.b-cdn.net/242eb235-657d-4369-acf1-6e1492fa9fa7/playlist.m3u8",
+          "thumbUrl": "https://vz-fd1254e9-985.b-cdn.net/242eb235-657d-4369-acf1-6e1492fa9fa7/thumbnail.jpg",
+          "mp4Url": "https://pub-c7de44ea8bf04b1aba53119c94c35d96.r2.dev/series/risky-love-with-my-boyfriends-dad/ep_04.mp4"
+        },
+        {
+          "n": 5,
+          "title": "Episode 5",
+          "duration": 37,
+          "likeCount": 153898,
+          "hlsUrl": "https://vz-fd1254e9-985.b-cdn.net/9fa2e3ec-3624-45ae-b4a3-1cebbaaa4646/playlist.m3u8",
+          "thumbUrl": "https://vz-fd1254e9-985.b-cdn.net/9fa2e3ec-3624-45ae-b4a3-1cebbaaa4646/thumbnail.jpg",
+          "mp4Url": "https://pub-c7de44ea8bf04b1aba53119c94c35d96.r2.dev/series/risky-love-with-my-boyfriends-dad/ep_05.mp4"
+        }
+      ]
+    },
+    {
+      "id": "rosy-psycho",
+      "title": "Rosy Psycho",
+      "cover": "https://pub-c7de44ea8bf04b1aba53119c94c35d96.r2.dev/series/rosy-psycho/cover.webp",
+      "tags": [],
+      "description": "",
+      "rating": 4.5,
+      "ratingCount": 13546,
+      "saveCount": 190317,
+      "shareCount": 9317,
+      "freeEpisodes": 0,
+      "totalEpisodes": 60,
+      "group": "limited-time-deals",
+      "trailer": {
+        "duration": 49,
+        "hlsUrl": "https://vz-fd1254e9-985.b-cdn.net/4bc094fa-898a-45d7-9f14-3e54abe1503b/playlist.m3u8",
+        "thumbUrl": "https://vz-fd1254e9-985.b-cdn.net/4bc094fa-898a-45d7-9f14-3e54abe1503b/thumbnail.jpg",
+        "mp4Url": "https://pub-c7de44ea8bf04b1aba53119c94c35d96.r2.dev/series/rosy-psycho/trailer.mp4"
+      },
+      "episodes": []
+    },
+    {
+      "id": "sold-to-the-mafia-queen",
+      "title": "Sold to the Mafia Queen",
+      "cover": "https://pub-c7de44ea8bf04b1aba53119c94c35d96.r2.dev/series/sold-to-the-mafia-queen/cover.webp",
+      "tags": [],
+      "description": "",
+      "rating": 4.5,
+      "ratingCount": 9425,
+      "saveCount": 162026,
+      "shareCount": 19216,
+      "freeEpisodes": 12,
+      "totalEpisodes": 60,
+      "group": "most-trending",
+      "trending": true,
+      "trendingRank": 9,
+      "trailer": {
+        "duration": 44,
+        "hlsUrl": "https://vz-fd1254e9-985.b-cdn.net/c9b0ab46-9c82-48df-a5c1-228b68ee0251/playlist.m3u8",
+        "thumbUrl": "https://vz-fd1254e9-985.b-cdn.net/c9b0ab46-9c82-48df-a5c1-228b68ee0251/thumbnail.jpg",
+        "mp4Url": "https://pub-c7de44ea8bf04b1aba53119c94c35d96.r2.dev/series/sold-to-the-mafia-queen/trailer.mp4"
+      },
+      "episodes": [
+        {
+          "n": 1,
+          "title": "Episode 1",
+          "duration": 70,
+          "likeCount": 114769,
+          "hlsUrl": "https://vz-fd1254e9-985.b-cdn.net/9f964274-945c-496f-895e-02faf38da533/playlist.m3u8",
+          "thumbUrl": "https://vz-fd1254e9-985.b-cdn.net/9f964274-945c-496f-895e-02faf38da533/thumbnail.jpg",
+          "mp4Url": "https://pub-c7de44ea8bf04b1aba53119c94c35d96.r2.dev/series/sold-to-the-mafia-queen/ep_01.mp4"
+        },
+        {
+          "n": 2,
+          "title": "Episode 2",
+          "duration": 55,
+          "likeCount": 56633,
+          "hlsUrl": "https://vz-fd1254e9-985.b-cdn.net/cf527f8b-796b-422e-9d5a-fdb749a02d7d/playlist.m3u8",
+          "thumbUrl": "https://vz-fd1254e9-985.b-cdn.net/cf527f8b-796b-422e-9d5a-fdb749a02d7d/thumbnail.jpg",
+          "mp4Url": "https://pub-c7de44ea8bf04b1aba53119c94c35d96.r2.dev/series/sold-to-the-mafia-queen/ep_02.mp4"
+        },
+        {
+          "n": 3,
+          "title": "Episode 3",
+          "duration": 47,
+          "likeCount": 115388,
+          "hlsUrl": "https://vz-fd1254e9-985.b-cdn.net/76544d01-9ac7-4eea-b1b6-08b08bbdcd4b/playlist.m3u8",
+          "thumbUrl": "https://vz-fd1254e9-985.b-cdn.net/76544d01-9ac7-4eea-b1b6-08b08bbdcd4b/thumbnail.jpg",
+          "mp4Url": "https://pub-c7de44ea8bf04b1aba53119c94c35d96.r2.dev/series/sold-to-the-mafia-queen/ep_03.mp4"
+        },
+        {
+          "n": 4,
+          "title": "Episode 4",
+          "duration": 82,
+          "likeCount": 128092,
+          "hlsUrl": "https://vz-fd1254e9-985.b-cdn.net/a02c6c5a-4a35-4a1f-b100-56180db4e0d7/playlist.m3u8",
+          "thumbUrl": "https://vz-fd1254e9-985.b-cdn.net/a02c6c5a-4a35-4a1f-b100-56180db4e0d7/thumbnail.jpg",
+          "mp4Url": "https://pub-c7de44ea8bf04b1aba53119c94c35d96.r2.dev/series/sold-to-the-mafia-queen/ep_04.mp4"
+        },
+        {
+          "n": 5,
+          "title": "Episode 5",
+          "duration": 58,
+          "likeCount": 105815,
+          "hlsUrl": "https://vz-fd1254e9-985.b-cdn.net/0c761e94-a6f2-4bf1-ab52-4220745b1f55/playlist.m3u8",
+          "thumbUrl": "https://vz-fd1254e9-985.b-cdn.net/0c761e94-a6f2-4bf1-ab52-4220745b1f55/thumbnail.jpg",
+          "mp4Url": "https://pub-c7de44ea8bf04b1aba53119c94c35d96.r2.dev/series/sold-to-the-mafia-queen/ep_05.mp4"
+        },
+        {
+          "n": 6,
+          "title": "Episode 6",
+          "duration": 74,
+          "likeCount": 100086,
+          "hlsUrl": "https://vz-fd1254e9-985.b-cdn.net/c413eff3-4c19-4a17-8e00-64d651105f02/playlist.m3u8",
+          "thumbUrl": "https://vz-fd1254e9-985.b-cdn.net/c413eff3-4c19-4a17-8e00-64d651105f02/thumbnail.jpg",
+          "mp4Url": "https://pub-c7de44ea8bf04b1aba53119c94c35d96.r2.dev/series/sold-to-the-mafia-queen/ep_06.mp4"
+        },
+        {
+          "n": 7,
+          "title": "Episode 7",
+          "duration": 68,
+          "likeCount": 97932,
+          "hlsUrl": "https://vz-fd1254e9-985.b-cdn.net/9a7ba5e9-93b2-4843-9a30-59b937baaa3c/playlist.m3u8",
+          "thumbUrl": "https://vz-fd1254e9-985.b-cdn.net/9a7ba5e9-93b2-4843-9a30-59b937baaa3c/thumbnail.jpg",
+          "mp4Url": "https://pub-c7de44ea8bf04b1aba53119c94c35d96.r2.dev/series/sold-to-the-mafia-queen/ep_07.mp4"
+        },
+        {
+          "n": 8,
+          "title": "Episode 8",
+          "duration": 57,
+          "likeCount": 72937,
+          "hlsUrl": "https://vz-fd1254e9-985.b-cdn.net/194a5328-bee4-45b5-970a-abf3920f6cfe/playlist.m3u8",
+          "thumbUrl": "https://vz-fd1254e9-985.b-cdn.net/194a5328-bee4-45b5-970a-abf3920f6cfe/thumbnail.jpg",
+          "mp4Url": "https://pub-c7de44ea8bf04b1aba53119c94c35d96.r2.dev/series/sold-to-the-mafia-queen/ep_08.mp4"
+        },
+        {
+          "n": 9,
+          "title": "Episode 9",
+          "duration": 63,
+          "likeCount": 42777,
+          "hlsUrl": "https://vz-fd1254e9-985.b-cdn.net/5f278cb4-8dd6-4fa2-881f-9be48aedf048/playlist.m3u8",
+          "thumbUrl": "https://vz-fd1254e9-985.b-cdn.net/5f278cb4-8dd6-4fa2-881f-9be48aedf048/thumbnail.jpg",
+          "mp4Url": "https://pub-c7de44ea8bf04b1aba53119c94c35d96.r2.dev/series/sold-to-the-mafia-queen/ep_09.mp4"
+        },
+        {
+          "n": 10,
+          "title": "Episode 10",
+          "duration": 83,
+          "likeCount": 55909,
+          "hlsUrl": "https://vz-fd1254e9-985.b-cdn.net/cec0bb99-d629-43e4-8aa9-e1ef49372166/playlist.m3u8",
+          "thumbUrl": "https://vz-fd1254e9-985.b-cdn.net/cec0bb99-d629-43e4-8aa9-e1ef49372166/thumbnail.jpg",
+          "mp4Url": "https://pub-c7de44ea8bf04b1aba53119c94c35d96.r2.dev/series/sold-to-the-mafia-queen/ep_10.mp4"
+        },
+        {
+          "n": 11,
+          "title": "Episode 11",
+          "duration": 44,
+          "likeCount": 88877,
+          "hlsUrl": "https://vz-fd1254e9-985.b-cdn.net/fadd2245-db11-4533-933f-8cc30403a48e/playlist.m3u8",
+          "thumbUrl": "https://vz-fd1254e9-985.b-cdn.net/fadd2245-db11-4533-933f-8cc30403a48e/thumbnail.jpg",
+          "mp4Url": "https://pub-c7de44ea8bf04b1aba53119c94c35d96.r2.dev/series/sold-to-the-mafia-queen/ep_11.mp4"
+        },
+        {
+          "n": 12,
+          "title": "Episode 12",
+          "duration": 50,
+          "likeCount": 58994,
+          "hlsUrl": "https://vz-fd1254e9-985.b-cdn.net/2f8c4c59-e032-4219-91f9-815d61d1e175/playlist.m3u8",
+          "thumbUrl": "https://vz-fd1254e9-985.b-cdn.net/2f8c4c59-e032-4219-91f9-815d61d1e175/thumbnail.jpg",
+          "mp4Url": "https://pub-c7de44ea8bf04b1aba53119c94c35d96.r2.dev/series/sold-to-the-mafia-queen/ep_12.mp4"
+        }
+      ]
+    },
+    {
+      "id": "surrender-to-my-exs-dad",
+      "title": "Surrender to My Ex's Dad",
+      "cover": "https://pub-c7de44ea8bf04b1aba53119c94c35d96.r2.dev/series/surrender-to-my-exs-dad/cover.webp",
+      "tags": [],
+      "description": "",
+      "rating": 4.7,
+      "ratingCount": 19440,
+      "saveCount": 121122,
+      "shareCount": 7363,
+      "freeEpisodes": 5,
+      "totalEpisodes": 60,
+      "group": "most-trending",
+      "trending": true,
+      "trendingRank": 10,
+      "trailer": {
+        "duration": 42,
+        "hlsUrl": "https://vz-fd1254e9-985.b-cdn.net/db23b0dd-13df-490f-aa14-6556f1899c96/playlist.m3u8",
+        "thumbUrl": "https://vz-fd1254e9-985.b-cdn.net/db23b0dd-13df-490f-aa14-6556f1899c96/thumbnail.jpg",
+        "mp4Url": "https://pub-c7de44ea8bf04b1aba53119c94c35d96.r2.dev/series/surrender-to-my-exs-dad/trailer.mp4"
+      },
+      "episodes": [
+        {
+          "n": 1,
+          "title": "Episode 1",
+          "duration": 97,
+          "likeCount": 82658,
+          "hlsUrl": "https://vz-fd1254e9-985.b-cdn.net/3a31e333-4660-4d40-aa52-f6bafcba710e/playlist.m3u8",
+          "thumbUrl": "https://vz-fd1254e9-985.b-cdn.net/3a31e333-4660-4d40-aa52-f6bafcba710e/thumbnail.jpg",
+          "mp4Url": "https://pub-c7de44ea8bf04b1aba53119c94c35d96.r2.dev/series/surrender-to-my-exs-dad/ep_01.mp4"
+        },
+        {
+          "n": 2,
+          "title": "Episode 2",
+          "duration": 84,
+          "likeCount": 131794,
+          "hlsUrl": "https://vz-fd1254e9-985.b-cdn.net/bba1cc1d-d4d0-41b2-9ebc-a9720e7e9765/playlist.m3u8",
+          "thumbUrl": "https://vz-fd1254e9-985.b-cdn.net/bba1cc1d-d4d0-41b2-9ebc-a9720e7e9765/thumbnail.jpg",
+          "mp4Url": "https://pub-c7de44ea8bf04b1aba53119c94c35d96.r2.dev/series/surrender-to-my-exs-dad/ep_02.mp4"
+        },
+        {
+          "n": 3,
+          "title": "Episode 3",
+          "duration": 65,
+          "likeCount": 95119,
+          "hlsUrl": "https://vz-fd1254e9-985.b-cdn.net/125985fb-0851-4135-a29e-48caf8592baa/playlist.m3u8",
+          "thumbUrl": "https://vz-fd1254e9-985.b-cdn.net/125985fb-0851-4135-a29e-48caf8592baa/thumbnail.jpg",
+          "mp4Url": "https://pub-c7de44ea8bf04b1aba53119c94c35d96.r2.dev/series/surrender-to-my-exs-dad/ep_03.mp4"
+        },
+        {
+          "n": 4,
+          "title": "Episode 4",
+          "duration": 49,
+          "likeCount": 145244,
+          "hlsUrl": "https://vz-fd1254e9-985.b-cdn.net/ae20d41b-4681-4520-8e2e-11e11c53d9f5/playlist.m3u8",
+          "thumbUrl": "https://vz-fd1254e9-985.b-cdn.net/ae20d41b-4681-4520-8e2e-11e11c53d9f5/thumbnail.jpg",
+          "mp4Url": "https://pub-c7de44ea8bf04b1aba53119c94c35d96.r2.dev/series/surrender-to-my-exs-dad/ep_04.mp4"
+        },
+        {
+          "n": 5,
+          "title": "Episode 5",
+          "duration": 70,
+          "likeCount": 73311,
+          "hlsUrl": "https://vz-fd1254e9-985.b-cdn.net/bb2d2bd2-73e1-48c2-acd6-b85004c2c2a5/playlist.m3u8",
+          "thumbUrl": "https://vz-fd1254e9-985.b-cdn.net/bb2d2bd2-73e1-48c2-acd6-b85004c2c2a5/thumbnail.jpg",
+          "mp4Url": "https://pub-c7de44ea8bf04b1aba53119c94c35d96.r2.dev/series/surrender-to-my-exs-dad/ep_05.mp4"
+        }
+      ]
+    },
+    {
+      "id": "tamed-by-my-dads-best-friend",
+      "title": "Tamed by My Dad's Best Friend",
+      "cover": "https://pub-c7de44ea8bf04b1aba53119c94c35d96.r2.dev/series/tamed-by-my-dads-best-friend/cover.webp",
+      "tags": [],
+      "description": "",
+      "rating": 4.9,
+      "ratingCount": 3345,
+      "saveCount": 48753,
+      "shareCount": 12194,
+      "freeEpisodes": 10,
+      "totalEpisodes": 60,
+      "group": "most-trending",
+      "trending": true,
+      "trendingRank": 11,
+      "episodes": [
+        {
+          "n": 1,
+          "title": "Episode 1",
+          "duration": 134,
+          "likeCount": 67623,
+          "hlsUrl": "https://vz-fd1254e9-985.b-cdn.net/45b879a3-9eed-49ef-bf5d-26336f2ed09a/playlist.m3u8",
+          "thumbUrl": "https://vz-fd1254e9-985.b-cdn.net/45b879a3-9eed-49ef-bf5d-26336f2ed09a/thumbnail.jpg",
+          "mp4Url": "https://pub-c7de44ea8bf04b1aba53119c94c35d96.r2.dev/series/tamed-by-my-dads-best-friend/ep_01.mp4"
+        },
+        {
+          "n": 2,
+          "title": "Episode 2",
+          "duration": 157,
+          "likeCount": 233912,
+          "hlsUrl": "https://vz-fd1254e9-985.b-cdn.net/0d175389-256c-46dd-b557-8b79f4bf3bed/playlist.m3u8",
+          "thumbUrl": "https://vz-fd1254e9-985.b-cdn.net/0d175389-256c-46dd-b557-8b79f4bf3bed/thumbnail.jpg",
+          "mp4Url": "https://pub-c7de44ea8bf04b1aba53119c94c35d96.r2.dev/series/tamed-by-my-dads-best-friend/ep_02.mp4"
+        },
+        {
+          "n": 3,
+          "title": "Episode 3",
+          "duration": 81,
+          "likeCount": 126071,
+          "hlsUrl": "https://vz-fd1254e9-985.b-cdn.net/5f60ddeb-06e1-47f1-a035-b7e4642ebda7/playlist.m3u8",
+          "thumbUrl": "https://vz-fd1254e9-985.b-cdn.net/5f60ddeb-06e1-47f1-a035-b7e4642ebda7/thumbnail.jpg",
+          "mp4Url": "https://pub-c7de44ea8bf04b1aba53119c94c35d96.r2.dev/series/tamed-by-my-dads-best-friend/ep_03.mp4"
+        },
+        {
+          "n": 4,
+          "title": "Episode 4",
+          "duration": 40,
+          "likeCount": 154560,
+          "hlsUrl": "https://vz-fd1254e9-985.b-cdn.net/ad2438ed-94a3-4482-9858-0db7a253c192/playlist.m3u8",
+          "thumbUrl": "https://vz-fd1254e9-985.b-cdn.net/ad2438ed-94a3-4482-9858-0db7a253c192/thumbnail.jpg",
+          "mp4Url": "https://pub-c7de44ea8bf04b1aba53119c94c35d96.r2.dev/series/tamed-by-my-dads-best-friend/ep_04.mp4"
+        },
+        {
+          "n": 5,
+          "title": "Episode 5",
+          "duration": 98,
+          "likeCount": 149037,
+          "hlsUrl": "https://vz-fd1254e9-985.b-cdn.net/a78f6c39-d56e-4a82-8915-c61dc0da53c1/playlist.m3u8",
+          "thumbUrl": "https://vz-fd1254e9-985.b-cdn.net/a78f6c39-d56e-4a82-8915-c61dc0da53c1/thumbnail.jpg",
+          "mp4Url": "https://pub-c7de44ea8bf04b1aba53119c94c35d96.r2.dev/series/tamed-by-my-dads-best-friend/ep_05.mp4"
+        },
+        {
+          "n": 6,
+          "title": "Episode 6",
+          "duration": 82,
+          "likeCount": 52178,
+          "hlsUrl": "https://vz-fd1254e9-985.b-cdn.net/0663b33f-926b-4e87-a01f-d6dd4dd6080c/playlist.m3u8",
+          "thumbUrl": "https://vz-fd1254e9-985.b-cdn.net/0663b33f-926b-4e87-a01f-d6dd4dd6080c/thumbnail.jpg",
+          "mp4Url": "https://pub-c7de44ea8bf04b1aba53119c94c35d96.r2.dev/series/tamed-by-my-dads-best-friend/ep_06.mp4"
+        },
+        {
+          "n": 7,
+          "title": "Episode 7",
+          "duration": 83,
+          "likeCount": 130285,
+          "hlsUrl": "https://vz-fd1254e9-985.b-cdn.net/a0a308fa-943b-4644-9ce8-825ca02eb0ad/playlist.m3u8",
+          "thumbUrl": "https://vz-fd1254e9-985.b-cdn.net/a0a308fa-943b-4644-9ce8-825ca02eb0ad/thumbnail.jpg",
+          "mp4Url": "https://pub-c7de44ea8bf04b1aba53119c94c35d96.r2.dev/series/tamed-by-my-dads-best-friend/ep_07.mp4"
+        },
+        {
+          "n": 8,
+          "title": "Episode 8",
+          "duration": 91,
+          "likeCount": 43861,
+          "hlsUrl": "https://vz-fd1254e9-985.b-cdn.net/9ce79bc8-819e-46c9-8b26-397155daba9f/playlist.m3u8",
+          "thumbUrl": "https://vz-fd1254e9-985.b-cdn.net/9ce79bc8-819e-46c9-8b26-397155daba9f/thumbnail.jpg",
+          "mp4Url": "https://pub-c7de44ea8bf04b1aba53119c94c35d96.r2.dev/series/tamed-by-my-dads-best-friend/ep_08.mp4"
+        },
+        {
+          "n": 9,
+          "title": "Episode 9",
+          "duration": 82,
+          "likeCount": 27340,
+          "hlsUrl": "https://vz-fd1254e9-985.b-cdn.net/57943d3e-825c-4838-9fe7-f3348cb1c809/playlist.m3u8",
+          "thumbUrl": "https://vz-fd1254e9-985.b-cdn.net/57943d3e-825c-4838-9fe7-f3348cb1c809/thumbnail.jpg",
+          "mp4Url": "https://pub-c7de44ea8bf04b1aba53119c94c35d96.r2.dev/series/tamed-by-my-dads-best-friend/ep_09.mp4"
+        },
+        {
+          "n": 10,
+          "title": "Episode 10",
+          "duration": 75,
+          "likeCount": 78141,
+          "hlsUrl": "https://vz-fd1254e9-985.b-cdn.net/196a5c4c-72e6-4749-956c-b6c5d285455b/playlist.m3u8",
+          "thumbUrl": "https://vz-fd1254e9-985.b-cdn.net/196a5c4c-72e6-4749-956c-b6c5d285455b/thumbnail.jpg",
+          "mp4Url": "https://pub-c7de44ea8bf04b1aba53119c94c35d96.r2.dev/series/tamed-by-my-dads-best-friend/ep_10.mp4"
+        }
+      ]
+    },
+    {
+      "id": "the-billionaire-i-must-ruin",
+      "title": "The Billionaire I Must Ruin",
+      "cover": "https://pub-c7de44ea8bf04b1aba53119c94c35d96.r2.dev/series/the-billionaire-i-must-ruin/cover.webp",
+      "tags": [],
+      "description": "",
+      "rating": 4.7,
+      "ratingCount": 11767,
+      "saveCount": 143022,
+      "shareCount": 22692,
+      "freeEpisodes": 0,
+      "totalEpisodes": 60,
+      "group": "limited-time-deals",
+      "trailer": {
+        "duration": 57,
+        "hlsUrl": "https://vz-fd1254e9-985.b-cdn.net/c24a16af-f4fa-4096-85fe-dc42fa36cf0d/playlist.m3u8",
+        "thumbUrl": "https://vz-fd1254e9-985.b-cdn.net/c24a16af-f4fa-4096-85fe-dc42fa36cf0d/thumbnail.jpg",
+        "mp4Url": "https://pub-c7de44ea8bf04b1aba53119c94c35d96.r2.dev/series/the-billionaire-i-must-ruin/trailer.mp4"
+      },
+      "episodes": []
+    },
+    {
+      "id": "the-billionaires-private-dancer",
+      "title": "The Billionaire's Private Dancer",
+      "cover": "https://pub-c7de44ea8bf04b1aba53119c94c35d96.r2.dev/series/the-billionaires-private-dancer/cover.webp",
+      "tags": [],
+      "description": "",
+      "rating": 4.6,
+      "ratingCount": 13677,
+      "saveCount": 218496,
+      "shareCount": 25664,
+      "freeEpisodes": 9,
+      "totalEpisodes": 60,
+      "group": "most-trending",
+      "trending": true,
+      "trendingRank": 12,
+      "episodes": [
+        {
+          "n": 1,
+          "title": "Episode 1",
+          "duration": 116,
+          "likeCount": 100240,
+          "hlsUrl": "https://vz-fd1254e9-985.b-cdn.net/bf0044e4-c2da-49e2-a62d-6dd722f312dc/playlist.m3u8",
+          "thumbUrl": "https://vz-fd1254e9-985.b-cdn.net/bf0044e4-c2da-49e2-a62d-6dd722f312dc/thumbnail.jpg",
+          "mp4Url": "https://pub-c7de44ea8bf04b1aba53119c94c35d96.r2.dev/series/the-billionaires-private-dancer/ep_01.mp4"
+        },
+        {
+          "n": 2,
+          "title": "Episode 2",
+          "duration": 160,
+          "likeCount": 71005,
+          "hlsUrl": "https://vz-fd1254e9-985.b-cdn.net/bc81e6be-3641-4d03-b4c3-ec20253297f3/playlist.m3u8",
+          "thumbUrl": "https://vz-fd1254e9-985.b-cdn.net/bc81e6be-3641-4d03-b4c3-ec20253297f3/thumbnail.jpg",
+          "mp4Url": "https://pub-c7de44ea8bf04b1aba53119c94c35d96.r2.dev/series/the-billionaires-private-dancer/ep_02.mp4"
+        },
+        {
+          "n": 3,
+          "title": "Episode 3",
+          "duration": 52,
+          "likeCount": 75187,
+          "hlsUrl": "https://vz-fd1254e9-985.b-cdn.net/e8d3ae21-b27e-494b-b7a1-7ebfdeaec7b3/playlist.m3u8",
+          "thumbUrl": "https://vz-fd1254e9-985.b-cdn.net/e8d3ae21-b27e-494b-b7a1-7ebfdeaec7b3/thumbnail.jpg",
+          "mp4Url": "https://pub-c7de44ea8bf04b1aba53119c94c35d96.r2.dev/series/the-billionaires-private-dancer/ep_03.mp4"
+        },
+        {
+          "n": 4,
+          "title": "Episode 4",
+          "duration": 128,
+          "likeCount": 147288,
+          "hlsUrl": "https://vz-fd1254e9-985.b-cdn.net/9749760b-ecae-4fad-8dbc-be0475dac93c/playlist.m3u8",
+          "thumbUrl": "https://vz-fd1254e9-985.b-cdn.net/9749760b-ecae-4fad-8dbc-be0475dac93c/thumbnail.jpg",
+          "mp4Url": "https://pub-c7de44ea8bf04b1aba53119c94c35d96.r2.dev/series/the-billionaires-private-dancer/ep_04.mp4"
+        },
+        {
+          "n": 5,
+          "title": "Episode 5",
+          "duration": 93,
+          "likeCount": 37265,
+          "hlsUrl": "https://vz-fd1254e9-985.b-cdn.net/4def0808-1f8c-49c6-8d24-fc20a24a3944/playlist.m3u8",
+          "thumbUrl": "https://vz-fd1254e9-985.b-cdn.net/4def0808-1f8c-49c6-8d24-fc20a24a3944/thumbnail.jpg",
+          "mp4Url": "https://pub-c7de44ea8bf04b1aba53119c94c35d96.r2.dev/series/the-billionaires-private-dancer/ep_05.mp4"
+        },
+        {
+          "n": 6,
+          "title": "Episode 6",
+          "duration": 65,
+          "likeCount": 59148,
+          "hlsUrl": "https://vz-fd1254e9-985.b-cdn.net/7bc456a5-e932-4686-9d65-e375003c043a/playlist.m3u8",
+          "thumbUrl": "https://vz-fd1254e9-985.b-cdn.net/7bc456a5-e932-4686-9d65-e375003c043a/thumbnail.jpg",
+          "mp4Url": "https://pub-c7de44ea8bf04b1aba53119c94c35d96.r2.dev/series/the-billionaires-private-dancer/ep_06.mp4"
+        },
+        {
+          "n": 7,
+          "title": "Episode 7",
+          "duration": 50,
+          "likeCount": 80508,
+          "hlsUrl": "https://vz-fd1254e9-985.b-cdn.net/9adab59c-e63b-498b-be24-de2b2b8eef7e/playlist.m3u8",
+          "thumbUrl": "https://vz-fd1254e9-985.b-cdn.net/9adab59c-e63b-498b-be24-de2b2b8eef7e/thumbnail.jpg",
+          "mp4Url": "https://pub-c7de44ea8bf04b1aba53119c94c35d96.r2.dev/series/the-billionaires-private-dancer/ep_07.mp4"
+        },
+        {
+          "n": 8,
+          "title": "Episode 8",
+          "duration": 121,
+          "likeCount": 101091,
+          "hlsUrl": "https://vz-fd1254e9-985.b-cdn.net/127c480e-8f96-4be0-b856-83131628c478/playlist.m3u8",
+          "thumbUrl": "https://vz-fd1254e9-985.b-cdn.net/127c480e-8f96-4be0-b856-83131628c478/thumbnail.jpg",
+          "mp4Url": "https://pub-c7de44ea8bf04b1aba53119c94c35d96.r2.dev/series/the-billionaires-private-dancer/ep_08.mp4"
+        },
+        {
+          "n": 9,
+          "title": "Episode 9",
+          "duration": 97,
+          "likeCount": 70269,
+          "hlsUrl": "https://vz-fd1254e9-985.b-cdn.net/09d4490d-693c-4798-8349-b310076b7fe2/playlist.m3u8",
+          "thumbUrl": "https://vz-fd1254e9-985.b-cdn.net/09d4490d-693c-4798-8349-b310076b7fe2/thumbnail.jpg",
+          "mp4Url": "https://pub-c7de44ea8bf04b1aba53119c94c35d96.r2.dev/series/the-billionaires-private-dancer/ep_09.mp4"
+        }
+      ]
+    },
+    {
+      "id": "the-bookworm-and-the-billionaire",
+      "title": "The Bookworm and the Billionaire",
+      "cover": "https://pub-c7de44ea8bf04b1aba53119c94c35d96.r2.dev/series/the-bookworm-and-the-billionaire/cover.webp",
+      "tags": [],
+      "description": "",
+      "rating": 4.7,
+      "ratingCount": 26886,
+      "saveCount": 74438,
+      "shareCount": 34225,
+      "freeEpisodes": 5,
+      "totalEpisodes": 60,
+      "group": "most-trending",
+      "trending": true,
+      "trendingRank": 13,
+      "trailer": {
+        "duration": 41,
+        "hlsUrl": "https://vz-fd1254e9-985.b-cdn.net/07b06fa5-c571-4109-85ac-f6ea8e9d7a63/playlist.m3u8",
+        "thumbUrl": "https://vz-fd1254e9-985.b-cdn.net/07b06fa5-c571-4109-85ac-f6ea8e9d7a63/thumbnail.jpg",
+        "mp4Url": "https://pub-c7de44ea8bf04b1aba53119c94c35d96.r2.dev/series/the-bookworm-and-the-billionaire/trailer.mp4"
+      },
+      "episodes": [
+        {
+          "n": 1,
+          "title": "Episode 1",
+          "duration": 138,
+          "likeCount": 55689,
+          "hlsUrl": "https://vz-fd1254e9-985.b-cdn.net/415e1679-738c-4757-9d0f-a0c37bfa59e1/playlist.m3u8",
+          "thumbUrl": "https://vz-fd1254e9-985.b-cdn.net/415e1679-738c-4757-9d0f-a0c37bfa59e1/thumbnail.jpg",
+          "mp4Url": "https://pub-c7de44ea8bf04b1aba53119c94c35d96.r2.dev/series/the-bookworm-and-the-billionaire/ep_01.mp4"
+        },
+        {
+          "n": 2,
+          "title": "Episode 2",
+          "duration": 120,
+          "likeCount": 96348,
+          "hlsUrl": "https://vz-fd1254e9-985.b-cdn.net/f57d4cf2-3793-40ec-bb9e-2c6ef82316a6/playlist.m3u8",
+          "thumbUrl": "https://vz-fd1254e9-985.b-cdn.net/f57d4cf2-3793-40ec-bb9e-2c6ef82316a6/thumbnail.jpg",
+          "mp4Url": "https://pub-c7de44ea8bf04b1aba53119c94c35d96.r2.dev/series/the-bookworm-and-the-billionaire/ep_02.mp4"
+        },
+        {
+          "n": 3,
+          "title": "Episode 3",
+          "duration": 120,
+          "likeCount": 98739,
+          "hlsUrl": "https://vz-fd1254e9-985.b-cdn.net/f300ee77-eab0-44ea-bfd0-1ca75daddbf4/playlist.m3u8",
+          "thumbUrl": "https://vz-fd1254e9-985.b-cdn.net/f300ee77-eab0-44ea-bfd0-1ca75daddbf4/thumbnail.jpg",
+          "mp4Url": "https://pub-c7de44ea8bf04b1aba53119c94c35d96.r2.dev/series/the-bookworm-and-the-billionaire/ep_03.mp4"
+        },
+        {
+          "n": 4,
+          "title": "Episode 4",
+          "duration": 62,
+          "likeCount": 68617,
+          "hlsUrl": "https://vz-fd1254e9-985.b-cdn.net/9360b6b1-2cf0-47fa-a3b3-085d39502885/playlist.m3u8",
+          "thumbUrl": "https://vz-fd1254e9-985.b-cdn.net/9360b6b1-2cf0-47fa-a3b3-085d39502885/thumbnail.jpg",
+          "mp4Url": "https://pub-c7de44ea8bf04b1aba53119c94c35d96.r2.dev/series/the-bookworm-and-the-billionaire/ep_04.mp4"
+        },
+        {
+          "n": 5,
+          "title": "Episode 5",
+          "duration": 89,
+          "likeCount": 153021,
+          "hlsUrl": "https://vz-fd1254e9-985.b-cdn.net/1a1f2fb0-76a1-4b2e-94c1-1b67d0566f68/playlist.m3u8",
+          "thumbUrl": "https://vz-fd1254e9-985.b-cdn.net/1a1f2fb0-76a1-4b2e-94c1-1b67d0566f68/thumbnail.jpg",
+          "mp4Url": "https://pub-c7de44ea8bf04b1aba53119c94c35d96.r2.dev/series/the-bookworm-and-the-billionaire/ep_05.mp4"
+        }
+      ]
+    },
+    {
+      "id": "the-dumb-billionaire-heiress-in-love-part-ii",
+      "title": "The Dumb Billionaire Heiress in Love: Part II",
+      "cover": "https://pub-c7de44ea8bf04b1aba53119c94c35d96.r2.dev/series/the-dumb-billionaire-heiress-in-love-part-ii/cover.webp",
+      "tags": [],
+      "description": "",
+      "rating": 4.6,
+      "ratingCount": 8372,
+      "saveCount": 31877,
+      "shareCount": 22220,
+      "freeEpisodes": 0,
+      "totalEpisodes": 60,
+      "group": "limited-time-deals",
+      "trailer": {
+        "duration": 74,
+        "hlsUrl": "https://vz-fd1254e9-985.b-cdn.net/7acf5053-de69-4161-b629-9c1df73812d0/playlist.m3u8",
+        "thumbUrl": "https://vz-fd1254e9-985.b-cdn.net/7acf5053-de69-4161-b629-9c1df73812d0/thumbnail.jpg",
+        "mp4Url": "https://pub-c7de44ea8bf04b1aba53119c94c35d96.r2.dev/series/the-dumb-billionaire-heiress-in-love-part-ii/trailer.mp4"
+      },
+      "episodes": []
+    },
+    {
+      "id": "the-janitor-owns-everything",
+      "title": "The Janitor Owns Everything",
+      "cover": "https://pub-c7de44ea8bf04b1aba53119c94c35d96.r2.dev/series/the-janitor-owns-everything/cover.webp",
+      "tags": [],
+      "description": "",
+      "rating": 4.6,
+      "ratingCount": 13219,
+      "saveCount": 157865,
+      "shareCount": 29993,
+      "freeEpisodes": 5,
+      "totalEpisodes": 60,
+      "group": "most-trending",
+      "trending": true,
+      "trendingRank": 14,
+      "episodes": [
+        {
+          "n": 1,
+          "title": "Episode 1",
+          "duration": 108,
+          "likeCount": 229187,
+          "hlsUrl": "https://vz-fd1254e9-985.b-cdn.net/4df100e4-8d01-4145-ac09-b0d7601241df/playlist.m3u8",
+          "thumbUrl": "https://vz-fd1254e9-985.b-cdn.net/4df100e4-8d01-4145-ac09-b0d7601241df/thumbnail.jpg",
+          "mp4Url": "https://pub-c7de44ea8bf04b1aba53119c94c35d96.r2.dev/series/the-janitor-owns-everything/ep_01.mp4"
+        },
+        {
+          "n": 2,
+          "title": "Episode 2",
+          "duration": 59,
+          "likeCount": 188040,
+          "hlsUrl": "https://vz-fd1254e9-985.b-cdn.net/1fce163d-d042-4cba-be0b-dfdb5f2bcec0/playlist.m3u8",
+          "thumbUrl": "https://vz-fd1254e9-985.b-cdn.net/1fce163d-d042-4cba-be0b-dfdb5f2bcec0/thumbnail.jpg",
+          "mp4Url": "https://pub-c7de44ea8bf04b1aba53119c94c35d96.r2.dev/series/the-janitor-owns-everything/ep_02.mp4"
+        },
+        {
+          "n": 3,
+          "title": "Episode 3",
+          "duration": 128,
+          "likeCount": 58634,
+          "hlsUrl": "https://vz-fd1254e9-985.b-cdn.net/bf25fcf2-592a-4d0d-9d1a-710ab537cf8a/playlist.m3u8",
+          "thumbUrl": "https://vz-fd1254e9-985.b-cdn.net/bf25fcf2-592a-4d0d-9d1a-710ab537cf8a/thumbnail.jpg",
+          "mp4Url": "https://pub-c7de44ea8bf04b1aba53119c94c35d96.r2.dev/series/the-janitor-owns-everything/ep_03.mp4"
+        },
+        {
+          "n": 4,
+          "title": "Episode 4",
+          "duration": 66,
+          "likeCount": 63543,
+          "hlsUrl": "https://vz-fd1254e9-985.b-cdn.net/1e34c8ea-7768-4729-b3d5-aab1c013cadd/playlist.m3u8",
+          "thumbUrl": "https://vz-fd1254e9-985.b-cdn.net/1e34c8ea-7768-4729-b3d5-aab1c013cadd/thumbnail.jpg",
+          "mp4Url": "https://pub-c7de44ea8bf04b1aba53119c94c35d96.r2.dev/series/the-janitor-owns-everything/ep_04.mp4"
+        },
+        {
+          "n": 5,
+          "title": "Episode 5",
+          "duration": 84,
+          "likeCount": 77310,
+          "hlsUrl": "https://vz-fd1254e9-985.b-cdn.net/83ffd9bd-0568-4b63-806b-255955b3f06d/playlist.m3u8",
+          "thumbUrl": "https://vz-fd1254e9-985.b-cdn.net/83ffd9bd-0568-4b63-806b-255955b3f06d/thumbnail.jpg",
+          "mp4Url": "https://pub-c7de44ea8bf04b1aba53119c94c35d96.r2.dev/series/the-janitor-owns-everything/ep_05.mp4"
+        }
+      ]
+    },
+    {
+      "id": "the-phoenix-conspiracy",
+      "title": "The Phoenix Conspiracy",
+      "cover": "https://pub-c7de44ea8bf04b1aba53119c94c35d96.r2.dev/series/the-phoenix-conspiracy/cover.webp",
+      "tags": [],
+      "description": "",
+      "rating": 4.4,
+      "ratingCount": 2738,
+      "saveCount": 89624,
+      "shareCount": 32948,
+      "freeEpisodes": 0,
+      "totalEpisodes": 60,
+      "group": "limited-time-deals",
+      "trailer": {
+        "duration": 90,
+        "hlsUrl": "https://vz-fd1254e9-985.b-cdn.net/9d292a23-2362-4807-9425-42347ff3680f/playlist.m3u8",
+        "thumbUrl": "https://vz-fd1254e9-985.b-cdn.net/9d292a23-2362-4807-9425-42347ff3680f/thumbnail_71579f10.jpg",
+        "mp4Url": "https://pub-c7de44ea8bf04b1aba53119c94c35d96.r2.dev/series/the-phoenix-conspiracy/trailer.mp4"
+      },
+      "episodes": []
+    },
+    {
+      "id": "the-quarterbacks-secret-princess",
+      "title": "The Quarterback's Secret Princess",
+      "cover": "https://pub-c7de44ea8bf04b1aba53119c94c35d96.r2.dev/series/the-quarterbacks-secret-princess/cover.webp",
+      "tags": [],
+      "description": "",
+      "rating": 4.7,
+      "ratingCount": 15709,
+      "saveCount": 206325,
+      "shareCount": 6488,
+      "freeEpisodes": 7,
+      "totalEpisodes": 60,
+      "group": "most-trending",
+      "trending": true,
+      "trendingRank": 15,
+      "trailer": {
+        "duration": 21,
+        "hlsUrl": "https://vz-fd1254e9-985.b-cdn.net/bffbb8bb-e585-4cd2-88e0-1fe390630271/playlist.m3u8",
+        "thumbUrl": "https://vz-fd1254e9-985.b-cdn.net/bffbb8bb-e585-4cd2-88e0-1fe390630271/thumbnail.jpg",
+        "mp4Url": "https://pub-c7de44ea8bf04b1aba53119c94c35d96.r2.dev/series/the-quarterbacks-secret-princess/trailer.mp4"
+      },
+      "episodes": [
+        {
+          "n": 1,
+          "title": "Episode 1",
+          "duration": 125,
+          "likeCount": 99734,
+          "hlsUrl": "https://vz-fd1254e9-985.b-cdn.net/437ecb9d-8ea3-4b69-889c-2efea835fc04/playlist.m3u8",
+          "thumbUrl": "https://vz-fd1254e9-985.b-cdn.net/437ecb9d-8ea3-4b69-889c-2efea835fc04/thumbnail.jpg",
+          "mp4Url": "https://pub-c7de44ea8bf04b1aba53119c94c35d96.r2.dev/series/the-quarterbacks-secret-princess/ep_01.mp4"
+        },
+        {
+          "n": 2,
+          "title": "Episode 2",
+          "duration": 100,
+          "likeCount": 161446,
+          "hlsUrl": "https://vz-fd1254e9-985.b-cdn.net/0728f877-c411-45ba-b183-d6bb7c789fff/playlist.m3u8",
+          "thumbUrl": "https://vz-fd1254e9-985.b-cdn.net/0728f877-c411-45ba-b183-d6bb7c789fff/thumbnail.jpg",
+          "mp4Url": "https://pub-c7de44ea8bf04b1aba53119c94c35d96.r2.dev/series/the-quarterbacks-secret-princess/ep_02.mp4"
+        },
+        {
+          "n": 3,
+          "title": "Episode 3",
+          "duration": 102,
+          "likeCount": 157924,
+          "hlsUrl": "https://vz-fd1254e9-985.b-cdn.net/44d67cc7-4662-4496-ae9b-0f210dd7f204/playlist.m3u8",
+          "thumbUrl": "https://vz-fd1254e9-985.b-cdn.net/44d67cc7-4662-4496-ae9b-0f210dd7f204/thumbnail.jpg",
+          "mp4Url": "https://pub-c7de44ea8bf04b1aba53119c94c35d96.r2.dev/series/the-quarterbacks-secret-princess/ep_03.mp4"
+        },
+        {
+          "n": 4,
+          "title": "Episode 4",
+          "duration": 64,
+          "likeCount": 95131,
+          "hlsUrl": "https://vz-fd1254e9-985.b-cdn.net/4869d29c-8887-40e3-a831-86d1466d307a/playlist.m3u8",
+          "thumbUrl": "https://vz-fd1254e9-985.b-cdn.net/4869d29c-8887-40e3-a831-86d1466d307a/thumbnail.jpg",
+          "mp4Url": "https://pub-c7de44ea8bf04b1aba53119c94c35d96.r2.dev/series/the-quarterbacks-secret-princess/ep_04.mp4"
+        },
+        {
+          "n": 5,
+          "title": "Episode 5",
+          "duration": 79,
+          "likeCount": 108072,
+          "hlsUrl": "https://vz-fd1254e9-985.b-cdn.net/71ada218-1d5f-4900-9e44-67e32e14d933/playlist.m3u8",
+          "thumbUrl": "https://vz-fd1254e9-985.b-cdn.net/71ada218-1d5f-4900-9e44-67e32e14d933/thumbnail.jpg",
+          "mp4Url": "https://pub-c7de44ea8bf04b1aba53119c94c35d96.r2.dev/series/the-quarterbacks-secret-princess/ep_05.mp4"
+        },
+        {
+          "n": 6,
+          "title": "Episode 6",
+          "duration": 61,
+          "likeCount": 98061,
+          "hlsUrl": "https://vz-fd1254e9-985.b-cdn.net/813ead2c-1799-4ba8-a002-1bb7c3b381d2/playlist.m3u8",
+          "thumbUrl": "https://vz-fd1254e9-985.b-cdn.net/813ead2c-1799-4ba8-a002-1bb7c3b381d2/thumbnail.jpg",
+          "mp4Url": "https://pub-c7de44ea8bf04b1aba53119c94c35d96.r2.dev/series/the-quarterbacks-secret-princess/ep_06.mp4"
+        },
+        {
+          "n": 7,
+          "title": "Episode 7",
+          "duration": 65,
+          "likeCount": 116956,
+          "hlsUrl": "https://vz-fd1254e9-985.b-cdn.net/cdd99834-4add-4ae9-beef-877cf72b593f/playlist.m3u8",
+          "thumbUrl": "https://vz-fd1254e9-985.b-cdn.net/cdd99834-4add-4ae9-beef-877cf72b593f/thumbnail.jpg",
+          "mp4Url": "https://pub-c7de44ea8bf04b1aba53119c94c35d96.r2.dev/series/the-quarterbacks-secret-princess/ep_07.mp4"
+        }
+      ]
+    },
+    {
+      "id": "the-sound-of-us",
+      "title": "The Sound of Us",
+      "cover": "https://pub-c7de44ea8bf04b1aba53119c94c35d96.r2.dev/series/the-sound-of-us/cover.webp",
+      "tags": [],
+      "description": "",
+      "rating": 4.5,
+      "ratingCount": 18840,
+      "saveCount": 148959,
+      "shareCount": 30257,
+      "freeEpisodes": 5,
+      "totalEpisodes": 60,
+      "group": "most-trending",
+      "trending": true,
+      "trendingRank": 16,
+      "trailer": {
+        "duration": 29,
+        "hlsUrl": "https://vz-fd1254e9-985.b-cdn.net/c8c3e86f-1e25-4edc-8367-791db4e066f1/playlist.m3u8",
+        "thumbUrl": "https://vz-fd1254e9-985.b-cdn.net/c8c3e86f-1e25-4edc-8367-791db4e066f1/thumbnail.jpg",
+        "mp4Url": "https://pub-c7de44ea8bf04b1aba53119c94c35d96.r2.dev/series/the-sound-of-us/trailer.mp4"
+      },
+      "episodes": [
+        {
+          "n": 1,
+          "title": "Episode 1",
+          "duration": 77,
+          "likeCount": 229902,
+          "hlsUrl": "https://vz-fd1254e9-985.b-cdn.net/00421dc9-435e-401f-b253-710f393084d3/playlist.m3u8",
+          "thumbUrl": "https://vz-fd1254e9-985.b-cdn.net/00421dc9-435e-401f-b253-710f393084d3/thumbnail.jpg",
+          "mp4Url": "https://pub-c7de44ea8bf04b1aba53119c94c35d96.r2.dev/series/the-sound-of-us/ep_01.mp4"
+        },
+        {
+          "n": 2,
+          "title": "Episode 2",
+          "duration": 102,
+          "likeCount": 183243,
+          "hlsUrl": "https://vz-fd1254e9-985.b-cdn.net/c29bd8da-afbe-497a-ad7b-e424263d2841/playlist.m3u8",
+          "thumbUrl": "https://vz-fd1254e9-985.b-cdn.net/c29bd8da-afbe-497a-ad7b-e424263d2841/thumbnail.jpg",
+          "mp4Url": "https://pub-c7de44ea8bf04b1aba53119c94c35d96.r2.dev/series/the-sound-of-us/ep_02.mp4"
+        },
+        {
+          "n": 3,
+          "title": "Episode 3",
+          "duration": 110,
+          "likeCount": 139275,
+          "hlsUrl": "https://vz-fd1254e9-985.b-cdn.net/b6710107-8310-4808-8a1c-3f4ca932c877/playlist.m3u8",
+          "thumbUrl": "https://vz-fd1254e9-985.b-cdn.net/b6710107-8310-4808-8a1c-3f4ca932c877/thumbnail.jpg",
+          "mp4Url": "https://pub-c7de44ea8bf04b1aba53119c94c35d96.r2.dev/series/the-sound-of-us/ep_03.mp4"
+        },
+        {
+          "n": 4,
+          "title": "Episode 4",
+          "duration": 96,
+          "likeCount": 123196,
+          "hlsUrl": "https://vz-fd1254e9-985.b-cdn.net/0218445b-3eee-4ca3-89ab-6b147e56af6b/playlist.m3u8",
+          "thumbUrl": "https://vz-fd1254e9-985.b-cdn.net/0218445b-3eee-4ca3-89ab-6b147e56af6b/thumbnail.jpg",
+          "mp4Url": "https://pub-c7de44ea8bf04b1aba53119c94c35d96.r2.dev/series/the-sound-of-us/ep_04.mp4"
+        },
+        {
+          "n": 5,
+          "title": "Episode 5",
+          "duration": 121,
+          "likeCount": 69818,
+          "hlsUrl": "https://vz-fd1254e9-985.b-cdn.net/71508bb5-289d-45ad-9873-4115add17279/playlist.m3u8",
+          "thumbUrl": "https://vz-fd1254e9-985.b-cdn.net/71508bb5-289d-45ad-9873-4115add17279/thumbnail.jpg",
+          "mp4Url": "https://pub-c7de44ea8bf04b1aba53119c94c35d96.r2.dev/series/the-sound-of-us/ep_05.mp4"
+        }
+      ]
+    },
+    {
+      "id": "twisted-fates",
+      "title": "Twisted Fates",
+      "cover": "https://pub-c7de44ea8bf04b1aba53119c94c35d96.r2.dev/series/twisted-fates/cover.webp",
+      "tags": [],
+      "description": "",
+      "rating": 4.6,
+      "ratingCount": 25662,
+      "saveCount": 218863,
+      "shareCount": 11094,
+      "freeEpisodes": 0,
+      "totalEpisodes": 60,
+      "group": "limited-time-deals",
+      "trailer": {
+        "duration": 59,
+        "hlsUrl": "https://vz-fd1254e9-985.b-cdn.net/4aa304fe-12a9-4004-b841-f61a54bc8cbf/playlist.m3u8",
+        "thumbUrl": "https://vz-fd1254e9-985.b-cdn.net/4aa304fe-12a9-4004-b841-f61a54bc8cbf/thumbnail.jpg",
+        "mp4Url": "https://pub-c7de44ea8bf04b1aba53119c94c35d96.r2.dev/series/twisted-fates/trailer.mp4"
+      },
+      "episodes": []
+    },
+    {
+      "id": "wet-hot-boys",
+      "title": "Wet Hot Boys",
+      "cover": "https://pub-c7de44ea8bf04b1aba53119c94c35d96.r2.dev/series/wet-hot-boys/cover.webp",
+      "tags": [],
+      "description": "",
+      "rating": 4.4,
+      "ratingCount": 5672,
+      "saveCount": 155309,
+      "shareCount": 28935,
+      "freeEpisodes": 10,
+      "totalEpisodes": 60,
+      "group": "most-trending",
+      "trending": true,
+      "trendingRank": 17,
+      "episodes": [
+        {
+          "n": 1,
+          "title": "Episode 1",
+          "duration": 157,
+          "likeCount": 71988,
+          "hlsUrl": "https://vz-fd1254e9-985.b-cdn.net/f7b22359-65bb-4139-9f78-e59ebaa281fe/playlist.m3u8",
+          "thumbUrl": "https://vz-fd1254e9-985.b-cdn.net/f7b22359-65bb-4139-9f78-e59ebaa281fe/thumbnail.jpg",
+          "mp4Url": "https://pub-c7de44ea8bf04b1aba53119c94c35d96.r2.dev/series/wet-hot-boys/ep_01.mp4"
+        },
+        {
+          "n": 2,
+          "title": "Episode 2",
+          "duration": 89,
+          "likeCount": 114707,
+          "hlsUrl": "https://vz-fd1254e9-985.b-cdn.net/367ce69f-42bd-48ad-8073-0f1b6b6bea37/playlist.m3u8",
+          "thumbUrl": "https://vz-fd1254e9-985.b-cdn.net/367ce69f-42bd-48ad-8073-0f1b6b6bea37/thumbnail.jpg",
+          "mp4Url": "https://pub-c7de44ea8bf04b1aba53119c94c35d96.r2.dev/series/wet-hot-boys/ep_02.mp4"
+        },
+        {
+          "n": 3,
+          "title": "Episode 3",
+          "duration": 126,
+          "likeCount": 96190,
+          "hlsUrl": "https://vz-fd1254e9-985.b-cdn.net/df438c34-65a5-4595-9f9b-c24e555516ac/playlist.m3u8",
+          "thumbUrl": "https://vz-fd1254e9-985.b-cdn.net/df438c34-65a5-4595-9f9b-c24e555516ac/thumbnail.jpg",
+          "mp4Url": "https://pub-c7de44ea8bf04b1aba53119c94c35d96.r2.dev/series/wet-hot-boys/ep_03.mp4"
+        },
+        {
+          "n": 4,
+          "title": "Episode 4",
+          "duration": 107,
+          "likeCount": 160863,
+          "hlsUrl": "https://vz-fd1254e9-985.b-cdn.net/d41091ea-98d7-45cc-8351-a0c9621860cd/playlist.m3u8",
+          "thumbUrl": "https://vz-fd1254e9-985.b-cdn.net/d41091ea-98d7-45cc-8351-a0c9621860cd/thumbnail.jpg",
+          "mp4Url": "https://pub-c7de44ea8bf04b1aba53119c94c35d96.r2.dev/series/wet-hot-boys/ep_04.mp4"
+        },
+        {
+          "n": 5,
+          "title": "Episode 5",
+          "duration": 43,
+          "likeCount": 124095,
+          "hlsUrl": "https://vz-fd1254e9-985.b-cdn.net/7d08c003-3558-4693-b984-4df5a332077d/playlist.m3u8",
+          "thumbUrl": "https://vz-fd1254e9-985.b-cdn.net/7d08c003-3558-4693-b984-4df5a332077d/thumbnail.jpg",
+          "mp4Url": "https://pub-c7de44ea8bf04b1aba53119c94c35d96.r2.dev/series/wet-hot-boys/ep_05.mp4"
+        },
+        {
+          "n": 6,
+          "title": "Episode 6",
+          "duration": 70,
+          "likeCount": 139472,
+          "hlsUrl": "https://vz-fd1254e9-985.b-cdn.net/04a56f79-c589-4cf9-b985-932ec1492114/playlist.m3u8",
+          "thumbUrl": "https://vz-fd1254e9-985.b-cdn.net/04a56f79-c589-4cf9-b985-932ec1492114/thumbnail.jpg",
+          "mp4Url": "https://pub-c7de44ea8bf04b1aba53119c94c35d96.r2.dev/series/wet-hot-boys/ep_06.mp4"
+        },
+        {
+          "n": 7,
+          "title": "Episode 7",
+          "duration": 33,
+          "likeCount": 35312,
+          "hlsUrl": "https://vz-fd1254e9-985.b-cdn.net/55b4b2cc-3eb2-488c-901d-e3bc0ea394ad/playlist.m3u8",
+          "thumbUrl": "https://vz-fd1254e9-985.b-cdn.net/55b4b2cc-3eb2-488c-901d-e3bc0ea394ad/thumbnail.jpg",
+          "mp4Url": "https://pub-c7de44ea8bf04b1aba53119c94c35d96.r2.dev/series/wet-hot-boys/ep_07.mp4"
+        },
+        {
+          "n": 8,
+          "title": "Episode 8",
+          "duration": 55,
+          "likeCount": 24269,
+          "hlsUrl": "https://vz-fd1254e9-985.b-cdn.net/c5e11233-ba23-4d06-8857-47f194048cc7/playlist.m3u8",
+          "thumbUrl": "https://vz-fd1254e9-985.b-cdn.net/c5e11233-ba23-4d06-8857-47f194048cc7/thumbnail.jpg",
+          "mp4Url": "https://pub-c7de44ea8bf04b1aba53119c94c35d96.r2.dev/series/wet-hot-boys/ep_08.mp4"
+        },
+        {
+          "n": 9,
+          "title": "Episode 9",
+          "duration": 80,
+          "likeCount": 26188,
+          "hlsUrl": "https://vz-fd1254e9-985.b-cdn.net/d31d59f2-f43b-44b5-a985-e6a91d729302/playlist.m3u8",
+          "thumbUrl": "https://vz-fd1254e9-985.b-cdn.net/d31d59f2-f43b-44b5-a985-e6a91d729302/thumbnail.jpg",
+          "mp4Url": "https://pub-c7de44ea8bf04b1aba53119c94c35d96.r2.dev/series/wet-hot-boys/ep_09.mp4"
+        },
+        {
+          "n": 10,
+          "title": "Episode 10",
+          "duration": 62,
+          "likeCount": 42628,
+          "hlsUrl": "https://vz-fd1254e9-985.b-cdn.net/81447cb3-ef80-42e0-9c71-c53995d60be3/playlist.m3u8",
+          "thumbUrl": "https://vz-fd1254e9-985.b-cdn.net/81447cb3-ef80-42e0-9c71-c53995d60be3/thumbnail.jpg",
+          "mp4Url": "https://pub-c7de44ea8bf04b1aba53119c94c35d96.r2.dev/series/wet-hot-boys/ep_10.mp4"
+        }
+      ]
+    }
+  ]
+}
