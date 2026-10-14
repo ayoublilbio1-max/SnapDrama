@@ -4,10 +4,11 @@ import * as SplashScreen from "expo-splash-screen";
 import { StatusBar } from "expo-status-bar";
 import * as SystemUI from "expo-system-ui";
 import * as Updates from "expo-updates";
-import { useCallback, useEffect } from "react";
+import { useEffect } from "react";
 import { AppState, Platform } from "react-native";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { KeyboardProvider } from "react-native-keyboard-controller";
+import { CatalogProvider, useCatalog } from "../data/catalog";
 import { useTheme } from "../hooks/useTheme";
 
 // Outside the component (brief §5): keep the splash until the app is ready.
@@ -16,6 +17,31 @@ SplashScreen.setOptions({ duration: 300, fade: true });
 
 const t0 = Date.now();
 let splashHidden = false; // module-level guard → hideAsync() runs ONCE only
+const SPLASH_MAX_MS = 3000; // safety: never keep the splash longer than this
+
+function hideSplashOnce(why: string) {
+  if (splashHidden) return;
+  splashHidden = true;
+  SplashScreen.hideAsync()
+    .then(() => {
+      if (__DEV__)
+        console.log(`[splash] hidden after ${Date.now() - t0}ms (${why})`);
+    })
+    .catch(() => {});
+}
+
+/** Hides the splash ONCE, when the first catalog copy is loaded (brief §5). */
+function SplashGate() {
+  const { status } = useCatalog();
+  useEffect(() => {
+    if (status === "ready") hideSplashOnce("catalog ready");
+  }, [status]);
+  useEffect(() => {
+    const t = setTimeout(() => hideSplashOnce("timeout"), SPLASH_MAX_MS);
+    return () => clearTimeout(t);
+  }, []);
+  return null;
+}
 
 export default function RootLayout() {
   const colors = useTheme();
@@ -63,33 +89,31 @@ export default function RootLayout() {
     SystemUI.setBackgroundColorAsync(colors.background).catch(() => {});
   }, [colors.background]);
 
-  // v0.1: hide on first layout. Later (catalog step): hide when the first catalog copy is loaded.
-  const hideSplashOnce = useCallback(() => {
-    if (splashHidden) return;
-    splashHidden = true;
-    SplashScreen.hideAsync()
-      .then(() => {
-        if (__DEV__) console.log(`[splash] hidden after ${Date.now() - t0}ms`);
-      })
-      .catch(() => {});
-  }, []);
-
   return (
     <GestureHandlerRootView
       style={{ flex: 1, backgroundColor: colors.background }}
-      onLayout={hideSplashOnce}
     >
-      <KeyboardProvider>
-        <Stack
-          screenOptions={{
-            headerShown: false,
-            contentStyle: { backgroundColor: colors.background },
-            animation: "fade",
-          }}
-        >
-          <Stack.Screen name="(tabs)" />
-        </Stack>
-      </KeyboardProvider>
+      <CatalogProvider>
+        <SplashGate />
+        <KeyboardProvider>
+          <Stack
+            screenOptions={{
+              headerShown: false,
+              contentStyle: { backgroundColor: colors.background },
+              // pushed pages (series, See all, VIP, search…) slide in fast
+              animation: "slide_from_right",
+              animationDuration: 220,
+              gestureEnabled: true,
+            }}
+          >
+            <Stack.Screen name="(tabs)" options={{ animation: "fade" }} />
+            <Stack.Screen
+              name="search"
+              options={{ animation: "fade_from_bottom" }}
+            />
+          </Stack>
+        </KeyboardProvider>
+      </CatalogProvider>
       <StatusBar style="auto" />
     </GestureHandlerRootView>
   );

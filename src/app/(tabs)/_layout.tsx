@@ -98,7 +98,8 @@ export default function TabsLayout() {
   return (
     <Tabs
       tabBar={(props) => <PillTabBar {...props} />}
-      screenOptions={{ headerShown: false }}
+      // freezeOnBlur: tabs you are not looking at stop re-rendering (faster); lazy: a tab is built on first visit
+      screenOptions={{ headerShown: false, freezeOnBlur: true, lazy: true }}
     >
       <Tabs.Screen name="index" />
       <Tabs.Screen name="for-you" />
