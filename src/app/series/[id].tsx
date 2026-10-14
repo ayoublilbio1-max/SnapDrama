@@ -320,7 +320,12 @@ export default function SeriesScreen() {
               style={StyleSheet.absoluteFill}
             />
             <Ionicons name="play" size={20} color={colors.onPrimary} />
-            <AppText weight="bold" size={16} color="onPrimary">
+            <AppText
+              weight="bold"
+              size={15}
+              color="onPrimary"
+              numberOfLines={1}
+            >
               {playLabel}
             </AppText>
           </Pressable>
@@ -330,6 +335,20 @@ export default function SeriesScreen() {
             active={stats.isSaved}
             onPress={onSave}
           />
+          {series.freeEpisodes > 0 && hasVideo(series.trailer) && (
+            <ActionButton
+              icon="film-outline"
+              label="Trailer"
+              active={false}
+              onPress={() => {
+                if (__DEV__) console.log(`[series] ${series.id} trailer`);
+                router.push({
+                  pathname: "/watch/[id]",
+                  params: { id: series.id, ep: "0" },
+                });
+              }}
+            />
+          )}
           <ActionButton
             icon={stats.myStars ? "star" : "star-outline"}
             label={stats.myStars ? `${stats.myStars}★` : "Rate"}
@@ -470,7 +489,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 10,
     paddingVertical: 4,
   },
-  actions: { flexDirection: "row", gap: 10, marginTop: 18 },
+  actions: { flexDirection: "row", gap: 8, marginTop: 18 },
   play: {
     flex: 1,
     height: 54,
@@ -482,9 +501,9 @@ const styles = StyleSheet.create({
     gap: 8,
   },
   action: {
-    width: 58,
+    width: 50,
     height: 54,
-    borderRadius: 18,
+    borderRadius: 16,
     borderWidth: 1,
     alignItems: "center",
     justifyContent: "center",

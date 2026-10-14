@@ -7,29 +7,28 @@ import { useVideoPlayer, VideoView } from "expo-video";
 import { memo, useEffect, useMemo, useRef, useState } from "react";
 import { Pressable, StyleSheet, View } from "react-native";
 import Animated, {
-    Easing,
-    useAnimatedStyle,
-    useSharedValue,
-    withDelay,
-    withRepeat,
-    withSequence,
-    withSpring,
-    withTiming,
+  Easing,
+  useAnimatedStyle,
+  useSharedValue,
+  withDelay,
+  withRepeat,
+  withSequence,
+  withTiming,
 } from "react-native-reanimated";
 import { darkColors } from "../../constants/colors";
 import type { Series, VideoSource } from "../../data/types";
 import {
-    episodeLikes,
-    seriesStats,
-    userActions,
-    useUserState,
+  episodeLikes,
+  seriesStats,
+  userActions,
+  useUserState,
 } from "../../data/userStore";
 import { withAlpha } from "../../utils/color";
 import { formatCount } from "../../utils/format";
 import {
-    BUNNY_TIMEOUT_MS,
-    getEpisodeSource,
-    markBunnyFailed,
+  BUNNY_TIMEOUT_MS,
+  getEpisodeSource,
+  markBunnyFailed,
 } from "../../video/source";
 import { AppText } from "../AppText";
 import { ProgressBar } from "./ProgressBar";
@@ -67,6 +66,8 @@ type Props = {
   onProgress: (n: number, time: number) => void;
   onEpisodes: () => void;
   onShare: () => void;
+  clean: boolean; // "Clear" mode: hide texts + buttons, only the video
+  onToggleClean: () => void;
 };
 
 /** One full-screen page of the vertical player. */
@@ -106,6 +107,8 @@ function PlayerSurface({
   onProgress,
   onEpisodes,
   onShare,
+  clean,
+  onToggleClean,
 }: Props) {
   const c = darkColors;
   const tag = `${series.id} ${item.kind === "trailer" ? "trailer" : `ep ${item.n}`}`;
@@ -126,6 +129,7 @@ function PlayerSurface({
   const resumeAt = useRef(startAt);
   const lastTime = useRef(startAt);
   const t0 = useRef(Date.now());
+  const readyLogged = useRef(false);
   const activeRef = useRef(active);
   activeRef.current = active;
 
@@ -149,6 +153,7 @@ function PlayerSurface({
   // new source → measure again, show the poster until the first frame
   useEffect(() => {
     t0.current = Date.now();
+    readyLogged.current = false;
     setFirstFrame(false);
     setFailed(false);
   }, [choice]);
@@ -169,10 +174,12 @@ function PlayerSurface({
   useEffect(() => {
     if (!choice) return;
     if (status === "readyToPlay") {
-      if (__DEV__)
+      // only the FIRST ready of this source (seek / buffering make it 'ready' again later)
+      if (__DEV__ && !readyLogged.current)
         console.log(
           `[video] ${tag} → ${choice.kind} ok in ${Date.now() - t0.current}ms`,
         );
+      readyLogged.current = true;
     } else if (status === "error") {
       if (!switchToR2("error")) {
         setFailed(true);
@@ -262,8 +269,8 @@ function PlayerSurface({
       userActions.like(series.id, item.n);
       Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium).catch(() => {});
       heart.value = withSequence(
-        withSpring(1, { damping: 9 }),
-        withDelay(380, withTiming(0, { duration: 260 })),
+        withTiming(1, { duration: 140 }),
+        withDelay(320, withTiming(0, { duration: 220 })),
       );
       return;
     }
@@ -310,16 +317,18 @@ function PlayerSurface({
       />
 
       {/* bottom gradient so texts and buttons are always readable */}
-      <LinearGradient
-        colors={[
-          withAlpha(c.background, 0),
-          withAlpha(c.background, 0.55),
-          withAlpha(c.background, 0.9),
-        ]}
-        locations={[0, 0.55, 1]}
-        style={[styles.gradient, { height: height * 0.4 }]}
-        pointerEvents="none"
-      />
+      {!clean && (
+        <LinearGradient
+          colors={[
+            withAlpha(c.background, 0),
+            withAlpha(c.background, 0.55),
+            withAlpha(c.background, 0.9),
+          ]}
+          locations={[0, 0.55, 1]}
+          style={[styles.gradient, { height: height * 0.4 }]}
+          pointerEvents="none"
+        />
+      )}
 
       {/* centre: loading / paused / heart / 2× */}
       <View style={styles.center} pointerEvents="none">
@@ -380,76 +389,101 @@ function PlayerSurface({
         </View>
       )}
 
+      {/* clear mode: one small button to bring everything back */}
+      {clean && (
+        <Pressable
+          onPress={onToggleClean}
+          hitSlop={10}
+          style={[
+            styles.showUi,
+            { bottom: bottomInset + 40, backgroundColor: c.overlay },
+          ]}
+          accessibilityLabel="Show buttons"
+        >
+          <Ionicons name="eye-outline" size={20} color={c.onPrimary} />
+        </Pressable>
+      )}
+
       {/* right side buttons */}
-      <View style={[styles.side, { bottom: bottomInset + 120 }]}>
-        <SideButton
-          icon={likes.isLiked ? "heart" : "heart-outline"}
-          color={likes.isLiked ? c.danger : c.onPrimary}
-          label={formatCount(likes.count)}
-          onPress={() => {
-            const now = userActions.toggleLike(series.id, item.n);
-            if (now)
-              Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light).catch(
-                () => {},
-              );
-          }}
-        />
-        <SideButton
-          icon={stats.isSaved ? "bookmark" : "bookmark-outline"}
-          color={stats.isSaved ? c.glow : c.onPrimary}
-          label={formatCount(stats.saveCount)}
-          onPress={() => userActions.toggleSave(series.id)}
-        />
-        <SideButton
-          icon="albums-outline"
-          color={c.onPrimary}
-          label="Episodes"
-          onPress={onEpisodes}
-        />
-        <SideButton
-          icon="arrow-redo-outline"
-          color={c.onPrimary}
-          label={formatCount(stats.shareCount)}
-          onPress={onShare}
-        />
-      </View>
+      {!clean && (
+        <View style={[styles.side, { bottom: bottomInset + 120 }]}>
+          <SideButton
+            icon={likes.isLiked ? "heart" : "heart-outline"}
+            color={likes.isLiked ? c.danger : c.onPrimary}
+            label={formatCount(likes.count)}
+            onPress={() => {
+              const now = userActions.toggleLike(series.id, item.n);
+              if (now)
+                Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light).catch(
+                  () => {},
+                );
+            }}
+          />
+          <SideButton
+            icon={stats.isSaved ? "bookmark" : "bookmark-outline"}
+            color={stats.isSaved ? c.glow : c.onPrimary}
+            label={formatCount(stats.saveCount)}
+            onPress={() => userActions.toggleSave(series.id)}
+          />
+          <SideButton
+            icon="albums-outline"
+            color={c.onPrimary}
+            label="Episodes"
+            onPress={onEpisodes}
+          />
+          <SideButton
+            icon="arrow-redo-outline"
+            color={c.onPrimary}
+            label={formatCount(stats.shareCount)}
+            onPress={onShare}
+          />
+          <SideButton
+            icon="eye-off-outline"
+            color={c.onPrimary}
+            label="Clear"
+            onPress={onToggleClean}
+          />
+        </View>
+      )}
 
       {/* bottom-left texts */}
-      <View
-        style={[styles.info, { bottom: bottomInset + 44 }]}
-        pointerEvents="box-none"
-      >
-        <AppText
-          weight="bold"
-          size={17}
-          color="onPrimary"
-          numberOfLines={1}
-          style={{ textShadowColor: c.shade, textShadowRadius: 6 }}
+      {!clean && (
+        <View
+          style={[styles.info, { bottom: bottomInset + 44 }]}
+          pointerEvents="box-none"
         >
-          {series.title}
-        </AppText>
-        <View style={styles.epRow}>
-          <View style={[styles.epPill, { backgroundColor: c.primary }]}>
-            <AppText weight="bold" size={11} color="onPrimary">
-              {label}
+          <AppText
+            weight="bold"
+            size={17}
+            color="onPrimary"
+            numberOfLines={1}
+            style={{ textShadowColor: c.shade, textShadowRadius: 6 }}
+          >
+            {series.title}
+          </AppText>
+          <View style={styles.epRow}>
+            <View style={[styles.epPill, { backgroundColor: c.primary }]}>
+              <AppText weight="bold" size={11} color="onPrimary">
+                {label}
+              </AppText>
+            </View>
+            <AppText size={13} style={{ color: c.textMuted }}>
+              {item.kind === "trailer"
+                ? `${series.totalEpisodes} episodes`
+                : `of ${series.totalEpisodes}`}
             </AppText>
           </View>
-          <AppText size={13} style={{ color: c.textMuted }}>
-            {item.kind === "trailer"
-              ? `${series.totalEpisodes} episodes`
-              : `of ${series.totalEpisodes}`}
-          </AppText>
+          {series.description ? (
+            <AppText
+              size={13}
+              numberOfLines={2}
+              style={{ color: withAlpha(c.onPrimary, 0.85) }}
+            >
+              {series.description}
+            </AppText>
+          ) : null}
         </View>
-        {series.description ? (
-          <AppText
-            size={13}
-            numberOfLines={2}
-            style={{ color: withAlpha(c.onPrimary, 0.85) }}
-          >
-            {series.description}
-          </AppText>
-        ) : null}
-      </View>
+      )}
 
       {source && <ProgressBar player={player} bottom={bottomInset + 4} />}
     </View>
@@ -572,7 +606,16 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
   },
-  side: { position: "absolute", right: 10, alignItems: "center", gap: 18 },
+  side: { position: "absolute", right: 10, alignItems: "center", gap: 16 },
+  showUi: {
+    position: "absolute",
+    right: 14,
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    alignItems: "center",
+    justifyContent: "center",
+  },
   sideBtn: { alignItems: "center", gap: 2, minWidth: 56 },
   info: { position: "absolute", left: 16, right: 90, gap: 6 },
   epRow: { flexDirection: "row", alignItems: "center", gap: 8 },

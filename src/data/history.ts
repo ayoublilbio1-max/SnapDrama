@@ -53,17 +53,26 @@ export function useHistory(): HistoryState {
 }
 
 export const historyActions = {
-  /** Called by the player (throttled). pos in seconds. */
+  /**
+   * Called by the player (throttled). pos in seconds.
+   * Only a NEW episode (or another series becoming the latest) re-renders the screens;
+   * position-only updates are saved quietly (otherwise Home redraws every 5 s behind the player).
+   */
   save(seriesId: string, ep: number, pos: number) {
     const prev = state[seriesId];
-    state = {
-      ...state,
-      [seriesId]: { ep, pos: Math.max(0, Math.floor(pos)), at: Date.now() },
-    };
-    emit();
+    const entry = { ep, pos: Math.max(0, Math.floor(pos)), at: Date.now() };
+    const latestId = Object.entries(state).sort(
+      (x, y) => y[1].at - x[1].at,
+    )[0]?.[0];
+    const visibleChange = !prev || prev.ep !== ep || latestId !== seriesId;
+    if (visibleChange) {
+      state = { ...state, [seriesId]: entry };
+      emit();
+      if (__DEV__) console.log(`[history] ${seriesId} → ep ${ep}`);
+    } else {
+      state[seriesId] = entry; // quiet update: same object, no re-render
+    }
     Storage.setItem(KEY, JSON.stringify(state)).catch(() => {});
-    if (__DEV__ && (!prev || prev.ep !== ep))
-      console.log(`[history] ${seriesId} → ep ${ep}`);
   },
 };
 

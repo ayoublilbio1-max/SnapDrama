@@ -109,6 +109,8 @@ export default function RootLayout() {
               animation: "slide_from_right",
               animationDuration: 220,
               gestureEnabled: true,
+              // screens under the top one stop re-rendering (Home doesn't redraw behind the player)
+              freezeOnBlur: true,
             }}
           >
             <Stack.Screen name="(tabs)" options={{ animation: "fade" }} />

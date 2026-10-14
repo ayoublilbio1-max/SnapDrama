@@ -3,29 +3,29 @@ import { useFocusEffect, useLocalSearchParams, useRouter } from "expo-router";
 import { setStatusBarStyle } from "expo-status-bar";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import {
-    FlatList,
-    Pressable,
-    Share,
-    StyleSheet,
-    View,
-    type ViewToken,
+  FlatList,
+  Pressable,
+  Share,
+  StyleSheet,
+  View,
+  type ViewToken,
 } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { AppText } from "../../components/AppText";
 import type { EpisodeState } from "../../components/EpisodeGrid";
 import { InfoModal } from "../../components/InfoModal";
 import {
-    EpisodePage,
-    type PlayerItem,
+  EpisodePage,
+  type PlayerItem,
 } from "../../components/player/EpisodePage";
 import { EpisodesSheet } from "../../components/player/EpisodesSheet";
 import { LockedCard } from "../../components/player/LockedCard";
 import { darkColors } from "../../constants/colors";
 import {
-    freeLabel,
-    isEpisodeFree,
-    useCatalog,
-    useSeries,
+  freeLabel,
+  isEpisodeFree,
+  useCatalog,
+  useSeries,
 } from "../../data/catalog";
 import { historyActions } from "../../data/history";
 import type { Series } from "../../data/types";
@@ -34,13 +34,28 @@ import { hasVideo } from "../../video/source";
 
 const SAVE_EVERY_MS = 5000;
 
-/** Pages of the player: free episodes with a video (or the trailer if none) + one locked card. */
+/**
+ * Pages of the player, top to bottom:
+ * trailer (if the series has one) → free episodes with a video → one locked card.
+ */
 function buildItems(series: Series): PlayerItem[] {
-  const items: PlayerItem[] = series.episodes
+  const items: PlayerItem[] = [];
+  if (series.trailer && hasVideo(series.trailer)) {
+    // a trailer has no likes of its own → it shows the series' count
+    items.push({
+      key: "trailer",
+      kind: "trailer",
+      n: 0,
+      video: series.trailer,
+      likeCount: series.saveCount,
+      title: "Trailer",
+    });
+  }
+  series.episodes
     .filter((e) => isEpisodeFree(series, e.n) && hasVideo(e))
     .sort((a, b) => a.n - b.n)
-    .map(
-      (e): PlayerItem => ({
+    .forEach((e) =>
+      items.push({
         key: `ep${e.n}`,
         kind: "episode",
         n: e.n,
@@ -49,16 +64,6 @@ function buildItems(series: Series): PlayerItem[] {
         title: e.title,
       }),
     );
-  if (!items.length && series.trailer && hasVideo(series.trailer)) {
-    items.push({
-      key: "trailer",
-      kind: "trailer",
-      n: 0,
-      video: series.trailer,
-      likeCount: series.saveCount,
-      title: "Trailer",
-    }); // a trailer uses the series' count
-  }
   const lastFree = items.reduce((m, it) => Math.max(m, it.n), 0);
   if (series.totalEpisodes > lastFree)
     items.push({ key: `lock${lastFree + 1}`, kind: "locked", n: lastFree + 1 });
@@ -66,9 +71,9 @@ function buildItems(series: Series): PlayerItem[] {
 }
 
 /**
- * Vertical episode player (brief §8): one page per episode, snapping, auto-next,
+ * Vertical episode player (brief §8): one page per episode, one page per swipe, auto-next,
  * only 3 players alive (current ± 1, the next one is preloaded), always dark.
- * Route: /watch/<seriesId>?ep=3&t=42
+ * Route: /watch/<seriesId>?ep=3&t=42   (ep=0 = trailer)
  */
 export default function WatchScreen() {
   const c = darkColors;
@@ -84,27 +89,32 @@ export default function WatchScreen() {
 
   const items = useMemo(() => (series ? buildItems(series) : []), [series]);
   const startIndex = useMemo(() => {
-    const ep = Number(params.ep ?? 0);
+    const ep = params.ep === undefined ? NaN : Number(params.ep);
     const i = items.findIndex((it) => it.n === ep && it.kind !== "locked");
-    return i >= 0 ? i : 0;
+    if (i >= 0) return i;
+    const firstEp = items.findIndex((it) => it.kind === "episode"); // default: EP 1, not the trailer
+    return firstEp >= 0 ? firstEp : 0;
   }, [items, params.ep]);
   const startAt = Number(params.t ?? 0) || 0;
 
   const [active, setActive] = useState(startIndex);
   const [pageH, setPageH] = useState(0);
   const [sheet, setSheet] = useState(false);
+  const [clean, setClean] = useState(false);
   const [notice, setNotice] = useState<{
     title: string;
     message: string;
   } | null>(null);
   const listRef = useRef<FlatList<PlayerItem>>(null);
   const lastSave = useRef(0);
+  const activeRef = useRef(active);
+  activeRef.current = active;
 
   useEffect(() => {
     if (__DEV__ && series) {
       const eps = items.filter((i) => i.kind === "episode").length;
       console.log(
-        `[player] open ${series.id} — ${eps} free eps${items.some((i) => i.kind === "trailer") ? " + trailer" : ""}` +
+        `[player] open ${series.id} — ${items.some((i) => i.kind === "trailer") ? "trailer + " : ""}${eps} free eps` +
           `${items.some((i) => i.kind === "locked") ? " + locked card" : ""}, start ${items[startIndex]?.key ?? "-"} at ${startAt}s`,
       );
     }
@@ -119,7 +129,7 @@ export default function WatchScreen() {
     }, []),
   );
 
-  // history: save when the episode changes, then every 5 s while playing
+  // history: save when the episode changes (trailer is not saved), then every 5 s (quietly)
   const activeItem = items[active];
   useEffect(() => {
     if (series && activeItem?.kind === "episode")
@@ -131,6 +141,7 @@ export default function WatchScreen() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [active, series?.id]);
 
+  // ── stable callbacks (they don't change on every page change → pages don't all re-render) ──
   const onProgress = useCallback(
     (n: number, time: number) => {
       if (!series || n <= 0) return;
@@ -152,15 +163,16 @@ export default function WatchScreen() {
   );
 
   const onEnded = useCallback(() => {
+    const next = activeRef.current + 1;
     if (__DEV__)
-      console.log(`[player] auto-next → ${items[active + 1]?.key ?? "end"}`);
-    goTo(active + 1);
-  }, [active, goTo, items]);
+      console.log(`[player] auto-next → ${items[next]?.key ?? "end"}`);
+    goTo(next);
+  }, [goTo, items]);
 
   const onViewable = useRef(
     ({ viewableItems }: { viewableItems: ViewToken[] }) => {
       const v = viewableItems.find((x) => x.isViewable);
-      if (v?.index != null) setActive(v.index);
+      if (v?.index != null && v.index !== activeRef.current) setActive(v.index);
     },
   ).current;
 
@@ -187,6 +199,14 @@ export default function WatchScreen() {
     }
   }, [series]);
 
+  const openSheet = useCallback(() => setSheet(true), []);
+  const toggleClean = useCallback(() => {
+    setClean((v) => {
+      if (__DEV__) console.log(`[player] clear mode ${!v ? "on" : "off"}`);
+      return !v;
+    });
+  }, []);
+
   const onPick = useCallback(
     (n: number, state: EpisodeState) => {
       setSheet(false);
@@ -212,7 +232,7 @@ export default function WatchScreen() {
             price={catalog.coinsPerEpisode}
             height={pageH}
             onUnlock={() => showUnlockNotice(item.n)}
-            onEpisodes={() => setSheet(true)}
+            onEpisodes={openSheet}
           />
         );
       }
@@ -227,8 +247,10 @@ export default function WatchScreen() {
           startAt={index === startIndex ? startAt : 0}
           onEnded={onEnded}
           onProgress={onProgress}
-          onEpisodes={() => setSheet(true)}
+          onEpisodes={openSheet}
           onShare={onShare}
+          clean={clean}
+          onToggleClean={toggleClean}
         />
       );
     },
@@ -241,7 +263,10 @@ export default function WatchScreen() {
       startAt,
       onEnded,
       onProgress,
+      openSheet,
       onShare,
+      clean,
+      toggleClean,
       catalog.coinsPerEpisode,
       showUnlockNotice,
     ],
@@ -265,7 +290,7 @@ export default function WatchScreen() {
   }
 
   const currentEp =
-    activeItem && activeItem.kind !== "locked" ? activeItem.n : 0;
+    activeItem && activeItem.kind === "episode" ? activeItem.n : 0;
 
   return (
     <View
@@ -278,9 +303,11 @@ export default function WatchScreen() {
           data={items}
           keyExtractor={(it) => it.key}
           renderItem={renderItem}
-          extraData={active}
-          pagingEnabled
+          extraData={`${active}-${clean}`}
+          // exactly ONE page per swipe, even on a fast fling (no skipping episodes)
           snapToInterval={pageH}
+          snapToAlignment="start"
+          disableIntervalMomentum
           decelerationRate="fast"
           showsVerticalScrollIndicator={false}
           getItemLayout={(_, i) => ({
@@ -298,31 +325,33 @@ export default function WatchScreen() {
         />
       )}
 
-      {/* top bar */}
-      <View
-        style={[styles.top, { paddingTop: insets.top + 6 }]}
-        pointerEvents="box-none"
-      >
-        <Pressable
-          onPress={() =>
-            router.canGoBack() ? router.back() : router.replace("/")
-          }
-          hitSlop={10}
-          style={[styles.back, { backgroundColor: c.overlay }]}
-          accessibilityLabel="Back"
+      {/* top bar (hidden in Clear mode) */}
+      {!clean && (
+        <View
+          style={[styles.top, { paddingTop: insets.top + 6 }]}
+          pointerEvents="box-none"
         >
-          <Ionicons name="chevron-back" size={22} color={c.onPrimary} />
-        </Pressable>
-        <AppText
-          weight="semibold"
-          size={15}
-          color="onPrimary"
-          numberOfLines={1}
-          style={[styles.topTitle, { textShadowColor: c.shade }]}
-        >
-          {series.title}
-        </AppText>
-      </View>
+          <Pressable
+            onPress={() =>
+              router.canGoBack() ? router.back() : router.replace("/")
+            }
+            hitSlop={10}
+            style={[styles.back, { backgroundColor: c.overlay }]}
+            accessibilityLabel="Back"
+          >
+            <Ionicons name="chevron-back" size={22} color={c.onPrimary} />
+          </Pressable>
+          <AppText
+            weight="semibold"
+            size={15}
+            color="onPrimary"
+            numberOfLines={1}
+            style={[styles.topTitle, { textShadowColor: c.shade }]}
+          >
+            {series.title}
+          </AppText>
+        </View>
+      )}
 
       <EpisodesSheet
         visible={sheet}
