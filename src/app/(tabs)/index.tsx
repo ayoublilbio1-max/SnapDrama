@@ -1,5 +1,5 @@
 import { useRouter } from "expo-router";
-import { useCallback, useEffect, useMemo } from "react";
+import { useCallback, useEffect, useMemo, useRef } from "react";
 import { ScrollView } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { FilterChips } from "../../components/FilterChips";
@@ -17,7 +17,7 @@ import {
 } from "../../constants/home";
 import { TAB_BAR_SPACE } from "../../constants/layout";
 import { getTrending, useCatalog } from "../../data/catalog";
-import { useContinueWatching } from "../../data/history";
+import { useContinueWatching, useHistory } from "../../data/history";
 import type { Series } from "../../data/types";
 import { useTheme } from "../../hooks/useTheme";
 
@@ -27,6 +27,9 @@ export default function HomeScreen() {
   const router = useRouter();
   const { catalog, status, source } = useCatalog();
   const continueList = useContinueWatching();
+  const history = useHistory();
+  const historyRef = useRef(history);
+  historyRef.current = history;
 
   const hero = useMemo(() => heroSeries(getTrending(catalog)), [catalog]);
   const rows = useMemo(
@@ -56,6 +59,22 @@ export default function HomeScreen() {
     (s: Series) => {
       if (__DEV__) console.log(`[home] open series ${s.id}`);
       router.push({ pathname: "/series/[id]", params: { id: s.id } });
+    },
+    [router],
+  );
+
+  // Continue watching → straight back into the player, at the saved episode + second
+  const resumeSeries = useCallback(
+    (s: Series) => {
+      const h = historyRef.current[s.id];
+      if (__DEV__)
+        console.log(
+          `[home] continue ${s.id} ep ${h?.ep ?? 1} at ${h?.pos ?? 0}s`,
+        );
+      router.push({
+        pathname: "/watch/[id]",
+        params: { id: s.id, ep: String(h?.ep ?? 1), t: String(h?.pos ?? 0) },
+      });
     },
     [router],
   );
@@ -110,7 +129,7 @@ export default function HomeScreen() {
           key={def.id}
           def={def}
           items={items}
-          onOpenSeries={openSeries}
+          onOpenSeries={def.id === "continue" ? resumeSeries : openSeries}
           onSeeAll={seeAll}
         />
       ))}

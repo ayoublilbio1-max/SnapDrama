@@ -21,10 +21,12 @@ import { InfoModal } from "../../components/InfoModal";
 import { RateSheet } from "../../components/RateSheet";
 import { ScreenHeader } from "../../components/ScreenHeader";
 import { freeLabel, useCatalog, useSeries } from "../../data/catalog";
+import { useResume } from "../../data/history";
 import { seriesStats, useUserState, userActions } from "../../data/userStore";
 import { useTheme } from "../../hooks/useTheme";
 import { withAlpha } from "../../utils/color";
 import { formatCount } from "../../utils/format";
+import { hasVideo } from "../../video/source";
 
 const HIDDEN_TAGS = new Set(["Recommended", "New", "Hot"]); // used for Home rows, not shown as genres
 
@@ -52,23 +54,23 @@ export default function SeriesScreen() {
       if (!series) return;
       if (__DEV__) console.log(`[series] ${series.id} tap ep ${n} (${state})`);
       Haptics.selectionAsync().catch(() => {});
-      // Temporary until the player (step 2) and the unlock sheet (step 4) are built
-      setNotice(
-        state === "free"
-          ? {
-              icon: "play-circle-outline",
-              title: `Episode ${n}`,
-              message: "The episode player is the next step of the build.",
-            }
-          : {
-              icon: "lock-closed-outline",
-              title: `Episode ${n} is locked`,
-              message: `Unlock for ${catalog.coinsPerEpisode} coins. The unlock sheet arrives with the coins step.`,
-            },
-      );
+      if (state === "free") {
+        router.push({
+          pathname: "/watch/[id]",
+          params: { id: series.id, ep: String(n) },
+        });
+        return;
+      }
+      // Temporary until the unlock sheet (coins step)
+      setNotice({
+        icon: "lock-closed-outline",
+        title: `Episode ${n} is locked`,
+        message: `Unlock for ${catalog.coinsPerEpisode} coins. The unlock sheet arrives with the coins step.`,
+      });
     },
-    [series, catalog.coinsPerEpisode],
+    [series, catalog.coinsPerEpisode, router],
   );
+  const resume = useResume(series?.id);
 
   if (!series) {
     if (__DEV__) console.log(`[series] not found: ${id}`);
@@ -110,15 +112,32 @@ export default function SeriesScreen() {
     }
   };
 
+  const canTrailer = series.freeEpisodes <= 0 && hasVideo(series.trailer);
+  const playLabel =
+    series.freeEpisodes > 0
+      ? resume && resume.ep > 0
+        ? `Continue EP ${resume.ep}`
+        : "Play EP 1"
+      : canTrailer
+        ? "Watch trailer"
+        : "Trailer only";
+
   const onPlay = () => {
-    if (series.freeEpisodes > 0) onEpisode(1, "free");
-    else
-      setNotice({
-        icon: "film-outline",
-        title: "Trailer only",
-        message:
-          "Every episode of this series is locked. The trailer plays in the For you feed.",
+    if (series.freeEpisodes > 0 || canTrailer) {
+      const ep = series.freeEpisodes > 0 ? (resume?.ep ?? 1) : 0;
+      const t = series.freeEpisodes > 0 && resume ? resume.pos : 0;
+      if (__DEV__) console.log(`[series] ${series.id} play ep ${ep} at ${t}s`);
+      router.push({
+        pathname: "/watch/[id]",
+        params: { id: series.id, ep: String(ep), t: String(t) },
       });
+      return;
+    }
+    setNotice({
+      icon: "film-outline",
+      title: "Trailer only",
+      message: "Every episode of this series is locked.",
+    });
   };
 
   return (
@@ -302,7 +321,7 @@ export default function SeriesScreen() {
             />
             <Ionicons name="play" size={20} color={colors.onPrimary} />
             <AppText weight="bold" size={16} color="onPrimary">
-              {series.freeEpisodes > 0 ? "Play EP 1" : "Trailer only"}
+              {playLabel}
             </AppText>
           </Pressable>
           <ActionButton

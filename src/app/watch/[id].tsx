@@ -1,0 +1,366 @@
+import Ionicons from "@expo/vector-icons/Ionicons";
+import { useFocusEffect, useLocalSearchParams, useRouter } from "expo-router";
+import { setStatusBarStyle } from "expo-status-bar";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import {
+    FlatList,
+    Pressable,
+    Share,
+    StyleSheet,
+    View,
+    type ViewToken,
+} from "react-native";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { AppText } from "../../components/AppText";
+import type { EpisodeState } from "../../components/EpisodeGrid";
+import { InfoModal } from "../../components/InfoModal";
+import {
+    EpisodePage,
+    type PlayerItem,
+} from "../../components/player/EpisodePage";
+import { EpisodesSheet } from "../../components/player/EpisodesSheet";
+import { LockedCard } from "../../components/player/LockedCard";
+import { darkColors } from "../../constants/colors";
+import {
+    freeLabel,
+    isEpisodeFree,
+    useCatalog,
+    useSeries,
+} from "../../data/catalog";
+import { historyActions } from "../../data/history";
+import type { Series } from "../../data/types";
+import { userActions } from "../../data/userStore";
+import { hasVideo } from "../../video/source";
+
+const SAVE_EVERY_MS = 5000;
+
+/** Pages of the player: free episodes with a video (or the trailer if none) + one locked card. */
+function buildItems(series: Series): PlayerItem[] {
+  const items: PlayerItem[] = series.episodes
+    .filter((e) => isEpisodeFree(series, e.n) && hasVideo(e))
+    .sort((a, b) => a.n - b.n)
+    .map(
+      (e): PlayerItem => ({
+        key: `ep${e.n}`,
+        kind: "episode",
+        n: e.n,
+        video: e,
+        likeCount: e.likeCount,
+        title: e.title,
+      }),
+    );
+  if (!items.length && series.trailer && hasVideo(series.trailer)) {
+    items.push({
+      key: "trailer",
+      kind: "trailer",
+      n: 0,
+      video: series.trailer,
+      likeCount: series.saveCount,
+      title: "Trailer",
+    }); // a trailer uses the series' count
+  }
+  const lastFree = items.reduce((m, it) => Math.max(m, it.n), 0);
+  if (series.totalEpisodes > lastFree)
+    items.push({ key: `lock${lastFree + 1}`, kind: "locked", n: lastFree + 1 });
+  return items;
+}
+
+/**
+ * Vertical episode player (brief §8): one page per episode, snapping, auto-next,
+ * only 3 players alive (current ± 1, the next one is preloaded), always dark.
+ * Route: /watch/<seriesId>?ep=3&t=42
+ */
+export default function WatchScreen() {
+  const c = darkColors;
+  const router = useRouter();
+  const insets = useSafeAreaInsets();
+  const params = useLocalSearchParams<{
+    id: string;
+    ep?: string;
+    t?: string;
+  }>();
+  const { catalog } = useCatalog();
+  const series = useSeries(params.id);
+
+  const items = useMemo(() => (series ? buildItems(series) : []), [series]);
+  const startIndex = useMemo(() => {
+    const ep = Number(params.ep ?? 0);
+    const i = items.findIndex((it) => it.n === ep && it.kind !== "locked");
+    return i >= 0 ? i : 0;
+  }, [items, params.ep]);
+  const startAt = Number(params.t ?? 0) || 0;
+
+  const [active, setActive] = useState(startIndex);
+  const [pageH, setPageH] = useState(0);
+  const [sheet, setSheet] = useState(false);
+  const [notice, setNotice] = useState<{
+    title: string;
+    message: string;
+  } | null>(null);
+  const listRef = useRef<FlatList<PlayerItem>>(null);
+  const lastSave = useRef(0);
+
+  useEffect(() => {
+    if (__DEV__ && series) {
+      const eps = items.filter((i) => i.kind === "episode").length;
+      console.log(
+        `[player] open ${series.id} — ${eps} free eps${items.some((i) => i.kind === "trailer") ? " + trailer" : ""}` +
+          `${items.some((i) => i.kind === "locked") ? " + locked card" : ""}, start ${items[startIndex]?.key ?? "-"} at ${startAt}s`,
+      );
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [series?.id]);
+
+  // always-dark screen: light status bar while here
+  useFocusEffect(
+    useCallback(() => {
+      setStatusBarStyle("light");
+      return () => setStatusBarStyle("auto");
+    }, []),
+  );
+
+  // history: save when the episode changes, then every 5 s while playing
+  const activeItem = items[active];
+  useEffect(() => {
+    if (series && activeItem?.kind === "episode")
+      historyActions.save(
+        series.id,
+        activeItem.n,
+        active === startIndex ? startAt : 0,
+      );
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [active, series?.id]);
+
+  const onProgress = useCallback(
+    (n: number, time: number) => {
+      if (!series || n <= 0) return;
+      const now = Date.now();
+      if (now - lastSave.current < SAVE_EVERY_MS) return;
+      lastSave.current = now;
+      historyActions.save(series.id, n, time);
+    },
+    [series],
+  );
+
+  const goTo = useCallback(
+    (index: number) => {
+      if (index < 0 || index >= items.length) return;
+      listRef.current?.scrollToIndex({ index, animated: true });
+      setActive(index);
+    },
+    [items.length],
+  );
+
+  const onEnded = useCallback(() => {
+    if (__DEV__)
+      console.log(`[player] auto-next → ${items[active + 1]?.key ?? "end"}`);
+    goTo(active + 1);
+  }, [active, goTo, items]);
+
+  const onViewable = useRef(
+    ({ viewableItems }: { viewableItems: ViewToken[] }) => {
+      const v = viewableItems.find((x) => x.isViewable);
+      if (v?.index != null) setActive(v.index);
+    },
+  ).current;
+
+  const showUnlockNotice = useCallback(
+    (n: number) => {
+      if (__DEV__) console.log(`[player] unlock tap ep ${n}`);
+      setNotice({
+        title: `Unlock episode ${n}`,
+        message: `${catalog.coinsPerEpisode} coins. The unlock sheet arrives with the coins step.`,
+      });
+    },
+    [catalog.coinsPerEpisode],
+  );
+
+  const onShare = useCallback(async () => {
+    if (!series) return;
+    try {
+      const res = await Share.share({
+        message: `Watch "${series.title}" on SnapDrama 🎬 ${freeLabel(series)}`,
+      });
+      if (res.action === Share.sharedAction) userActions.markShared(series.id);
+    } catch (e) {
+      if (__DEV__) console.log("[player] share failed", String(e));
+    }
+  }, [series]);
+
+  const onPick = useCallback(
+    (n: number, state: EpisodeState) => {
+      setSheet(false);
+      if (state === "locked") {
+        showUnlockNotice(n);
+        return;
+      }
+      const i = items.findIndex((it) => it.kind === "episode" && it.n === n);
+      if (__DEV__) console.log(`[player] pick ep ${n} → page ${i}`);
+      if (i >= 0) goTo(i);
+    },
+    [items, goTo, showUnlockNotice],
+  );
+
+  const renderItem = useCallback(
+    ({ item, index }: { item: PlayerItem; index: number }) => {
+      if (!series) return null;
+      if (item.kind === "locked") {
+        return (
+          <LockedCard
+            series={series}
+            n={item.n}
+            price={catalog.coinsPerEpisode}
+            height={pageH}
+            onUnlock={() => showUnlockNotice(item.n)}
+            onEpisodes={() => setSheet(true)}
+          />
+        );
+      }
+      return (
+        <EpisodePage
+          item={item}
+          series={series}
+          height={pageH}
+          bottomInset={insets.bottom}
+          active={index === active}
+          nearby={Math.abs(index - active) <= 1}
+          startAt={index === startIndex ? startAt : 0}
+          onEnded={onEnded}
+          onProgress={onProgress}
+          onEpisodes={() => setSheet(true)}
+          onShare={onShare}
+        />
+      );
+    },
+    [
+      series,
+      pageH,
+      insets.bottom,
+      active,
+      startIndex,
+      startAt,
+      onEnded,
+      onProgress,
+      onShare,
+      catalog.coinsPerEpisode,
+      showUnlockNotice,
+    ],
+  );
+
+  if (!series || !items.length) {
+    return (
+      <View
+        style={[
+          styles.root,
+          {
+            backgroundColor: c.background,
+            alignItems: "center",
+            justifyContent: "center",
+          },
+        ]}
+      >
+        <AppText color="onPrimary">This series can't be played.</AppText>
+      </View>
+    );
+  }
+
+  const currentEp =
+    activeItem && activeItem.kind !== "locked" ? activeItem.n : 0;
+
+  return (
+    <View
+      style={[styles.root, { backgroundColor: c.background }]}
+      onLayout={(e) => setPageH(Math.round(e.nativeEvent.layout.height))}
+    >
+      {pageH > 0 && (
+        <FlatList
+          ref={listRef}
+          data={items}
+          keyExtractor={(it) => it.key}
+          renderItem={renderItem}
+          extraData={active}
+          pagingEnabled
+          snapToInterval={pageH}
+          decelerationRate="fast"
+          showsVerticalScrollIndicator={false}
+          getItemLayout={(_, i) => ({
+            length: pageH,
+            offset: pageH * i,
+            index: i,
+          })}
+          initialScrollIndex={startIndex}
+          initialNumToRender={1}
+          maxToRenderPerBatch={2}
+          windowSize={3}
+          removeClippedSubviews
+          onViewableItemsChanged={onViewable}
+          viewabilityConfig={{ itemVisiblePercentThreshold: 60 }}
+        />
+      )}
+
+      {/* top bar */}
+      <View
+        style={[styles.top, { paddingTop: insets.top + 6 }]}
+        pointerEvents="box-none"
+      >
+        <Pressable
+          onPress={() =>
+            router.canGoBack() ? router.back() : router.replace("/")
+          }
+          hitSlop={10}
+          style={[styles.back, { backgroundColor: c.overlay }]}
+          accessibilityLabel="Back"
+        >
+          <Ionicons name="chevron-back" size={22} color={c.onPrimary} />
+        </Pressable>
+        <AppText
+          weight="semibold"
+          size={15}
+          color="onPrimary"
+          numberOfLines={1}
+          style={[styles.topTitle, { textShadowColor: c.shade }]}
+        >
+          {series.title}
+        </AppText>
+      </View>
+
+      <EpisodesSheet
+        visible={sheet}
+        series={series}
+        current={currentEp}
+        coinsPerEpisode={catalog.coinsPerEpisode}
+        onPick={onPick}
+        onClose={() => setSheet(false)}
+      />
+      <InfoModal
+        visible={!!notice}
+        icon="lock-closed-outline"
+        title={notice?.title ?? ""}
+        message={notice?.message ?? ""}
+        onClose={() => setNotice(null)}
+      />
+    </View>
+  );
+}
+
+const styles = StyleSheet.create({
+  root: { flex: 1 },
+  top: {
+    position: "absolute",
+    top: 0,
+    left: 0,
+    right: 0,
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 10,
+    paddingHorizontal: 12,
+  },
+  back: {
+    width: 38,
+    height: 38,
+    borderRadius: 19,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  topTitle: { flex: 1, textShadowRadius: 6 },
+});

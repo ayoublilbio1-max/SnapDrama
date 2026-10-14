@@ -8,7 +8,9 @@ import { useEffect } from "react";
 import { AppState, Platform } from "react-native";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { KeyboardProvider } from "react-native-keyboard-controller";
+import { darkColors } from "../constants/colors";
 import { CatalogProvider, useCatalog } from "../data/catalog";
+import { preloadHistory } from "../data/history";
 import { preloadUserState } from "../data/userStore";
 import { useTheme } from "../hooks/useTheme";
 
@@ -16,6 +18,7 @@ import { useTheme } from "../hooks/useTheme";
 SplashScreen.preventAutoHideAsync().catch(() => {});
 SplashScreen.setOptions({ duration: 300, fade: true });
 preloadUserState(); // saves / ratings ready before the first series page
+preloadHistory(); // continue watching ready before Home
 
 const t0 = Date.now();
 let splashHidden = false; // module-level guard → hideAsync() runs ONCE only
@@ -112,6 +115,13 @@ export default function RootLayout() {
             <Stack.Screen
               name="search"
               options={{ animation: "fade_from_bottom" }}
+            />
+            <Stack.Screen
+              name="watch/[id]"
+              options={{
+                animation: "fade",
+                contentStyle: { backgroundColor: darkColors.background },
+              }}
             />
           </Stack>
         </KeyboardProvider>
