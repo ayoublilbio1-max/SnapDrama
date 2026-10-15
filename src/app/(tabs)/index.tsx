@@ -20,6 +20,7 @@ import { getTrending, useCatalog } from "../../data/catalog";
 import { useContinueWatching, useHistory } from "../../data/history";
 import type { Series } from "../../data/types";
 import { useTheme } from "../../hooks/useTheme";
+import { canNavigate } from "../../utils/navLock";
 
 export default function HomeScreen() {
   const colors = useTheme();
@@ -57,6 +58,7 @@ export default function HomeScreen() {
   // Stable callbacks → memoized rows/cards don't re-render on every Home render
   const openSeries = useCallback(
     (s: Series) => {
+      if (!canNavigate(`series ${s.id}`)) return;
       if (__DEV__) console.log(`[home] open series ${s.id}`);
       router.push({ pathname: "/series/[id]", params: { id: s.id } });
     },
@@ -66,6 +68,7 @@ export default function HomeScreen() {
   // Continue watching → straight back into the player, at the saved episode + second
   const resumeSeries = useCallback(
     (s: Series) => {
+      if (!canNavigate(`continue ${s.id}`)) return;
       const h = historyRef.current[s.id];
       if (__DEV__)
         console.log(
@@ -81,6 +84,7 @@ export default function HomeScreen() {
 
   const seeAll = useCallback(
     (def: HomeRowDef) => {
+      if (!canNavigate(`see all ${def.id}`)) return;
       if (__DEV__) console.log(`[home] see all ${def.id}`);
       router.push({
         pathname: "/browse",
