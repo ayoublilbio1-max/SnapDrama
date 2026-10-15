@@ -50,7 +50,9 @@ async function dailyBonus() {
     const day = today();
     if ((await Storage.getItem(BONUS_KEY)) === day) return;
     await Storage.setItem(BONUS_KEY, day);
-    walletActions.reward(VIP_DAILY_COINS, "VIP daily bonus");
+    walletActions.reward(VIP_DAILY_COINS, "VIP daily bonus", {
+      key: "hist.vip",
+    });
   } catch (e) {
     if (__DEV__) console.log("[vip] daily bonus failed", String(e));
   }

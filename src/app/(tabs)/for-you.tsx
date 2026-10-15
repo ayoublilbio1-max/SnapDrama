@@ -22,6 +22,8 @@ import { freeLabel, useCatalog } from "../../data/catalog";
 import { getFeedItems, type FeedItem } from "../../data/feed";
 import { useHistory } from "../../data/history";
 import { userActions } from "../../data/userStore";
+import { useT } from "../../i18n";
+import { canNavigate } from "../../utils/navLock";
 import { pauseFeed, resumeFeed } from "../../video/feedControl";
 
 const noop = () => {};
@@ -33,6 +35,7 @@ const noop = () => {};
  */
 export default function ForYouScreen() {
   const c = darkColors;
+  const t = useT();
   const router = useRouter();
   const insets = useSafeAreaInsets();
   const { catalog, status } = useCatalog();
@@ -77,18 +80,19 @@ export default function ForYouScreen() {
 
   const watchSeries = useCallback(
     (f: FeedItem) => {
+      if (!canNavigate(`watch series ${f.series.id}`)) return;
       const h = historyRef.current[f.series.id];
       const ep = h?.ep ?? 1;
-      const t = h?.pos ?? 0;
+      const pos = h?.pos ?? 0;
       if (__DEV__)
-        console.log(`[feed] watch series ${f.series.id} → ep ${ep} at ${t}s`);
+        console.log(`[feed] watch series ${f.series.id} → ep ${ep} at ${pos}s`);
       if (f.series.freeEpisodes <= 0) {
         router.push({ pathname: "/series/[id]", params: { id: f.series.id } });
         return;
       }
       router.push({
         pathname: "/watch/[id]",
-        params: { id: f.series.id, ep: String(ep), t: String(t) },
+        params: { id: f.series.id, ep: String(ep), t: String(pos) },
       });
     },
     [router],
@@ -96,21 +100,28 @@ export default function ForYouScreen() {
 
   const openSeries = useCallback(
     (f: FeedItem) =>
+      canNavigate(`series ${f.series.id}`) &&
       router.push({ pathname: "/series/[id]", params: { id: f.series.id } }),
     [router],
   );
 
-  const share = useCallback(async (f: FeedItem) => {
-    try {
-      const res = await Share.share({
-        message: `Watch "${f.series.title}" on SnapDrama 🎬 ${freeLabel(f.series)}`,
-      });
-      if (res.action === Share.sharedAction)
-        userActions.markShared(f.series.id);
-    } catch (e) {
-      if (__DEV__) console.log("[feed] share failed", String(e));
-    }
-  }, []);
+  const share = useCallback(
+    async (f: FeedItem) => {
+      try {
+        const res = await Share.share({
+          message: t("share.series", {
+            title: f.series.title,
+            free: freeLabel(f.series, t),
+          }),
+        });
+        if (res.action === Share.sharedAction)
+          userActions.markShared(f.series.id);
+      } catch (e) {
+        if (__DEV__) console.log("[feed] share failed", String(e));
+      }
+    },
+    [t],
+  );
 
   const toggleClean = useCallback(() => setClean((v) => !v), []);
   const onSubtitles = useCallback(() => setDemoOpen(true), []);
@@ -207,7 +218,7 @@ export default function ForYouScreen() {
             color="onPrimary"
             style={{ textShadowColor: c.shade, textShadowRadius: 6 }}
           >
-            For you
+            {t("tabs.forYou")}
           </AppText>
           <View style={[styles.side, { alignItems: "flex-end" }]}>
             <MuteButton />
@@ -218,9 +229,9 @@ export default function ForYouScreen() {
       <InfoModal
         visible={demoOpen}
         icon="language-outline"
-        title="Not in the demo"
-        message="Subtitles in 50+ languages are part of the full app. This demo plays episodes without subtitles."
-        actionLabel="Contact the developer"
+        title={t("demo.notInDemo")}
+        message={t("demo.subtitles")}
+        actionLabel={t("common.contactDev")}
         onAction={() => {
           setDemoOpen(false);
           Linking.openURL(FIVERR_URL).catch(() => {});

@@ -6,6 +6,7 @@ import { TabBarButton } from "../../components/TabBarButton";
 import type { TabIconName } from "../../components/TabIcons";
 import { TAB_BAR_GAP, TAB_BAR_HEIGHT } from "../../constants/layout";
 import { useTheme } from "../../hooks/useTheme";
+import { useT, type Key } from "../../i18n";
 
 // Props that expo-router's <Tabs> passes to a custom tabBar (no extra package import needed)
 type TabBarProps = Parameters<
@@ -16,17 +17,18 @@ type TabBarProps = Parameters<
  * Tab config. RULE: every screen file in (tabs) must have an entry here
  * (key = file name without .tsx) AND a <Tabs.Screen> below.
  */
-const TAB_CONFIG: Record<string, { icon: TabIconName; label: string }> = {
-  index: { icon: "home", label: "Home" },
-  "for-you": { icon: "shorts", label: "For you" },
-  rewards: { icon: "rewards", label: "Rewards" },
-  "my-list": { icon: "mylist", label: "My list" },
-  profile: { icon: "profile", label: "Profile" },
+const TAB_CONFIG: Record<string, { icon: TabIconName; label: Key }> = {
+  index: { icon: "home", label: "tabs.home" },
+  "for-you": { icon: "shorts", label: "tabs.forYou" },
+  rewards: { icon: "rewards", label: "tabs.rewards" },
+  "my-list": { icon: "mylist", label: "tabs.myList" },
+  profile: { icon: "profile", label: "tabs.profile" },
 };
 
 /** Floating white pill bar drawn over the screens. */
 function PillTabBar({ state, navigation }: TabBarProps) {
   const colors = useTheme();
+  const t = useT();
   const insets = useSafeAreaInsets();
   const activeName = state.routes[state.index]?.name;
   const [barWidth, setBarWidth] = useState(0);
@@ -73,7 +75,7 @@ function PillTabBar({ state, navigation }: TabBarProps) {
               <TabBarButton
                 key={route.key}
                 icon={cfg.icon}
-                label={cfg.label}
+                label={t(cfg.label)}
                 colors={colors}
                 isFocused={focused}
                 width={focused ? activeWidth : idleWidth}

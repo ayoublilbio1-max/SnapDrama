@@ -23,6 +23,7 @@ import {
   userActions,
   useUserState,
 } from "../../data/userStore";
+import { useT } from "../../i18n";
 import { withAlpha } from "../../utils/color";
 import { formatCount } from "../../utils/format";
 import { registerFeedControl } from "../../video/feedControl";
@@ -125,6 +126,7 @@ function PlayerSurface({
 }: Props) {
   const isFeed = variant === "feed";
   const c = darkColors;
+  const t = useT();
   const tag = `${series.id} ${item.kind === "trailer" ? "trailer" : `ep ${item.n}`}`;
 
   // ── source choice: Bunny first, R2 on error / timeout ──
@@ -325,7 +327,8 @@ function PlayerSurface({
     setFast(false);
   };
 
-  const label = item.kind === "trailer" ? "Trailer" : `EP ${item.n}`;
+  const label =
+    item.kind === "trailer" ? t("free.trailer") : t("player.ep", { n: item.n });
   const showPoster = !firstFrame || !source;
 
   return (
@@ -392,7 +395,7 @@ function PlayerSurface({
         >
           <Ionicons name="play-forward" size={14} color={c.onPrimary} />
           <AppText weight="bold" size={13} color="onPrimary">
-            2× speed
+            {t("player.fast")}
           </AppText>
         </View>
       )}
@@ -406,7 +409,7 @@ function PlayerSurface({
             color={c.textMuted}
           />
           <AppText weight="bold" size={17} color="onPrimary">
-            Video unavailable
+            {t("player.unavailable")}
           </AppText>
           <Pressable
             onPress={() => {
@@ -417,7 +420,7 @@ function PlayerSurface({
             style={[styles.retry, { backgroundColor: c.primary }]}
           >
             <AppText weight="semibold" size={14} color="onPrimary">
-              Retry
+              {t("common.retry")}
             </AppText>
           </Pressable>
         </View>
@@ -432,7 +435,7 @@ function PlayerSurface({
             styles.showUi,
             { bottom: bottomInset + 40, backgroundColor: c.overlay },
           ]}
-          accessibilityLabel="Show buttons"
+          accessibilityLabel={t("player.showButtons")}
         >
           <Ionicons name="eye-outline" size={20} color={c.onPrimary} />
         </Pressable>
@@ -463,7 +466,7 @@ function PlayerSurface({
             <SideButton
               icon="albums-outline"
               color={c.onPrimary}
-              label="Episodes"
+              label={t("series.episodes")}
               onPress={onEpisodes}
             />
           )}
@@ -476,13 +479,13 @@ function PlayerSurface({
           <SideButton
             icon="language-outline"
             color={c.onPrimary}
-            label="Subtitles"
+            label={t("player.subtitles")}
             onPress={onSubtitles}
           />
           <SideButton
             icon="eye-off-outline"
             color={c.onPrimary}
-            label="Clear"
+            label={t("player.clear")}
             onPress={onToggleClean}
           />
         </View>
@@ -498,7 +501,7 @@ function PlayerSurface({
             <View style={[styles.rankPill, { backgroundColor: c.overlay }]}>
               <Ionicons name="flame" size={12} color={c.gold} />
               <AppText weight="bold" size={11} style={{ color: c.gold }}>
-                #{rank} Trending
+                {t("player.rank", { n: rank })}
               </AppText>
             </View>
           ) : null}
@@ -526,8 +529,8 @@ function PlayerSurface({
             </View>
             <AppText size={13} style={{ color: c.textMuted }}>
               {item.kind === "trailer"
-                ? `${series.totalEpisodes} episodes`
-                : `of ${series.totalEpisodes}`}
+                ? t("common.episodes", { n: series.totalEpisodes })
+                : t("player.of", { n: series.totalEpisodes })}
             </AppText>
           </View>
           {series.description ? (
@@ -555,7 +558,7 @@ function PlayerSurface({
               />
               <Ionicons name="play" size={16} color={c.onPrimary} />
               <AppText weight="bold" size={14} color="onPrimary">
-                Watch series
+                {t("player.watchSeries")}
               </AppText>
             </Pressable>
           ) : null}

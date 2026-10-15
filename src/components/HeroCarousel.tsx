@@ -14,6 +14,7 @@ import {
 import { freeLabel } from "../data/catalog";
 import type { Series } from "../data/types";
 import { useTheme } from "../hooks/useTheme";
+import { useT } from "../i18n";
 import { AppText } from "./AppText";
 
 const AUTO_MS = 4500;
@@ -36,6 +37,7 @@ export const HeroCarousel = memo(function HeroCarousel({
   onOpen: (s: Series) => void;
 }) {
   const colors = useTheme();
+  const t = useT();
   const { width: W } = useWindowDimensions();
   const cardW = Math.round(W * 0.62);
   const cardH = Math.round((cardW * 4) / 3);
@@ -225,7 +227,8 @@ export const HeroCarousel = memo(function HeroCarousel({
             {active.title}
           </AppText>
           <AppText size={12} color="textMuted" align="center">
-            {freeLabel(active)} · {active.totalEpisodes} episodes
+            {freeLabel(active, t)} ·{" "}
+            {t("common.episodes", { n: active.totalEpisodes })}
           </AppText>
         </View>
       )}

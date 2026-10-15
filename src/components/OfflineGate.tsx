@@ -6,7 +6,10 @@ import { Pressable, StyleSheet, View } from "react-native";
 import Animated, { FadeIn, FadeOut } from "react-native-reanimated";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useTheme } from "../hooks/useTheme";
+import { useT } from "../i18n";
 import { AppText } from "./AppText";
+
+const BACK_ONLINE_MS = 2500; // how long "You're back online" stays
 
 /** Offline only when the phone says so for sure (null = still checking → not offline). */
 function isOffline(s: NetInfoState) {
@@ -15,16 +18,19 @@ function isOffline(s: NetInfoState) {
 
 /**
  * Brief §8: no internet → themed "No internet" screen with Retry.
- * "Browse offline" hides it (saved series, My list, coins still work) and shows a small banner instead.
- * Comes back / goes away by itself when the connection changes.
+ * "Browse offline" hides it (saved series, My list, coins still work) and shows a small red banner instead.
+ * When the connection comes back: a green "You're back online" banner for 2.5 s, then nothing.
  */
 export function OfflineGate() {
   const colors = useTheme();
+  const t = useT();
   const insets = useSafeAreaInsets();
   const [offline, setOffline] = useState(false);
   const [dismissed, setDismissed] = useState(false);
   const [checking, setChecking] = useState(false);
+  const [backOnline, setBackOnline] = useState(false);
   const wasOffline = useRef(false);
+  const backTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   useEffect(() => {
     const unsub = NetInfo.addEventListener((s) => {
@@ -35,11 +41,27 @@ export function OfflineGate() {
           console.log(
             off ? `[net] offline (${s.type})` : `[net] back online (${s.type})`,
           );
-        if (!off) setDismissed(false); // next time it goes offline, show the screen again
+        if (backTimer.current) clearTimeout(backTimer.current);
+        if (off) {
+          setBackOnline(false);
+        } else {
+          setDismissed(false); // next time it goes offline, show the screen again
+          setBackOnline(true);
+          Haptics.notificationAsync(
+            Haptics.NotificationFeedbackType.Success,
+          ).catch(() => {});
+          backTimer.current = setTimeout(
+            () => setBackOnline(false),
+            BACK_ONLINE_MS,
+          );
+        }
       }
       setOffline(off);
     });
-    return unsub;
+    return () => {
+      unsub();
+      if (backTimer.current) clearTimeout(backTimer.current);
+    };
   }, []);
 
   const retry = async () => {
@@ -48,12 +70,10 @@ export function OfflineGate() {
     const t0 = Date.now();
     try {
       const s = await NetInfo.refresh();
-      const off = isOffline(s);
       if (__DEV__)
         console.log(
-          `[net] retry → ${off ? "still offline" : "online"} in ${Date.now() - t0}ms`,
+          `[net] retry → ${isOffline(s) ? "still offline" : "online"} in ${Date.now() - t0}ms`,
         );
-      setOffline(off);
     } catch (e) {
       if (__DEV__) console.log("[net] retry failed", String(e));
     } finally {
@@ -61,7 +81,29 @@ export function OfflineGate() {
     }
   };
 
-  if (!offline) return null;
+  if (!offline) {
+    if (!backOnline) return null;
+    return (
+      <Animated.View
+        entering={FadeIn}
+        exiting={FadeOut}
+        pointerEvents="none"
+        style={[
+          styles.banner,
+          { top: insets.top + 4, backgroundColor: colors.success },
+        ]}
+      >
+        <Ionicons name="wifi" size={14} color={colors.onSuccess} />
+        <AppText
+          weight="semibold"
+          size={12}
+          style={{ color: colors.onSuccess }}
+        >
+          {t("net.backOnline")}
+        </AppText>
+      </Animated.View>
+    );
+  }
 
   if (dismissed) {
     return (
@@ -80,7 +122,7 @@ export function OfflineGate() {
           color={colors.onDanger}
         />
         <AppText weight="semibold" size={12} color="onDanger">
-          Offline — showing saved content
+          {t("net.offlineBanner")}
         </AppText>
       </Animated.View>
     );
@@ -102,7 +144,7 @@ export function OfflineGate() {
         />
       </View>
       <AppText weight="bold" size={22} align="center">
-        No internet
+        {t("net.title")}
       </AppText>
       <AppText
         size={14}
@@ -110,8 +152,7 @@ export function OfflineGate() {
         align="center"
         style={{ maxWidth: 300 }}
       >
-        Check your Wi-Fi or mobile data, then try again. Videos need a
-        connection to play.
+        {t("net.message")}
       </AppText>
       <Pressable
         disabled={checking}
@@ -126,7 +167,7 @@ export function OfflineGate() {
       >
         <Ionicons name="refresh" size={18} color={colors.onPrimary} />
         <AppText weight="semibold" size={15} color="onPrimary">
-          {checking ? "Checking…" : "Retry"}
+          {checking ? t("net.checking") : t("common.retry")}
         </AppText>
       </Pressable>
       <Pressable
@@ -138,7 +179,7 @@ export function OfflineGate() {
         style={{ paddingVertical: 10 }}
       >
         <AppText weight="medium" size={14} color="textAccent">
-          Browse offline
+          {t("net.browseOffline")}
         </AppText>
       </Pressable>
     </Animated.View>

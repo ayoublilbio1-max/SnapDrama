@@ -1,13 +1,14 @@
 import Storage from "expo-sqlite/kv-store";
 import {
-    createContext,
-    useContext,
-    useEffect,
-    useMemo,
-    useState,
-    type ReactNode,
+  createContext,
+  useContext,
+  useEffect,
+  useMemo,
+  useState,
+  type ReactNode,
 } from "react";
 import { CATALOG_URL } from "../constants/app";
+import type { T } from "../i18n";
 import type { Catalog, Series } from "./types";
 
 /**
@@ -163,9 +164,10 @@ export function seriesByTag(catalog: Catalog, tag: string) {
   );
 }
 
-export function freeLabel(series: Series) {
-  if (series.freeEpisodes <= 0) return "Trailer";
+/** "EP 1–5 free" badge, in the app language (pass the `t` from useT()). */
+export function freeLabel(series: Series, t: T) {
+  if (series.freeEpisodes <= 0) return t("free.trailer");
   return series.freeEpisodes === 1
-    ? "EP 1 free"
-    : `EP 1–${series.freeEpisodes} free`;
+    ? t("free.one")
+    : t("free.many", { n: series.freeEpisodes });
 }

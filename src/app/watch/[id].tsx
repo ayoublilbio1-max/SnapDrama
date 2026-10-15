@@ -38,6 +38,8 @@ import { rewardsActions } from "../../data/rewards";
 import type { Series } from "../../data/types";
 import { userActions } from "../../data/userStore";
 import { isUnlocked, useUnlocked } from "../../data/wallet";
+import { useT } from "../../i18n";
+import { canNavigate } from "../../utils/navLock";
 import { hasVideo } from "../../video/source";
 
 const SAVE_EVERY_MS = 5000;
@@ -93,6 +95,7 @@ function buildItems(
  */
 export default function WatchScreen() {
   const c = darkColors;
+  const t = useT();
   const router = useRouter();
   const insets = useSafeAreaInsets();
   const params = useLocalSearchParams<{
@@ -233,13 +236,16 @@ export default function WatchScreen() {
     if (!series) return;
     try {
       const res = await Share.share({
-        message: `Watch "${series.title}" on SnapDrama 🎬 ${freeLabel(series)}`,
+        message: t("share.series", {
+          title: series.title,
+          free: freeLabel(series, t),
+        }),
       });
       if (res.action === Share.sharedAction) userActions.markShared(series.id);
     } catch (e) {
       if (__DEV__) console.log("[player] share failed", String(e));
     }
-  }, [series]);
+  }, [series, t]);
 
   // brief §7: features not in the demo open a themed "not in the demo" popup
   const onSubtitles = useCallback(() => {
@@ -341,7 +347,7 @@ export default function WatchScreen() {
           },
         ]}
       >
-        <AppText color="onPrimary">This series can't be played.</AppText>
+        <AppText color="onPrimary">{t("player.cantPlay")}</AppText>
       </View>
     );
   }
@@ -394,7 +400,7 @@ export default function WatchScreen() {
             }
             hitSlop={10}
             style={[styles.back, { backgroundColor: c.overlay }]}
-            accessibilityLabel="Back"
+            accessibilityLabel={t("common.back")}
           >
             <Ionicons name="chevron-back" size={22} color={c.onPrimary} />
           </Pressable>
@@ -422,9 +428,9 @@ export default function WatchScreen() {
       <InfoModal
         visible={demoOpen}
         icon="language-outline"
-        title="Not in the demo"
-        message="Subtitles in 50+ languages are part of the full app. This demo plays episodes without subtitles."
-        actionLabel="Contact the developer"
+        title={t("demo.notInDemo")}
+        message={t("demo.subtitles")}
+        actionLabel={t("common.contactDev")}
         onAction={() => {
           setDemoOpen(false);
           if (__DEV__) console.log("[player] demo → open Fiverr");
@@ -447,11 +453,11 @@ export default function WatchScreen() {
         }}
         onGetCoins={() => {
           setUnlockN(0);
-          router.push("/coins");
+          if (canNavigate("coins")) router.push("/coins");
         }}
         onGetVip={() => {
           setUnlockN(0);
-          router.push("/vip");
+          if (canNavigate("vip")) router.push("/vip");
         }}
       />
       <DemoEpisodeModal visible={noVideo} onClose={() => setNoVideo(false)} />

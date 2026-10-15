@@ -25,6 +25,7 @@ import { episodeView, progressKey, useProgress } from "../../data/progress";
 import type { Series } from "../../data/types";
 import { useUserState, userActions } from "../../data/userStore";
 import { useTheme } from "../../hooks/useTheme";
+import { useT } from "../../i18n";
 import { canNavigate } from "../../utils/navLock";
 
 type Tab = "saved" | "watching";
@@ -35,6 +36,7 @@ const GAP = 10;
 /** My list tab: Saved series (grid) + Watching (continue where you stopped). Edit → select → Remove. */
 export default function MyListScreen() {
   const colors = useTheme();
+  const t = useT();
   const insets = useSafeAreaInsets();
   const router = useRouter();
   const { width } = useWindowDimensions();
@@ -139,7 +141,7 @@ export default function MyListScreen() {
       {/* header */}
       <View style={[styles.header, { paddingTop: insets.top + 10 }]}>
         <AppText weight="bold" size={26} style={{ flex: 1 }}>
-          My list
+          {t("tabs.myList")}
         </AppText>
         {list.length > 0 && (
           <Pressable
@@ -158,7 +160,7 @@ export default function MyListScreen() {
               size={14}
               color={editing ? "textAccent" : "text"}
             >
-              {editing ? "Done" : "Edit"}
+              {editing ? t("mylist.done") : t("mylist.edit")}
             </AppText>
           </Pressable>
         )}
@@ -171,13 +173,13 @@ export default function MyListScreen() {
           { backgroundColor: colors.surface, borderColor: colors.border },
         ]}
       >
-        {(["saved", "watching"] as const).map((t) => {
-          const on = t === tab;
-          const n = t === "saved" ? saved.length : watching.length;
+        {(["saved", "watching"] as const).map((tb) => {
+          const on = tb === tab;
+          const n = tb === "saved" ? saved.length : watching.length;
           return (
             <Pressable
-              key={t}
-              onPress={() => switchTab(t)}
+              key={tb}
+              onPress={() => switchTab(tb)}
               style={[styles.segBtn, on && { backgroundColor: colors.primary }]}
             >
               <AppText
@@ -185,7 +187,7 @@ export default function MyListScreen() {
                 size={14}
                 color={on ? "onPrimary" : "textMuted"}
               >
-                {t === "saved" ? "Saved" : "Watching"}
+                {tb === "saved" ? t("mylist.saved") : t("mylist.watching")}
                 {n ? ` · ${n}` : ""}
               </AppText>
             </Pressable>
@@ -256,9 +258,9 @@ export default function MyListScreen() {
                       {s.title}
                     </AppText>
                     <AppText size={12} color="textMuted">
-                      EP {ep} of {s.totalEpisodes}
+                      {t("mylist.epOf", { n: ep, total: s.totalEpisodes })}
                       {watched
-                        ? " · watched"
+                        ? ` · ${t("ep.watched")}`
                         : ratio > 0
                           ? ` · ${Math.round(ratio * 100)}%`
                           : ""}
@@ -324,7 +326,7 @@ export default function MyListScreen() {
               color={allSelected ? colors.primary : colors.textMuted}
             />
             <AppText weight="medium" size={14}>
-              All
+              {t("mylist.all")}
             </AppText>
           </Pressable>
           <Pressable
@@ -340,7 +342,8 @@ export default function MyListScreen() {
           >
             <Ionicons name="trash-outline" size={16} color={colors.onDanger} />
             <AppText weight="semibold" size={14} color="onDanger">
-              Remove{selected.size ? ` (${selected.size})` : ""}
+              {t("mylist.remove")}
+              {selected.size ? ` (${selected.size})` : ""}
             </AppText>
           </Pressable>
         </View>
@@ -350,15 +353,15 @@ export default function MyListScreen() {
         visible={confirm}
         title={
           tab === "saved"
-            ? `Remove ${selected.size} from Saved?`
-            : `Remove ${selected.size} from Watching?`
+            ? t("mylist.removeSaved", { n: selected.size })
+            : t("mylist.removeWatching", { n: selected.size })
         }
         message={
           tab === "saved"
-            ? "They will no longer be in My list. You can save them again any time."
-            : "Your place in these series will be forgotten. Watched episodes stay marked."
+            ? t("mylist.removeSavedMsg")
+            : t("mylist.removeWatchingMsg")
         }
-        confirmLabel="Remove"
+        confirmLabel={t("mylist.remove")}
         onConfirm={remove}
         onCancel={() => setConfirm(false)}
       />
@@ -386,6 +389,7 @@ function Check({ on }: { on: boolean }) {
 
 function Empty({ tab, onDiscover }: { tab: Tab; onDiscover: () => void }) {
   const colors = useTheme();
+  const t = useT();
   return (
     <View style={styles.empty}>
       <View
@@ -398,12 +402,12 @@ function Empty({ tab, onDiscover }: { tab: Tab; onDiscover: () => void }) {
         />
       </View>
       <AppText weight="bold" size={18} align="center">
-        {tab === "saved" ? "Nothing saved yet" : "Nothing watched yet"}
+        {tab === "saved" ? t("mylist.emptySaved") : t("mylist.emptyWatching")}
       </AppText>
       <AppText size={14} color="textMuted" align="center">
         {tab === "saved"
-          ? "Tap the bookmark on a series to keep it here."
-          : "Series you start show up here, so you can continue where you stopped."}
+          ? t("mylist.emptySavedHint")
+          : t("mylist.emptyWatchingHint")}
       </AppText>
       <Pressable
         onPress={onDiscover}
@@ -413,7 +417,7 @@ function Empty({ tab, onDiscover }: { tab: Tab; onDiscover: () => void }) {
         ]}
       >
         <AppText weight="semibold" size={14} color="onPrimary">
-          Discover series
+          {t("mylist.discover")}
         </AppText>
       </Pressable>
     </View>

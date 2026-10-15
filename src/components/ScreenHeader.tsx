@@ -4,6 +4,7 @@ import type { ReactNode } from "react";
 import { Pressable, StyleSheet, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useTheme } from "../hooks/useTheme";
+import { useT } from "../i18n";
 import { AppText } from "./AppText";
 
 /** Back button + title for pushed pages (See all, filters, categories, VIP, search, series). */
@@ -15,6 +16,7 @@ export function ScreenHeader({
   right?: ReactNode;
 }) {
   const colors = useTheme();
+  const t = useT();
   const insets = useSafeAreaInsets();
   const router = useRouter();
   return (
@@ -29,7 +31,7 @@ export function ScreenHeader({
         ]}
         hitSlop={8}
         accessibilityRole="button"
-        accessibilityLabel="Back"
+        accessibilityLabel={t("common.back")}
       >
         <Ionicons name="chevron-back" size={22} color={colors.text} />
       </Pressable>

@@ -2,12 +2,14 @@ import Ionicons from "@expo/vector-icons/Ionicons";
 import * as Haptics from "expo-haptics";
 import { Pressable, StyleSheet } from "react-native";
 import { darkColors } from "../../constants/colors";
+import { useT } from "../../i18n";
 import { toggleMuted, useMuted } from "../../video/mute";
 
 /** Round 🔊 / 🔇 button for the top bar of the player and the feed. */
 export function MuteButton() {
   const c = darkColors;
   const muted = useMuted();
+  const t = useT();
   return (
     <Pressable
       onPress={() => {
@@ -20,7 +22,7 @@ export function MuteButton() {
         { backgroundColor: c.overlay, opacity: pressed ? 0.7 : 1 },
       ]}
       accessibilityRole="button"
-      accessibilityLabel={muted ? "Turn sound on" : "Mute"}
+      accessibilityLabel={muted ? t("player.soundOn") : t("player.mute")}
     >
       <Ionicons
         name={muted ? "volume-mute" : "volume-high"}

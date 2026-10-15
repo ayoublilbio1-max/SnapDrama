@@ -3,6 +3,7 @@ import { memo } from "react";
 import { Pressable, ScrollView, StyleSheet } from "react-native";
 import { FILTERS, type FilterId } from "../constants/home";
 import { useTheme } from "../hooks/useTheme";
+import { useT } from "../i18n";
 import { AppText } from "./AppText";
 
 /** Popular · New · Hot · Categories · Anime. "Popular" is Home itself (active); the others open a page. */
@@ -12,6 +13,7 @@ export const FilterChips = memo(function FilterChips({
   onPress: (id: FilterId) => void;
 }) {
   const colors = useTheme();
+  const t = useT();
   return (
     <ScrollView
       horizontal
@@ -49,7 +51,7 @@ export const FilterChips = memo(function FilterChips({
               size={14}
               color={active ? "onPrimary" : "text"}
             >
-              {f.label}
+              {t(f.label)}
             </AppText>
           </Pressable>
         );

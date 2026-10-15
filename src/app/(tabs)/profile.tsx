@@ -2,7 +2,7 @@ import Ionicons from "@expo/vector-icons/Ionicons";
 import * as Haptics from "expo-haptics";
 import { Image } from "expo-image";
 import * as ImagePicker from "expo-image-picker";
-import { useRouter } from "expo-router";
+import { useRouter, type Href } from "expo-router";
 import { useEffect, useRef, useState } from "react";
 import {
   Linking,
@@ -10,6 +10,7 @@ import {
   Platform,
   Pressable,
   ScrollView,
+  Share,
   StyleSheet,
   Switch,
   TextInput,
@@ -19,6 +20,7 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { AppText } from "../../components/AppText";
 import { CoinIcon } from "../../components/CoinIcon";
 import { InfoModal } from "../../components/InfoModal";
+import { RateSheet } from "../../components/RateSheet";
 import {
   APP_NAME,
   APP_VERSION,
@@ -29,36 +31,44 @@ import { TAB_BAR_SPACE } from "../../constants/layout";
 import {
   settingsActions,
   useSettings,
+  type LangPref,
   type ThemePref,
 } from "../../data/settings";
 import { useUserState } from "../../data/userStore";
 import { useVip } from "../../data/vip";
 import { useBalance } from "../../data/wallet";
 import { useTheme } from "../../hooks/useTheme";
+import { LANGS, deviceLang, useT, type Key } from "../../i18n";
+import { cancelAllNotifications, ensurePermission } from "../../notifications";
 import { canNavigate } from "../../utils/navLock";
-import { toggleMuted, useMuted } from "../../video/mute";
+import { setMuted } from "../../video/mute";
 
 type IconName = React.ComponentProps<typeof Ionicons>["name"];
-type Popup = "feedback" | "signin" | "language" | null;
 
-const THEMES: { id: ThemePref; label: string; icon: IconName }[] = [
-  { id: "system", label: "System", icon: "phone-portrait-outline" },
-  { id: "light", label: "Light", icon: "sunny-outline" },
-  { id: "dark", label: "Dark", icon: "moon-outline" },
+const THEMES: { id: ThemePref; label: Key; icon: IconName }[] = [
+  {
+    id: "system",
+    label: "profile.themeSystem",
+    icon: "phone-portrait-outline",
+  },
+  { id: "light", label: "profile.themeLight", icon: "sunny-outline" },
+  { id: "dark", label: "profile.themeDark", icon: "moon-outline" },
 ];
 
-/** Profile tab: who you are (demo), wallet shortcuts, settings, help & feedback, version footer. */
+/** Profile tab: who you are (demo), wallet, account, settings, help & about, version footer. */
 export default function ProfileScreen() {
   const colors = useTheme();
+  const t = useT();
   const insets = useSafeAreaInsets();
   const router = useRouter();
   const settings = useSettings();
   const balance = useBalance();
   const vip = useVip();
   const user = useUserState();
-  const muted = useMuted();
-  const [popup, setPopup] = useState<Popup>(null);
+  const [feedback, setFeedback] = useState(false);
   const [nameOpen, setNameOpen] = useState(false);
+  const [langOpen, setLangOpen] = useState(false);
+  const [rateOpen, setRateOpen] = useState(false);
   const [toast, setToast] = useState("");
   const toastTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
@@ -75,10 +85,10 @@ export default function ProfileScreen() {
     toastTimer.current = setTimeout(() => setToast(""), 2200);
   };
 
-  const go = (path: "/coins" | "/vip" | "/my-list") => {
-    if (!canNavigate(path)) return;
-    if (__DEV__) console.log(`[profile] → ${path}`);
-    if (path === "/my-list") router.navigate(path);
+  const go = (path: Href, tab = false) => {
+    if (!canNavigate(String(path))) return;
+    if (__DEV__) console.log(`[profile] → ${String(path)}`);
+    if (tab) router.navigate(path);
     else router.push(path);
   };
 
@@ -98,16 +108,16 @@ export default function ProfileScreen() {
         settingsActions.setAvatar(res.assets[0].uri);
     } catch (e) {
       if (__DEV__) console.log("[profile] avatar picker failed", String(e));
-      showToast("Couldn't open your photos");
+      showToast(t("profile.photosError"));
     }
   };
 
   const openFiverr = () => {
-    setPopup(null);
+    setFeedback(false);
     if (__DEV__) console.log("[profile] open Fiverr");
     Linking.openURL(FIVERR_URL).catch((e) => {
       if (__DEV__) console.log("[profile] could not open Fiverr", String(e));
-      showToast("Couldn't open the link");
+      showToast(t("profile.linkError"));
     });
   };
 
@@ -117,13 +127,47 @@ export default function ProfileScreen() {
       await Promise.all([Image.clearDiskCache(), Image.clearMemoryCache()]);
       if (__DEV__)
         console.log(`[profile] image cache cleared in ${Date.now() - t0}ms`);
-      showToast("Image cache cleared");
+      showToast(t("profile.cacheCleared"));
     } catch (e) {
       if (__DEV__) console.log("[profile] clear cache failed", String(e));
-      showToast("Couldn't clear the cache");
+      showToast(t("profile.cacheError"));
     }
   };
 
+  const onStartMuted = (on: boolean) => {
+    settingsActions.setStartMuted(on);
+    setMuted(on, "settings"); // takes effect right away too
+  };
+
+  const onNotifications = async (on: boolean) => {
+    if (!on) {
+      settingsActions.setNotifications(false);
+      await cancelAllNotifications();
+      return;
+    }
+    const allowed = await ensurePermission(true);
+    if (!allowed) {
+      showToast(t("profile.notifDenied"));
+      Linking.openSettings().catch(() => {});
+      return;
+    }
+    settingsActions.setNotifications(true); // NotificationsGate plans them again
+    showToast(t("profile.notifOn"));
+  };
+
+  const shareApp = async () => {
+    try {
+      await Share.share({ message: t("share.app", { app: APP_NAME }) });
+    } catch (e) {
+      if (__DEV__) console.log("[profile] share app failed", String(e));
+    }
+  };
+
+  const name = settings.name === "Guest" ? t("profile.guest") : settings.name;
+  const langLabel =
+    settings.language === "system"
+      ? `${t("profile.langSystem")} · ${LANGS.find((l) => l.id === deviceLang())?.label}`
+      : (LANGS.find((l) => l.id === settings.language)?.label ?? "");
   const deviceInfo = `${APP_NAME} ${APP_VERSION} · Android API ${Platform.Version}`;
 
   return (
@@ -141,7 +185,7 @@ export default function ProfileScreen() {
           <Pressable
             onPress={pickAvatar}
             accessibilityRole="button"
-            accessibilityLabel="Change profile picture"
+            accessibilityLabel={t("profile.changePhoto")}
           >
             <View
               style={[
@@ -186,7 +230,7 @@ export default function ProfileScreen() {
                 numberOfLines={1}
                 style={{ flexShrink: 1 }}
               >
-                {settings.name}
+                {name}
               </AppText>
               <Ionicons
                 name="create-outline"
@@ -209,21 +253,21 @@ export default function ProfileScreen() {
             ) : null}
           </View>
           <Pressable
-            onPress={() => setPopup("signin")}
+            onPress={() => go("/account")}
             style={({ pressed }) => [
               styles.signIn,
               { borderColor: colors.primary, opacity: pressed ? 0.8 : 1 },
             ]}
           >
             <AppText weight="semibold" size={13} color="textAccent">
-              Sign in
+              {t("profile.signIn")}
             </AppText>
           </Pressable>
         </View>
 
         {/* stats */}
         <View style={styles.stats}>
-          <Stat label="Coins" onPress={() => go("/coins")}>
+          <Stat label={t("coins.title")} onPress={() => go("/coins")}>
             <View style={styles.statValue}>
               <CoinIcon size={18} glow={false} />
               <AppText weight="bold" size={18}>
@@ -237,10 +281,10 @@ export default function ProfileScreen() {
               size={18}
               style={{ color: vip ? colors.gold : colors.text }}
             >
-              {vip ? "Active" : "Get"}
+              {vip ? t("profile.vipActive") : t("profile.vipGet")}
             </AppText>
           </Stat>
-          <Stat label="Saved" onPress={() => go("/my-list")}>
+          <Stat label={t("mylist.saved")} onPress={() => go("/my-list", true)}>
             <AppText weight="bold" size={18}>
               {Object.keys(user.saved).length}
             </AppText>
@@ -248,53 +292,62 @@ export default function ProfileScreen() {
         </View>
 
         {/* wallet */}
-        <Section title="Wallet">
+        <Section title={t("profile.wallet")}>
           <Row
             icon="wallet-outline"
-            label="Coin shop"
-            hint="Coin packs & history"
+            label={t("profile.coinShop")}
+            hint={t("profile.coinShopHint")}
             onPress={() => go("/coins")}
           />
           <Row
             icon="diamond-outline"
             label="VIP"
-            hint={vip ? "Active" : "Unlock every episode free"}
+            hint={vip ? t("profile.vipActive") : t("profile.vipHint")}
             onPress={() => go("/vip")}
             last
           />
         </Section>
 
+        {/* account */}
+        <Section title={t("account.title")}>
+          <Row
+            icon="person-circle-outline"
+            label={t("profile.manageAccount")}
+            hint={t("profile.manageAccountHint")}
+            onPress={() => go("/account")}
+            last
+          />
+        </Section>
+
         {/* settings */}
-        <Section title="Settings">
+        <Section title={t("profile.settings")}>
           <View
             style={[
               styles.row,
+              styles.column,
               {
                 borderBottomWidth: StyleSheet.hairlineWidth,
                 borderBottomColor: colors.border,
-                flexDirection: "column",
-                alignItems: "stretch",
-                gap: 10,
               },
             ]}
           >
             <View style={styles.rowTop}>
               <RowIcon icon="contrast-outline" />
               <AppText weight="medium" size={15} style={{ flex: 1 }}>
-                Theme
+                {t("profile.theme")}
               </AppText>
             </View>
             <View
               style={[styles.themes, { backgroundColor: colors.surfaceAlt }]}
             >
-              {THEMES.map((t) => {
-                const on = settings.theme === t.id;
+              {THEMES.map((th) => {
+                const on = settings.theme === th.id;
                 return (
                   <Pressable
-                    key={t.id}
+                    key={th.id}
                     onPress={() => {
                       Haptics.selectionAsync().catch(() => {});
-                      settingsActions.setTheme(t.id);
+                      settingsActions.setTheme(th.id);
                     }}
                     style={[
                       styles.themeBtn,
@@ -304,7 +357,7 @@ export default function ProfileScreen() {
                     accessibilityState={{ selected: on }}
                   >
                     <Ionicons
-                      name={t.icon}
+                      name={th.icon}
                       size={15}
                       color={on ? colors.onPrimary : colors.textMuted}
                     />
@@ -312,67 +365,94 @@ export default function ProfileScreen() {
                       weight="semibold"
                       size={13}
                       color={on ? "onPrimary" : "textMuted"}
+                      numberOfLines={1}
                     >
-                      {t.label}
+                      {t(th.label)}
                     </AppText>
                   </Pressable>
                 );
               })}
             </View>
           </View>
-          <View
-            style={[
-              styles.row,
-              {
-                borderBottomWidth: StyleSheet.hairlineWidth,
-                borderBottomColor: colors.border,
-              },
-            ]}
-          >
-            <RowIcon
-              icon={muted ? "volume-mute-outline" : "volume-high-outline"}
-            />
-            <View style={{ flex: 1 }}>
-              <AppText weight="medium" size={15}>
-                Sound
-              </AppText>
-              <AppText size={12} color="textMuted">
-                {muted ? "Videos start muted" : "Videos play with sound"}
-              </AppText>
-            </View>
-            <Switch
-              value={!muted}
-              onValueChange={() => toggleMuted()}
-              trackColor={{ false: colors.surfaceAlt, true: colors.primary }}
-              thumbColor={colors.onPrimary}
-            />
-          </View>
           <Row
             icon="language-outline"
-            label="Language"
-            hint="English"
-            onPress={() => setPopup("language")}
+            label={t("profile.language")}
+            hint={langLabel}
+            onPress={() => setLangOpen(true)}
+          />
+          <SwitchRow
+            icon="volume-mute-outline"
+            label={t("profile.startMuted")}
+            hint={
+              settings.startMuted
+                ? t("profile.startMutedOn")
+                : t("profile.startMutedOff")
+            }
+            value={settings.startMuted}
+            onChange={onStartMuted}
+          />
+          <SwitchRow
+            icon="notifications-outline"
+            label={t("profile.notifications")}
+            hint={
+              settings.notifications
+                ? t("profile.notificationsOn")
+                : t("profile.notificationsOff")
+            }
+            value={settings.notifications}
+            onChange={onNotifications}
           />
           <Row
             icon="trash-bin-outline"
-            label="Clear image cache"
-            hint="Frees space, covers load again"
+            label={t("profile.clearCache")}
+            hint={t("profile.clearCacheHint")}
             onPress={clearCache}
             last
           />
         </Section>
 
-        {/* help */}
-        <Section title="Help">
+        {/* help & about */}
+        <Section title={t("profile.help")}>
           <Row
             icon="chatbubble-ellipses-outline"
-            label="Feedback"
-            hint="Report a bug or tell us what to improve"
-            onPress={() => setPopup("feedback")}
+            label={t("profile.feedback")}
+            hint={t("profile.feedbackHint")}
+            onPress={() => setFeedback(true)}
+          />
+          <Row
+            icon={settings.myStars ? "star" : "star-outline"}
+            label={t("profile.rateUs")}
+            hint={
+              settings.myStars
+                ? t("profile.rated", { n: settings.myStars })
+                : t("profile.rateUsHint", { app: APP_NAME })
+            }
+            onPress={() => setRateOpen(true)}
+          />
+          <Row
+            icon="share-social-outline"
+            label={t("profile.shareApp", { app: APP_NAME })}
+            hint={t("profile.shareAppHint")}
+            onPress={shareApp}
+          />
+          <Row
+            icon="help-circle-outline"
+            label={t("info.faq")}
+            onPress={() => go("/info/faq")}
+          />
+          <Row
+            icon="shield-checkmark-outline"
+            label={t("info.privacy")}
+            onPress={() => go("/info/privacy")}
+          />
+          <Row
+            icon="document-text-outline"
+            label={t("info.terms")}
+            onPress={() => go("/info/terms")}
           />
           <Row
             icon="briefcase-outline"
-            label="Contact the developer"
+            label={t("common.contactDev")}
             hint={`Fiverr · ${DEVELOPER}`}
             onPress={openFiverr}
             last
@@ -385,11 +465,11 @@ export default function ProfileScreen() {
             {APP_NAME} {APP_VERSION}
           </AppText>
           <AppText size={12} color="textMuted">
-            Developed with{" "}
+            {t("profile.madeWith")}{" "}
             <AppText size={12} style={{ color: colors.danger }}>
               ♥
             </AppText>{" "}
-            by {DEVELOPER}
+            {t("profile.by")} {DEVELOPER}
           </AppText>
         </View>
       </ScrollView>
@@ -416,40 +496,39 @@ export default function ProfileScreen() {
       ) : null}
 
       <InfoModal
-        visible={popup === "feedback"}
+        visible={feedback}
         icon="chatbubble-ellipses-outline"
-        title="Send feedback"
-        message={`Found a bug or have an idea to make ${APP_NAME} better? Contact me on Fiverr (${DEVELOPER}) and tell me what happened.`}
-        actionLabel="Open my Fiverr profile"
+        title={t("feedback.title")}
+        message={t("feedback.message", { app: APP_NAME, dev: DEVELOPER })}
+        actionLabel={t("feedback.open")}
         onAction={openFiverr}
-        onClose={() => setPopup(null)}
+        onClose={() => setFeedback(false)}
       >
         <View style={[styles.infoBox, { backgroundColor: colors.surfaceAlt }]}>
           <AppText size={12} color="textMuted">
-            Please add this to your message:
+            {t("feedback.addThis")}
           </AppText>
           <AppText weight="semibold" size={13} selectable>
             {deviceInfo}
           </AppText>
         </View>
       </InfoModal>
-      <InfoModal
-        visible={popup === "signin"}
-        icon="person-circle-outline"
-        title="Not in the demo"
-        message="Accounts and sync across devices are part of the full app. In this demo everything is saved on this phone."
-        actionLabel="Contact the developer"
-        onAction={openFiverr}
-        onClose={() => setPopup(null)}
+      <RateSheet
+        visible={rateOpen}
+        title={APP_NAME}
+        heading={t("rateApp.title", { app: APP_NAME })}
+        current={settings.myStars}
+        onSubmit={(stars) => {
+          settingsActions.setMyStars(stars);
+          setRateOpen(false);
+          showToast(stars >= 4 ? t("rateApp.thanksHigh") : t("rateApp.thanks"));
+        }}
+        onClose={() => setRateOpen(false)}
       />
-      <InfoModal
-        visible={popup === "language"}
-        icon="language-outline"
-        title="Not in the demo"
-        message="More app languages are part of the full app. This demo is in English."
-        actionLabel="Contact the developer"
-        onAction={openFiverr}
-        onClose={() => setPopup(null)}
+      <LanguageSheet
+        visible={langOpen}
+        current={settings.language}
+        onClose={() => setLangOpen(false)}
       />
       <NameSheet
         visible={nameOpen}
@@ -571,6 +650,141 @@ function Row({
   );
 }
 
+function SwitchRow({
+  icon,
+  label,
+  hint,
+  value,
+  onChange,
+}: {
+  icon: IconName;
+  label: string;
+  hint: string;
+  value: boolean;
+  onChange: (v: boolean) => void;
+}) {
+  const colors = useTheme();
+  return (
+    <View
+      style={[
+        styles.row,
+        {
+          borderBottomWidth: StyleSheet.hairlineWidth,
+          borderBottomColor: colors.border,
+        },
+      ]}
+    >
+      <RowIcon icon={icon} />
+      <View style={{ flex: 1 }}>
+        <AppText weight="medium" size={15}>
+          {label}
+        </AppText>
+        <AppText size={12} color="textMuted">
+          {hint}
+        </AppText>
+      </View>
+      <Switch
+        value={value}
+        onValueChange={onChange}
+        trackColor={{ false: colors.surfaceAlt, true: colors.primary }}
+        thumbColor={colors.onPrimary}
+      />
+    </View>
+  );
+}
+
+/** Settings › Language: follow the phone, or English / Français / Español / Deutsch. Changes the whole app at once. */
+function LanguageSheet({
+  visible,
+  current,
+  onClose,
+}: {
+  visible: boolean;
+  current: LangPref;
+  onClose: () => void;
+}) {
+  const colors = useTheme();
+  const t = useT();
+  const insets = useSafeAreaInsets();
+  const options: { id: LangPref; label: string; flag: string }[] = [
+    {
+      id: "system",
+      label: `${t("profile.langSystem")} · ${LANGS.find((l) => l.id === deviceLang())?.label}`,
+      flag: "📱",
+    },
+    ...LANGS,
+  ];
+  return (
+    <Modal
+      visible={visible}
+      transparent
+      animationType="slide"
+      statusBarTranslucent
+      navigationBarTranslucent
+      onRequestClose={onClose}
+    >
+      <Pressable
+        style={[styles.sheetBackdrop, { backgroundColor: colors.overlay }]}
+        onPress={onClose}
+      >
+        <Pressable
+          onPress={() => {}}
+          style={[
+            styles.bottomSheet,
+            {
+              backgroundColor: colors.surface,
+              borderColor: colors.border,
+              paddingBottom: insets.bottom + 16,
+            },
+          ]}
+        >
+          <View style={[styles.handle, { backgroundColor: colors.border }]} />
+          <AppText weight="bold" size={18} style={{ marginBottom: 6 }}>
+            {t("profile.language")}
+          </AppText>
+          {options.map((o) => {
+            const on = o.id === current;
+            return (
+              <Pressable
+                key={o.id}
+                onPress={() => {
+                  Haptics.selectionAsync().catch(() => {});
+                  settingsActions.setLanguage(o.id);
+                  onClose();
+                }}
+                style={({ pressed }) => [
+                  styles.langRow,
+                  {
+                    backgroundColor: on ? colors.primary + "22" : "transparent",
+                    borderColor: on ? colors.primary : colors.border,
+                    opacity: pressed ? 0.7 : 1,
+                  },
+                ]}
+              >
+                <AppText size={20}>{o.flag}</AppText>
+                <AppText
+                  weight={on ? "semibold" : "medium"}
+                  size={15}
+                  style={{ flex: 1 }}
+                >
+                  {o.label}
+                </AppText>
+                {on && (
+                  <Ionicons
+                    name="checkmark-circle"
+                    size={20}
+                    color={colors.primary}
+                  />
+                )}
+              </Pressable>
+            );
+          })}
+        </Pressable>
+      </Pressable>
+    </Modal>
+  );
+}
+
 /** Small dialog to change the display name (saved on the phone). Sits high, so the keyboard never covers it. */
 function NameSheet({
   visible,
@@ -582,11 +796,12 @@ function NameSheet({
   onClose: () => void;
 }) {
   const colors = useTheme();
+  const t = useT();
   const insets = useSafeAreaInsets();
   const [value, setValue] = useState(current);
 
   useEffect(() => {
-    if (visible) setValue(current);
+    if (visible) setValue(current === "Guest" ? "" : current);
   }, [visible, current]);
 
   const save = () => {
@@ -616,19 +831,19 @@ function NameSheet({
         <Pressable
           onPress={() => {}}
           style={[
-            styles.sheet,
+            styles.dialog,
             { backgroundColor: colors.surface, borderColor: colors.border },
           ]}
         >
           <AppText weight="bold" size={18}>
-            Your name
+            {t("profile.yourName")}
           </AppText>
           <TextInput
             value={value}
             onChangeText={setValue}
             maxLength={24}
             autoFocus
-            placeholder="Guest"
+            placeholder={t("profile.guest")}
             placeholderTextColor={colors.textMuted}
             returnKeyType="done"
             onSubmitEditing={save}
@@ -650,7 +865,7 @@ function NameSheet({
             ]}
           >
             <AppText weight="semibold" size={15} color="onPrimary">
-              Save
+              {t("profile.save")}
             </AppText>
           </Pressable>
         </Pressable>
@@ -717,6 +932,7 @@ const styles = StyleSheet.create({
     gap: 12,
     paddingVertical: 12,
   },
+  column: { flexDirection: "column", alignItems: "stretch", gap: 10 },
   rowTop: { flexDirection: "row", alignItems: "center", gap: 12 },
   rowIcon: {
     width: 34,
@@ -734,6 +950,7 @@ const styles = StyleSheet.create({
     gap: 6,
     height: 34,
     borderRadius: 11,
+    paddingHorizontal: 4,
   },
   footer: { alignItems: "center", gap: 2, marginTop: 26 },
   toast: {
@@ -742,6 +959,7 @@ const styles = StyleSheet.create({
     borderRadius: 18,
     paddingHorizontal: 16,
     paddingVertical: 8,
+    maxWidth: "86%",
   },
   infoBox: {
     alignSelf: "stretch",
@@ -751,7 +969,32 @@ const styles = StyleSheet.create({
     marginBottom: 8,
   },
   backdrop: { flex: 1, justifyContent: "flex-start", paddingHorizontal: 24 },
-  sheet: { borderRadius: 24, borderWidth: 1, padding: 20, gap: 12 },
+  dialog: { borderRadius: 24, borderWidth: 1, padding: 20, gap: 12 },
+  sheetBackdrop: { flex: 1, justifyContent: "flex-end" },
+  bottomSheet: {
+    borderTopLeftRadius: 26,
+    borderTopRightRadius: 26,
+    borderWidth: 1,
+    paddingHorizontal: 16,
+    paddingTop: 10,
+    gap: 8,
+  },
+  handle: {
+    alignSelf: "center",
+    width: 40,
+    height: 4,
+    borderRadius: 2,
+    marginBottom: 8,
+  },
+  langRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 12,
+    borderRadius: 14,
+    borderWidth: 1,
+    paddingHorizontal: 14,
+    height: 52,
+  },
   input: {
     height: 50,
     borderRadius: 14,

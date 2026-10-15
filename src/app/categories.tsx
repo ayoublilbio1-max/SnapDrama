@@ -2,11 +2,11 @@ import { LinearGradient } from "expo-linear-gradient";
 import { useRouter } from "expo-router";
 import { useMemo } from "react";
 import {
-    Pressable,
-    ScrollView,
-    StyleSheet,
-    View,
-    useWindowDimensions,
+  Pressable,
+  ScrollView,
+  StyleSheet,
+  View,
+  useWindowDimensions,
 } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { AppText } from "../components/AppText";
@@ -14,10 +14,13 @@ import { ScreenHeader } from "../components/ScreenHeader";
 import { CATEGORIES } from "../constants/home";
 import { seriesByTag, useCatalog } from "../data/catalog";
 import { useTheme } from "../hooks/useTheme";
+import { useT } from "../i18n";
+import { canNavigate } from "../utils/navLock";
 
 /** All categories (2 columns). Tap → the series that have this tag. */
 export default function CategoriesScreen() {
   const colors = useTheme();
+  const t = useT();
   const router = useRouter();
   const insets = useSafeAreaInsets();
   const { width } = useWindowDimensions();
@@ -34,7 +37,7 @@ export default function CategoriesScreen() {
 
   return (
     <View style={{ flex: 1, backgroundColor: colors.background }}>
-      <ScreenHeader title="Categories" />
+      <ScreenHeader title={t("filter.categories")} />
       <ScrollView
         contentContainerStyle={[
           styles.grid,
@@ -45,10 +48,11 @@ export default function CategoriesScreen() {
           <Pressable
             key={c}
             onPress={() => {
+              if (!canNavigate(`category ${c}`)) return;
               if (__DEV__) console.log(`[categories] open ${c} (${counts[c]})`);
               router.push({
                 pathname: "/browse",
-                params: { kind: "category", value: c, title: c },
+                params: { kind: "category", value: c },
               });
             }}
             style={({ pressed }) => [
@@ -70,10 +74,12 @@ export default function CategoriesScreen() {
               />
             )}
             <AppText weight="bold" size={16}>
-              {c}
+              {t.tag(c)}
             </AppText>
             <AppText size={12} color="textMuted">
-              {counts[c] ? `${counts[c]} series` : "No series yet"}
+              {counts[c]
+                ? t("common.seriesCount", { n: counts[c] })
+                : t("common.noSeries")}
             </AppText>
           </Pressable>
         ))}

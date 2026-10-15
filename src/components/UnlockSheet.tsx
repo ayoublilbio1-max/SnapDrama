@@ -17,6 +17,7 @@ import type { Series } from "../data/types";
 import { useVip } from "../data/vip";
 import { useBalance, walletActions } from "../data/wallet";
 import { useTheme } from "../hooks/useTheme";
+import { useT } from "../i18n";
 import { withAlpha } from "../utils/color";
 import { AppText } from "./AppText";
 import { CoinIcon } from "./CoinIcon";
@@ -47,6 +48,7 @@ export function UnlockSheet({
   onGetVip: () => void;
 }) {
   const colors = useTheme();
+  const t = useT();
   const insets = useSafeAreaInsets();
   const balance = useBalance();
   const vip = !!useVip();
@@ -175,7 +177,7 @@ export function UnlockSheet({
             align="center"
             style={{ marginTop: 14 }}
           >
-            {done ? `Episode ${n} unlocked` : `Unlock episode ${n}`}
+            {done ? t("unlock.doneTitle", { n }) : t("unlock.title", { n })}
           </AppText>
           <AppText size={13} color="textMuted" align="center" numberOfLines={1}>
             {series.title} · {n} / {series.totalEpisodes}
@@ -185,7 +187,7 @@ export function UnlockSheet({
           <View style={[styles.box, { backgroundColor: colors.surfaceAlt }]}>
             <View style={styles.boxRow}>
               <AppText size={14} color="textMuted">
-                {done ? "Paid" : "Price"}
+                {done ? t("unlock.paid") : t("unlock.price")}
               </AppText>
               {vip ? (
                 <View style={styles.coins}>
@@ -195,7 +197,7 @@ export function UnlockSheet({
                     size={15}
                     style={{ color: colors.gold }}
                   >
-                    Free with VIP
+                    {t("unlock.freeVip")}
                   </AppText>
                 </View>
               ) : (
@@ -214,7 +216,7 @@ export function UnlockSheet({
             <View style={[styles.line, { backgroundColor: colors.border }]} />
             <View style={styles.boxRow}>
               <AppText size={14} color="textMuted">
-                Your balance
+                {t("unlock.balance")}
               </AppText>
               <View style={styles.coins}>
                 <CoinIcon size={18} glow={false} />
@@ -243,7 +245,7 @@ export function UnlockSheet({
               align="center"
               style={{ color: colors.gold, marginTop: 10 }}
             >
-              You need {missing} more coins
+              {t("unlock.needMore", { n: missing })}
             </AppText>
           )}
 
@@ -268,20 +270,20 @@ export function UnlockSheet({
               <>
                 <Ionicons name="play" size={18} color={colors.onPrimary} />
                 <AppText weight="bold" size={16} color="onPrimary">
-                  Play episode {n}
+                  {t("unlock.play", { n })}
                 </AppText>
               </>
             ) : vip ? (
               <>
                 <Ionicons name="diamond" size={16} color={colors.onPrimary} />
                 <AppText weight="bold" size={16} color="onPrimary">
-                  Unlock free with VIP
+                  {t("unlock.vipBtn")}
                 </AppText>
               </>
             ) : enough ? (
               <>
                 <AppText weight="bold" size={16} color="onPrimary">
-                  Unlock
+                  {t("unlock.btn")}
                 </AppText>
                 <View
                   style={[
@@ -301,7 +303,7 @@ export function UnlockSheet({
               </>
             ) : (
               <AppText weight="bold" size={16} color="onPrimary">
-                Get coins
+                {t("unlock.getCoins")}
               </AppText>
             )}
           </Pressable>
@@ -311,7 +313,7 @@ export function UnlockSheet({
               {enough ? (
                 <Pressable onPress={onGetCoins} hitSlop={8} style={styles.link}>
                   <AppText weight="medium" size={14} color="textAccent">
-                    Get more coins
+                    {t("unlock.getMore")}
                   </AppText>
                 </Pressable>
               ) : null}
@@ -330,14 +332,14 @@ export function UnlockSheet({
                   size={14}
                   style={{ color: colors.gold }}
                 >
-                  Or go VIP — no coins needed
+                  {t("unlock.orVip")}
                 </AppText>
               </Pressable>
             </View>
           ) : (
             <Pressable onPress={onClose} hitSlop={8} style={styles.link}>
               <AppText weight="medium" size={14} color="textMuted">
-                Close
+                {t("common.close")}
               </AppText>
             </Pressable>
           )}

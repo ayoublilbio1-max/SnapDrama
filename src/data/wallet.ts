@@ -1,5 +1,6 @@
 import Storage from "expo-sqlite/kv-store";
 import { useSyncExternalStore } from "react";
+import type { Key } from "../i18n/strings";
 import { isEpisodeFree } from "./catalog";
 import type { Episode, Series } from "./types";
 
@@ -12,7 +13,8 @@ export type CoinEntry = {
   id: string;
   kind: "welcome" | "unlock" | "buy" | "reward";
   amount: number; // + received, − spent
-  label: string;
+  label: string; // English text (logs + old lines)
+  meta?: { key: Key; params?: Record<string, string | number> }; // shown in the app language
   at: number; // time
 };
 
@@ -43,16 +45,20 @@ function persist() {
   });
 }
 
+export type EntryMeta = NonNullable<CoinEntry["meta"]>;
+
 function entry(
   kind: CoinEntry["kind"],
   amount: number,
   label: string,
+  meta?: EntryMeta,
 ): CoinEntry {
   return {
     id: `${Date.now()}-${Math.random().toString(36).slice(2, 7)}`,
     kind,
     amount,
     label,
+    meta,
     at: Date.now(),
   };
 }
@@ -85,7 +91,11 @@ async function doLoad() {
       // first start on this phone → welcome coins
       set({
         balance: WELCOME_COINS,
-        history: [entry("welcome", WELCOME_COINS, "Welcome bonus")],
+        history: [
+          entry("welcome", WELCOME_COINS, "Welcome bonus", {
+            key: "hist.welcome",
+          }),
+        ],
         unlocked: {},
       });
       if (__DEV__)
@@ -188,7 +198,10 @@ export const walletActions = {
     set({
       balance,
       history: [
-        entry("unlock", -price, `${series.title} · EP ${n}`),
+        entry("unlock", -price, `${series.title} · EP ${n}`, {
+          key: "hist.unlock",
+          params: { title: series.title, n },
+        }),
         ...state.history,
       ],
       unlocked: { ...state.unlocked, [unlockKey(series.id, n)]: Date.now() },
@@ -200,12 +213,12 @@ export const walletActions = {
     return true;
   },
   /** Demo coin pack: no payment, the coins are just added. */
-  buy(coins: number, label: string) {
+  buy(coins: number, label: string, meta?: EntryMeta) {
     const balance = state.balance + coins;
     set({
       ...state,
       balance,
-      history: [entry("buy", coins, label), ...state.history],
+      history: [entry("buy", coins, label, meta), ...state.history],
     });
     if (__DEV__)
       console.log(
@@ -213,12 +226,12 @@ export const walletActions = {
       );
   },
   /** Free coins (Rewards tab). */
-  reward(coins: number, label: string) {
+  reward(coins: number, label: string, meta?: EntryMeta) {
     const balance = state.balance + coins;
     set({
       ...state,
       balance,
-      history: [entry("reward", coins, label), ...state.history],
+      history: [entry("reward", coins, label, meta), ...state.history],
     });
     if (__DEV__)
       console.log(`[wallet] reward +${coins} (${label}) — balance ${balance}`);

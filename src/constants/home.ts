@@ -1,5 +1,6 @@
 import { seriesByGroup, seriesByTag } from "../data/catalog";
 import type { Catalog, Series } from "../data/types";
+import type { Key } from "../i18n/strings";
 
 /**
  * Home rows, in order. To add a row later: add one line here (JS only).
@@ -14,44 +15,44 @@ export type RowSource =
 export type RowStyle = "default" | "ranked" | "deal";
 export type HomeRowDef = {
   id: string;
-  title: string;
+  title: Key;
   source: RowSource;
   style?: RowStyle;
-};
+}; // title = i18n key
 
 export const HOME_ROWS: HomeRowDef[] = [
-  { id: "continue", title: "Continue watching", source: { type: "continue" } },
+  { id: "continue", title: "row.continue", source: { type: "continue" } },
   {
     id: "most-trending",
-    title: "Most trending",
+    title: "row.trending",
     source: { type: "group", value: "most-trending" },
     style: "ranked",
   },
   {
     id: "limited-time-deals",
-    title: "Limited-time deals",
+    title: "row.deals",
     source: { type: "group", value: "limited-time-deals" },
     style: "deal",
   },
   {
     id: "might-love",
-    title: "We think you might love",
+    title: "row.mightLove",
     source: { type: "tag", value: "Recommended" },
   },
-  { id: "hot", title: "Hot", source: { type: "tag", value: "Hot" } },
+  { id: "hot", title: "row.hot", source: { type: "tag", value: "Hot" } },
   {
     id: "forbidden-love",
-    title: "Forbidden Love",
+    title: "row.forbidden",
     source: { type: "tag", value: "Forbidden Love" },
   },
   {
     id: "revenge",
-    title: "Revenge",
+    title: "row.revenge",
     source: { type: "tag", value: "Revenge" },
   },
   {
     id: "billionaire",
-    title: "Billionaire",
+    title: "row.billionaire",
     source: { type: "tag", value: "Billionaire" },
   },
 ];
@@ -74,15 +75,15 @@ export function heroSeries(trending: Series[]): Series[] {
 
 /** Filter chips under the header. "popular" = Home itself; the others open their own page. */
 export const FILTERS = [
-  { id: "popular", label: "Popular" },
-  { id: "new", label: "New" },
-  { id: "hot", label: "Hot" },
-  { id: "categories", label: "Categories" },
-  { id: "anime", label: "Anime" },
-] as const;
+  { id: "popular", label: "filter.popular" },
+  { id: "new", label: "filter.new" },
+  { id: "hot", label: "filter.hot" },
+  { id: "categories", label: "filter.categories" },
+  { id: "anime", label: "filter.anime" },
+] as const satisfies readonly { id: string; label: Key }[];
 export type FilterId = (typeof FILTERS)[number]["id"];
 
-/** Categories page. Each one lists the series that have this tag in catalog.json. */
+/** Categories page. Each one lists the series that have this tag in catalog.json (name shown with t.tag()). */
 export const CATEGORIES = [
   "Romance",
   "Billionaire",

@@ -1,5 +1,6 @@
 import { Linking } from "react-native";
 import { FIVERR_URL } from "../constants/app";
+import { useT } from "../i18n";
 import { InfoModal } from "./InfoModal";
 
 /**
@@ -13,13 +14,14 @@ export function DemoEpisodeModal({
   visible: boolean;
   onClose: () => void;
 }) {
+  const t = useT();
   return (
     <InfoModal
       visible={visible}
       icon="sparkles-outline"
-      title="This is a demo"
-      message="This episode isn't included in the demo — only the free episodes can be watched. To get the full app, contact the developer."
-      actionLabel="Contact the developer"
+      title={t("demo.title")}
+      message={t("demo.episode")}
+      actionLabel={t("common.contactDev")}
       onAction={() => {
         onClose();
         if (__DEV__) console.log("[paywall] demo → open Fiverr");

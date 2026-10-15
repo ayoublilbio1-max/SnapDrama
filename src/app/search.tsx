@@ -8,10 +8,13 @@ import { SeriesGrid } from "../components/SeriesGrid";
 import { getTrending, useCatalog } from "../data/catalog";
 import type { Series } from "../data/types";
 import { useTheme } from "../hooks/useTheme";
+import { useT } from "../i18n";
+import { canNavigate } from "../utils/navLock";
 
 /** Search all series by title or tag. Empty search → trending series. */
 export default function SearchScreen() {
   const colors = useTheme();
+  const t = useT();
   const router = useRouter();
   const { catalog } = useCatalog();
   const [q, setQ] = useState("");
@@ -27,6 +30,7 @@ export default function SearchScreen() {
 
   const open = useCallback(
     (s: Series) => {
+      if (!canNavigate(`series ${s.id}`)) return;
       if (__DEV__) console.log(`[search] "${query}" → open ${s.id}`);
       router.push({ pathname: "/series/[id]", params: { id: s.id } });
     },
@@ -48,12 +52,14 @@ export default function SearchScreen() {
       <SeriesGrid
         items={items}
         onOpen={open}
-        emptyText={`No series for "${query}"`}
+        emptyText={t("search.none", { q: query })}
         header={
           <AppText weight="bold" size={16} style={styles.heading}>
             {query
-              ? `${items.length} result${items.length === 1 ? "" : "s"}`
-              : "Popular now"}
+              ? t(items.length === 1 ? "search.result" : "search.results", {
+                  n: items.length,
+                })
+              : t("search.popular")}
           </AppText>
         }
       />

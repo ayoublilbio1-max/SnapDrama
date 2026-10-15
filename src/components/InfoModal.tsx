@@ -3,6 +3,7 @@ import { LinearGradient } from "expo-linear-gradient";
 import type { ReactNode } from "react";
 import { Modal, Pressable, StyleSheet, View } from "react-native";
 import { useTheme } from "../hooks/useTheme";
+import { useT } from "../i18n";
 import { AppText } from "./AppText";
 
 type IconName = React.ComponentProps<typeof Ionicons>["name"];
@@ -19,7 +20,7 @@ export function InfoModal({
   children,
   actionLabel,
   onAction,
-  closeLabel = "Close",
+  closeLabel,
   onClose,
 }: {
   visible: boolean;
@@ -33,6 +34,7 @@ export function InfoModal({
   onClose: () => void;
 }) {
   const colors = useTheme();
+  const t = useT();
   return (
     <Modal
       visible={visible}
@@ -107,7 +109,7 @@ export function InfoModal({
             ]}
           >
             <AppText weight="semibold" size={15}>
-              {closeLabel}
+              {closeLabel ?? t("common.close")}
             </AppText>
           </Pressable>
         </Pressable>

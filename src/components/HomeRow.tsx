@@ -2,6 +2,7 @@ import { memo, useCallback } from "react";
 import { FlatList, Pressable, StyleSheet, View } from "react-native";
 import type { HomeRowDef } from "../constants/home";
 import type { Series } from "../data/types";
+import { useT } from "../i18n";
 import { AppText } from "./AppText";
 import { EmptyState } from "./EmptyState";
 import { SeriesCard } from "./SeriesCard";
@@ -24,6 +25,7 @@ export const HomeRow = memo(function HomeRow({
   onSeeAll,
 }: Props) {
   const style = def.style ?? "default";
+  const t = useT();
 
   const renderItem = useCallback(
     ({ item, index }: { item: Series; index: number }) => (
@@ -42,19 +44,19 @@ export const HomeRow = memo(function HomeRow({
     <View style={styles.root}>
       <View style={styles.header}>
         <AppText weight="bold" size={18} numberOfLines={1} style={styles.title}>
-          {def.title}
+          {t(def.title)}
         </AppText>
         {items.length > 0 && (
           <Pressable onPress={() => onSeeAll(def)} hitSlop={10}>
             <AppText weight="medium" size={13} color="textAccent">
-              See all
+              {t("common.seeAll")}
             </AppText>
           </Pressable>
         )}
       </View>
 
       {items.length === 0 ? (
-        <EmptyState />
+        <EmptyState text={t("common.noSeries")} />
       ) : (
         <FlatList
           horizontal

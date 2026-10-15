@@ -4,11 +4,18 @@ import { View } from "react-native";
 import { ScreenHeader } from "../components/ScreenHeader";
 import { SearchField, matchesQuery } from "../components/SearchField";
 import { SeriesGrid } from "../components/SeriesGrid";
-import { HOME_ROWS, seriesForFilter, seriesForSource } from "../constants/home";
+import {
+  FILTERS,
+  HOME_ROWS,
+  seriesForFilter,
+  seriesForSource,
+} from "../constants/home";
 import { seriesByTag, useCatalog } from "../data/catalog";
 import { useContinueWatching } from "../data/history";
 import type { Series } from "../data/types";
 import { useTheme } from "../hooks/useTheme";
+import { useT } from "../i18n";
+import { canNavigate } from "../utils/navLock";
 
 /**
  * One page for every list of series:
@@ -20,11 +27,11 @@ import { useTheme } from "../hooks/useTheme";
 export default function BrowseScreen() {
   const colors = useTheme();
   const router = useRouter();
-  const { kind, value, title } = useLocalSearchParams<{
+  const { kind, value } = useLocalSearchParams<{
     kind: string;
     value: string;
-    title?: string;
   }>();
+  const t = useT();
   const { catalog } = useCatalog();
   const continueList = useContinueWatching();
   const [q, setQ] = useState("");
@@ -52,6 +59,7 @@ export default function BrowseScreen() {
 
   const open = useCallback(
     (s: Series) => {
+      if (!canNavigate(`series ${s.id}`)) return;
       if (__DEV__ && query)
         console.log(`[browse] "${query}" in ${value} → open ${s.id}`);
       router.push({ pathname: "/series/[id]", params: { id: s.id } });
@@ -59,7 +67,16 @@ export default function BrowseScreen() {
     [router, query, value],
   );
 
-  const pageName = title ?? value ?? "";
+  // page title in the app language (changes with Settings › Language)
+  const row =
+    kind === "row" ? HOME_ROWS.find((r) => r.id === value) : undefined;
+  const filter =
+    kind === "filter" ? FILTERS.find((f) => f.id === value) : undefined;
+  const pageName = row
+    ? t(row.title)
+    : filter
+      ? t(filter.label)
+      : t.tag(value ?? "");
 
   return (
     <View style={{ flex: 1, backgroundColor: colors.background }}>
@@ -68,14 +85,14 @@ export default function BrowseScreen() {
         <SearchField
           value={q}
           onChange={setQ}
-          placeholder={`Search in ${pageName}`}
+          placeholder={t("search.inPage", { page: pageName })}
           style={{ marginHorizontal: 16, marginBottom: 14 }}
         />
       )}
       <SeriesGrid
         items={items}
         onOpen={open}
-        emptyText={query ? `No series for "${query}"` : undefined}
+        emptyText={query ? t("search.none", { q: query }) : undefined}
       />
     </View>
   );

@@ -6,6 +6,7 @@ import { darkColors } from "../../constants/colors";
 import type { Series } from "../../data/types";
 import { useVip } from "../../data/vip";
 import { useBalance } from "../../data/wallet";
+import { useT } from "../../i18n";
 import { withAlpha } from "../../utils/color";
 import { AppText } from "../AppText";
 import { CoinIcon } from "../CoinIcon";
@@ -34,6 +35,7 @@ export function LockedCard({
   onEpisodes: () => void;
 }) {
   const c = darkColors;
+  const t = useT();
   const balance = useBalance();
   const vip = !!useVip();
   return (
@@ -77,7 +79,7 @@ export function LockedCard({
           align="center"
           style={{ marginTop: 20 }}
         >
-          Episode {n} {unlocked ? "unlocked" : "is locked"}
+          {unlocked ? t("unlock.doneTitle", { n }) : t("locked.title", { n })}
         </AppText>
         <AppText
           size={14}
@@ -105,20 +107,20 @@ export function LockedCard({
             <>
               <Ionicons name="play" size={18} color={c.onPrimary} />
               <AppText weight="bold" size={16} color="onPrimary">
-                Play episode {n}
+                {t("unlock.play", { n })}
               </AppText>
             </>
           ) : vip ? (
             <>
               <Ionicons name="diamond" size={16} color={c.onPrimary} />
               <AppText weight="bold" size={16} color="onPrimary">
-                Unlock free with VIP
+                {t("unlock.vipBtn")}
               </AppText>
             </>
           ) : (
             <>
               <AppText weight="bold" size={16} color="onPrimary">
-                Unlock
+                {t("unlock.btn")}
               </AppText>
               <View style={[styles.price, { backgroundColor: c.overlay }]}>
                 <CoinIcon size={20} glow={false} />
@@ -142,7 +144,7 @@ export function LockedCard({
             </>
           ) : null}
           <AppText size={13} style={{ color: c.textMuted }}>
-            Balance
+            {t("locked.balance")}
           </AppText>
           <CoinIcon size={16} glow={false} />
           <AppText weight="semibold" size={13} color="onPrimary">
@@ -153,7 +155,7 @@ export function LockedCard({
         <Pressable onPress={onEpisodes} hitSlop={8} style={styles.link}>
           <Ionicons name="albums-outline" size={16} color={c.textAccent} />
           <AppText weight="medium" size={14} style={{ color: c.textAccent }}>
-            All episodes
+            {t("locked.allEpisodes")}
           </AppText>
         </Pressable>
       </View>

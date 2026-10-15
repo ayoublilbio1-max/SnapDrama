@@ -18,6 +18,8 @@ import {
 } from "../data/vip";
 import { useBalance } from "../data/wallet";
 import { useTheme } from "../hooks/useTheme";
+import { useT, type Key } from "../i18n";
+import { canNavigate } from "../utils/navLock";
 
 /**
  * DEMO VIP page — simulated payment, the plan is saved on the phone (src/data/vip.ts).
@@ -27,17 +29,23 @@ import { useTheme } from "../hooks/useTheme";
 
 const BENEFITS: {
   icon: React.ComponentProps<typeof Ionicons>["name"];
-  text: string;
+  text: Key;
 }[] = [
-  { icon: "lock-open", text: "Unlock every episode of every series" },
-  { icon: "ban", text: "No ads, ever" },
-  { icon: "sparkles", text: "New episodes first" },
-  { icon: "gift", text: `${VIP_DAILY_COINS} bonus coins every day` },
-  { icon: "film", text: "Full HD quality" },
+  { icon: "lock-open", text: "vip.b1" },
+  { icon: "ban", text: "vip.b2" },
+  { icon: "sparkles", text: "vip.b3" },
+  { icon: "gift", text: "vip.b4" },
+  { icon: "film", text: "vip.b5" },
 ];
+
+// plan texts in the app language (ids from src/data/vip.ts)
+const planName = (id: PlanId) => `vip.plan.${id}` as Key;
+const planPer = (id: PlanId) => `vip.per.${id}` as Key;
+const planNote = (id: PlanId) => `vip.note.${id}` as Key;
 
 export default function VipScreen() {
   const colors = useTheme();
+  const t = useT();
   const insets = useSafeAreaInsets();
   const router = useRouter();
   const active = useVip();
@@ -79,8 +87,8 @@ export default function VipScreen() {
           </AppText>
           <AppText size={14} color="textMuted" align="center">
             {active
-              ? `You are VIP · ${PLANS.find((p) => p.id === active)?.name} plan`
-              : "Watch every drama without waiting or coins."}
+              ? t("vip.youAre", { plan: t(planName(active)) })
+              : t("vip.pitch")}
           </AppText>
         </View>
 
@@ -101,7 +109,7 @@ export default function VipScreen() {
                 <Ionicons name={b.icon} size={16} color={colors.gold} />
               </View>
               <AppText size={14} style={{ flex: 1 }}>
-                {b.text}
+                {t(b.text, { n: VIP_DAILY_COINS })}
               </AppText>
             </View>
           ))}
@@ -132,11 +140,11 @@ export default function VipScreen() {
                 />
                 <View style={{ flex: 1 }}>
                   <AppText weight="semibold" size={16}>
-                    {p.name}
+                    {t(planName(p.id))}
                   </AppText>
                   {p.note ? (
                     <AppText size={12} style={{ color: colors.gold }}>
-                      {p.note}
+                      {t(planNote(p.id))}
                     </AppText>
                   ) : null}
                 </View>
@@ -144,7 +152,7 @@ export default function VipScreen() {
                   {p.price}
                   <AppText size={12} color="textMuted">
                     {" "}
-                    {p.per}
+                    {t(planPer(p.id))}
                   </AppText>
                 </AppText>
               </Pressable>
@@ -168,7 +176,7 @@ export default function VipScreen() {
             size={16}
             color={active ? "danger" : "onPrimary"}
           >
-            {active ? "Cancel VIP (demo)" : `Get VIP · ${plan.price}`}
+            {active ? t("vip.cancelDemo") : t("vip.get", { price: plan.price })}
           </AppText>
         </Pressable>
 
@@ -178,12 +186,12 @@ export default function VipScreen() {
           align="center"
           style={{ marginTop: 10 }}
         >
-          Demo mode — payments are simulated for this showcase.
+          {t("common.demoPayments")}
         </AppText>
 
         {/* link to the coin shop: pay per episode instead */}
         <Pressable
-          onPress={() => router.push("/coins")}
+          onPress={() => canNavigate("coins") && router.push("/coins")}
           style={({ pressed }) => [
             styles.coinsLink,
             {
@@ -193,15 +201,15 @@ export default function VipScreen() {
             },
           ]}
           accessibilityRole="button"
-          accessibilityLabel="Coin shop"
+          accessibilityLabel={t("profile.coinShop")}
         >
           <CoinIcon size={30} glow={false} />
           <View style={{ flex: 1 }}>
             <AppText weight="semibold" size={15}>
-              {active ? "Your coins" : "Prefer to pay per episode?"}
+              {active ? t("vip.yourCoins") : t("vip.perEpisode")}
             </AppText>
             <AppText size={12} color="textMuted">
-              Balance {balance} coins · coin packs & history
+              {t("vip.coinsHint", { n: balance })}
             </AppText>
           </View>
           <Ionicons name="chevron-forward" size={20} color={colors.textMuted} />
@@ -211,9 +219,12 @@ export default function VipScreen() {
       <ConfirmModal
         visible={confirm === "buy"}
         icon="diamond"
-        title={`Get ${plan.name} VIP?`}
-        message={`${plan.price} ${plan.per}. Demo mode: the payment is simulated and your VIP plan is saved on this phone.`}
-        confirmLabel="Get VIP"
+        title={t("vip.getTitle", { plan: t(planName(plan.id)) })}
+        message={t("vip.getMsg", {
+          price: plan.price,
+          per: t(planPer(plan.id)),
+        })}
+        confirmLabel={t("vip.getShort")}
         destructive={false}
         onConfirm={activate}
         onCancel={() => setConfirm(null)}
@@ -221,10 +232,10 @@ export default function VipScreen() {
       <ConfirmModal
         visible={confirm === "cancel"}
         icon="close-circle-outline"
-        title="Cancel VIP?"
-        message="You will lose the VIP benefits in this demo."
-        confirmLabel="Cancel VIP"
-        cancelLabel="Keep VIP"
+        title={t("vip.cancelTitle")}
+        message={t("vip.cancelMsg")}
+        confirmLabel={t("vip.cancelBtn")}
+        cancelLabel={t("vip.keep")}
         onConfirm={cancel}
         onCancel={() => setConfirm(null)}
       />

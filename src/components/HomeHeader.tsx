@@ -2,6 +2,7 @@ import Ionicons from "@expo/vector-icons/Ionicons";
 import { Image } from "expo-image";
 import { Pressable, StyleSheet, View } from "react-native";
 import { useTheme } from "../hooks/useTheme";
+import { useT } from "../i18n";
 import { AppText } from "./AppText";
 import { CoinIcon } from "./CoinIcon";
 
@@ -20,6 +21,7 @@ export function HomeHeader({
   onSearch: () => void;
 }) {
   const colors = useTheme();
+  const t = useT();
   return (
     <View style={styles.row}>
       <Image
@@ -62,7 +64,7 @@ export function HomeHeader({
           { backgroundColor: colors.surface, opacity: pressed ? 0.8 : 1 },
         ]}
         accessibilityRole="button"
-        accessibilityLabel="Search"
+        accessibilityLabel={t("common.search")}
         hitSlop={6}
       >
         <Ionicons name="search" size={20} color={colors.text} />

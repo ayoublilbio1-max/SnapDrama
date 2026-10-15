@@ -28,8 +28,10 @@ import { useResume } from "../../data/history";
 import { seriesStats, useUserState, userActions } from "../../data/userStore";
 import { playableEpisode } from "../../data/wallet";
 import { useTheme } from "../../hooks/useTheme";
+import { useT } from "../../i18n";
 import { withAlpha } from "../../utils/color";
 import { formatCount } from "../../utils/format";
+import { canNavigate } from "../../utils/navLock";
 import { hasVideo } from "../../video/source";
 
 const HIDDEN_TAGS = new Set(["Recommended", "New", "Hot"]); // used for Home rows, not shown as genres
@@ -42,6 +44,7 @@ type Notice = {
 
 export default function SeriesScreen() {
   const colors = useTheme();
+  const t = useT();
   const insets = useSafeAreaInsets();
   const router = useRouter();
   const { width } = useWindowDimensions();
@@ -63,6 +66,7 @@ export default function SeriesScreen() {
     (n: number) => {
       if (!series) return;
       if (playableEpisode(series, n)) {
+        if (!canNavigate(`watch ${series.id} ${n}`)) return;
         router.push({
           pathname: "/watch/[id]",
           params: { id: series.id, ep: String(n) },
@@ -82,6 +86,7 @@ export default function SeriesScreen() {
       if (__DEV__) console.log(`[series] ${series.id} tap ep ${n} (${state})`);
       Haptics.selectionAsync().catch(() => {});
       if (state === "free") {
+        if (!canNavigate(`watch ${series.id} ${n}`)) return;
         router.push({
           pathname: "/watch/[id]",
           params: { id: series.id, ep: String(n) },
@@ -104,7 +109,7 @@ export default function SeriesScreen() {
       <View style={{ flex: 1, backgroundColor: colors.background }}>
         <ScreenHeader />
         <EmptyState
-          text="This series is not available"
+          text={t("series.notAvailable")}
           icon="alert-circle-outline"
         />
       </View>
@@ -112,7 +117,7 @@ export default function SeriesScreen() {
   }
 
   const stats = seriesStats(series, user);
-  const genres = series.tags.filter((t) => !HIDDEN_TAGS.has(t));
+  const genres = series.tags.filter((tag) => !HIDDEN_TAGS.has(tag));
   const coverW = Math.round(width * 0.38);
   const coverH = Math.round((coverW * 4) / 3);
   const lockedCount = Math.max(0, series.totalEpisodes - series.freeEpisodes);
@@ -129,7 +134,11 @@ export default function SeriesScreen() {
   const onShare = async () => {
     try {
       const res = await Share.share({
-        message: `Watch "${series.title}" on SnapDrama 🎬 ${freeLabel(series)} — ${series.totalEpisodes} episodes`,
+        message: t("share.seriesLong", {
+          title: series.title,
+          free: freeLabel(series, t),
+          n: series.totalEpisodes,
+        }),
       });
       if (res.action === Share.sharedAction) userActions.markShared(series.id);
       else if (__DEV__) console.log(`[series] share dismissed ${series.id}`);
@@ -142,27 +151,29 @@ export default function SeriesScreen() {
   const playLabel =
     series.freeEpisodes > 0
       ? resume && resume.ep > 0
-        ? `Continue EP ${resume.ep}`
-        : "Play EP 1"
+        ? t("series.continueEp", { n: resume.ep })
+        : t("series.playEp1")
       : canTrailer
-        ? "Watch trailer"
-        : "Trailer only";
+        ? t("series.watchTrailer")
+        : t("series.trailerOnly");
 
   const onPlay = () => {
     if (series.freeEpisodes > 0 || canTrailer) {
+      if (!canNavigate(`play ${series.id}`)) return;
       const ep = series.freeEpisodes > 0 ? (resume?.ep ?? 1) : 0;
-      const t = series.freeEpisodes > 0 && resume ? resume.pos : 0;
-      if (__DEV__) console.log(`[series] ${series.id} play ep ${ep} at ${t}s`);
+      const pos = series.freeEpisodes > 0 && resume ? resume.pos : 0;
+      if (__DEV__)
+        console.log(`[series] ${series.id} play ep ${ep} at ${pos}s`);
       router.push({
         pathname: "/watch/[id]",
-        params: { id: series.id, ep: String(ep), t: String(t) },
+        params: { id: series.id, ep: String(ep), t: String(pos) },
       });
       return;
     }
     setNotice({
       icon: "film-outline",
-      title: "Trailer only",
-      message: "Every episode of this series is locked.",
+      title: t("series.trailerOnly"),
+      message: t("series.allLocked"),
     });
   };
 
@@ -202,7 +213,7 @@ export default function SeriesScreen() {
                 styles.iconBtn,
                 { backgroundColor: colors.surface, opacity: pressed ? 0.7 : 1 },
               ]}
-              accessibilityLabel="Share"
+              accessibilityLabel={t("common.share")}
             >
               <Ionicons
                 name="share-social-outline"
@@ -231,7 +242,7 @@ export default function SeriesScreen() {
               });
             }}
             accessibilityRole="imagebutton"
-            accessibilityLabel="View cover"
+            accessibilityLabel={t("series.viewCover")}
           >
             <View
               ref={coverRef}
@@ -282,11 +293,13 @@ export default function SeriesScreen() {
                 ({formatCount(stats.ratingCount)})
               </AppText>
               <AppText weight="medium" size={12} color="textAccent">
-                {stats.myStars ? `· You: ${stats.myStars}★` : "· Rate"}
+                {stats.myStars
+                  ? `· ${t("series.you", { n: stats.myStars })}`
+                  : `· ${t("series.rate")}`}
               </AppText>
             </Pressable>
             <AppText size={13} color="textMuted">
-              {series.totalEpisodes} episodes
+              {t("common.episodes", { n: series.totalEpisodes })}
             </AppText>
             <View
               style={[
@@ -296,10 +309,10 @@ export default function SeriesScreen() {
             >
               <AppText weight="semibold" size={12} color="textAccent">
                 {series.freeEpisodes <= 0
-                  ? "Trailer only"
+                  ? t("series.trailerOnly")
                   : series.freeEpisodes === 1
-                    ? "Episode 1 free"
-                    : `Episodes 1–${series.freeEpisodes} free`}
+                    ? t("series.ep1Free")
+                    : t("series.epsFree", { n: series.freeEpisodes })}
               </AppText>
             </View>
           </View>
@@ -308,13 +321,14 @@ export default function SeriesScreen() {
         {/* genres */}
         {genres.length > 0 && (
           <View style={styles.tags}>
-            {genres.map((t) => (
+            {genres.map((tag) => (
               <Pressable
-                key={t}
+                key={tag}
                 onPress={() =>
+                  canNavigate(`category ${tag}`) &&
                   router.push({
                     pathname: "/browse",
-                    params: { kind: "category", value: t, title: t },
+                    params: { kind: "category", value: tag },
                   })
                 }
                 style={[
@@ -326,7 +340,7 @@ export default function SeriesScreen() {
                 ]}
               >
                 <AppText size={12} weight="medium">
-                  {t}
+                  {t.tag(tag)}
                 </AppText>
               </Pressable>
             ))}
@@ -349,7 +363,7 @@ export default function SeriesScreen() {
               color="textAccent"
               style={{ marginTop: 4 }}
             >
-              {expanded ? "Show less" : "More"}
+              {expanded ? t("series.less") : t("series.more")}
             </AppText>
           </Pressable>
         ) : null}
@@ -388,9 +402,10 @@ export default function SeriesScreen() {
           {series.freeEpisodes > 0 && hasVideo(series.trailer) && (
             <ActionButton
               icon="film-outline"
-              label="Trailer"
+              label={t("free.trailer")}
               active={false}
               onPress={() => {
+                if (!canNavigate(`trailer ${series.id}`)) return;
                 if (__DEV__) console.log(`[series] ${series.id} trailer`);
                 router.push({
                   pathname: "/watch/[id]",
@@ -401,7 +416,7 @@ export default function SeriesScreen() {
           )}
           <ActionButton
             icon={stats.myStars ? "star" : "star-outline"}
-            label={stats.myStars ? `${stats.myStars}★` : "Rate"}
+            label={stats.myStars ? `${stats.myStars}★` : t("series.rate")}
             active={!!stats.myStars}
             tint="gold"
             onPress={() => setRateOpen(true)}
@@ -411,13 +426,13 @@ export default function SeriesScreen() {
         {/* episodes */}
         <View style={styles.epHeader}>
           <AppText weight="bold" size={18}>
-            Episodes
+            {t("series.episodes")}
           </AppText>
           {lockedCount > 0 && (
             <View style={styles.price}>
               <CoinIcon size={16} glow={false} />
               <AppText size={12} color="textMuted">
-                {catalog.coinsPerEpisode} coins / locked episode
+                {t("series.pricePerEp", { n: catalog.coinsPerEpisode })}
               </AppText>
             </View>
           )}
@@ -434,8 +449,10 @@ export default function SeriesScreen() {
           align="center"
           style={{ marginTop: 18 }}
         >
-          {formatCount(stats.shareCount)} shares ·{" "}
-          {formatCount(stats.saveCount)} saves
+          {t("series.sharesSaves", {
+            shares: formatCount(stats.shareCount),
+            saves: formatCount(stats.saveCount),
+          })}
         </AppText>
       </ScrollView>
 
@@ -467,11 +484,11 @@ export default function SeriesScreen() {
         }}
         onGetCoins={() => {
           setUnlockN(0);
-          router.push("/coins");
+          if (canNavigate("coins")) router.push("/coins");
         }}
         onGetVip={() => {
           setUnlockN(0);
-          router.push("/vip");
+          if (canNavigate("vip")) router.push("/vip");
         }}
       />
       <DemoEpisodeModal visible={demoOpen} onClose={() => setDemoOpen(false)} />

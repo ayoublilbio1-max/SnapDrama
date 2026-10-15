@@ -1,5 +1,6 @@
 import Storage from "expo-sqlite/kv-store";
 import { useSyncExternalStore } from "react";
+import type { Key } from "../i18n/strings";
 import { walletActions, walletReady } from "./wallet";
 
 /**
@@ -11,7 +12,8 @@ export const CHECKIN_COINS = [10, 15, 20, 25, 30, 40, 60]; // day 1 → day 7, t
 export type TaskId = "watch1" | "watch3" | "save" | "rate" | "share";
 export type TaskDef = {
   id: TaskId;
-  title: string;
+  title: string; // English (logs)
+  titleKey: Key; // shown in the app language
   coins: number;
   daily: boolean; // daily = resets every day, else once ever
   goal: number;
@@ -28,6 +30,7 @@ export const TASKS: TaskDef[] = [
   {
     id: "watch1",
     title: "Watch 1 episode",
+    titleKey: "task.watch1",
     coins: 5,
     daily: true,
     goal: 1,
@@ -37,6 +40,7 @@ export const TASKS: TaskDef[] = [
   {
     id: "watch3",
     title: "Watch 3 episodes",
+    titleKey: "task.watch3",
     coins: 15,
     daily: true,
     goal: 3,
@@ -46,6 +50,7 @@ export const TASKS: TaskDef[] = [
   {
     id: "save",
     title: "Save a series to My list",
+    titleKey: "task.save",
     coins: 10,
     daily: false,
     goal: 1,
@@ -55,6 +60,7 @@ export const TASKS: TaskDef[] = [
   {
     id: "rate",
     title: "Rate a series",
+    titleKey: "task.rate",
     coins: 10,
     daily: false,
     goal: 1,
@@ -64,6 +70,7 @@ export const TASKS: TaskDef[] = [
   {
     id: "share",
     title: "Share a series",
+    titleKey: "task.share",
     coins: 20,
     daily: false,
     goal: 1,
@@ -189,7 +196,10 @@ export const rewardsActions = {
     if (v.doneToday || !v.nextDay) return 0;
     await walletReady();
     set({ ...state, streak: v.nextDay, lastCheckIn: dayKey() });
-    walletActions.reward(v.nextCoins, `Daily check-in · day ${v.nextDay}`);
+    walletActions.reward(v.nextCoins, `Daily check-in · day ${v.nextDay}`, {
+      key: "hist.checkin",
+      params: { n: v.nextDay },
+    });
     if (__DEV__)
       console.log(`[rewards] check-in day ${v.nextDay} +${v.nextCoins}`);
     return v.nextCoins;
@@ -201,7 +211,7 @@ export const rewardsActions = {
       claimed: { ...state.claimed, [t.id]: t.daily ? today : "once" },
     });
     await walletReady();
-    walletActions.reward(t.coins, `Task · ${t.title}`);
+    walletActions.reward(t.coins, `Task · ${t.title}`, { key: t.titleKey });
     if (__DEV__) console.log(`[rewards] task ${t.id} claimed +${t.coins}`);
   },
   /** The player shows an episode → counts for "Watch N episodes" (each episode once a day). */

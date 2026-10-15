@@ -33,6 +33,8 @@ export type ThemeColors = {
   onPrimary: string; // text on primary buttons
   danger: string;
   onDanger: string;
+  success: string; // "You're back online", positive toasts
+  onSuccess: string;
   overlay: string; // modal backdrop
   tabBar: string; // floating pill background (white in light, dark card in dark)
   tabBarBorder: string; // thin outline of the pill (violet glow in dark)
@@ -63,6 +65,8 @@ export const darkColors: ThemeColors = {
   onPrimary: palette.white,
   danger: palette.danger,
   onDanger: palette.white,
+  success: "#22C55E",
+  onSuccess: palette.white,
   overlay: "rgba(5, 0, 16, 0.72)",
   tabBar: palette.card,
   tabBarBorder: "rgba(139, 92, 246, 0.35)",
@@ -93,6 +97,8 @@ export const lightColors: ThemeColors = {
   onPrimary: palette.white,
   danger: "#DC2626",
   onDanger: palette.white,
+  success: "#16A34A",
+  onSuccess: palette.white,
   overlay: "rgba(25, 17, 44, 0.45)",
   tabBar: palette.white,
   tabBarBorder: "transparent",

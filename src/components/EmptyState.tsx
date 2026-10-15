@@ -1,13 +1,14 @@
 import Ionicons from "@expo/vector-icons/Ionicons";
 import { StyleSheet, View } from "react-native";
 import { useTheme } from "../hooks/useTheme";
+import { useT } from "../i18n";
 import { AppText } from "./AppText";
 
 type IconName = React.ComponentProps<typeof Ionicons>["name"];
 
 /** "No series yet" box — used by empty Home rows, grids and search. */
 export function EmptyState({
-  text = "No series yet",
+  text,
   icon = "film-outline",
   height = 120,
 }: {
@@ -16,6 +17,7 @@ export function EmptyState({
   height?: number;
 }) {
   const colors = useTheme();
+  const t = useT();
   return (
     <View
       style={[
@@ -25,7 +27,7 @@ export function EmptyState({
     >
       <Ionicons name={icon} size={24} color={colors.textMuted} />
       <AppText size={13} color="textMuted">
-        {text}
+        {text ?? t("common.noSeries")}
       </AppText>
     </View>
   );

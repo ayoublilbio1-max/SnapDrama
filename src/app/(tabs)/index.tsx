@@ -8,7 +8,6 @@ import { HomeHeader } from "../../components/HomeHeader";
 import { HomeRow } from "../../components/HomeRow";
 import { HomeSkeleton } from "../../components/Skeleton";
 import {
-  FILTERS,
   HOME_ROWS,
   heroSeries,
   seriesForSource,
@@ -88,7 +87,7 @@ export default function HomeScreen() {
       if (__DEV__) console.log(`[home] see all ${def.id}`);
       router.push({
         pathname: "/browse",
-        params: { kind: "row", value: def.id, title: def.title },
+        params: { kind: "row", value: def.id },
       });
     },
     [router],
@@ -98,21 +97,27 @@ export default function HomeScreen() {
     (id: FilterId) => {
       if (__DEV__) console.log(`[home] filter ${id}`);
       if (id === "popular") return; // Popular = this page
+      if (!canNavigate(`filter ${id}`)) return;
       if (id === "categories") {
         router.push("/categories");
         return;
       }
-      const label = FILTERS.find((f) => f.id === id)?.label ?? id;
       router.push({
         pathname: "/browse",
-        params: { kind: "filter", value: id, title: label },
+        params: { kind: "filter", value: id },
       });
     },
     [router],
   );
 
-  const openVip = useCallback(() => router.push("/vip"), [router]);
-  const openSearch = useCallback(() => router.push("/search"), [router]);
+  const openVip = useCallback(
+    () => canNavigate("vip") && router.push("/vip"),
+    [router],
+  );
+  const openSearch = useCallback(
+    () => canNavigate("search") && router.push("/search"),
+    [router],
+  );
 
   if (status === "loading") return <HomeSkeleton />;
 

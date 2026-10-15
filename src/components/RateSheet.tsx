@@ -5,32 +5,36 @@ import { useEffect, useState } from "react";
 import { Modal, Pressable, StyleSheet, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useTheme } from "../hooks/useTheme";
+import { useT, type Key } from "../i18n";
 import { AppText } from "./AppText";
 
-const LABELS = [
-  "",
-  "Not for me",
-  "It was okay",
-  "Good",
-  "Really good",
-  "Loved it!",
+const LABELS: Key[] = [
+  "rate.l1",
+  "rate.l1",
+  "rate.l2",
+  "rate.l3",
+  "rate.l4",
+  "rate.l5",
 ];
 
-/** Bottom sheet with 1–5 stars. The tester can change their stars later. */
+/** Bottom sheet with 1–5 stars (a series, or the app in Settings › Rate us). The tester can change their stars later. */
 export function RateSheet({
   visible,
   title,
+  heading,
   current,
   onSubmit,
   onClose,
 }: {
   visible: boolean;
   title: string;
+  heading?: string; // default "Rate this series"
   current: number;
   onSubmit: (stars: number) => void;
   onClose: () => void;
 }) {
   const colors = useTheme();
+  const t = useT();
   const insets = useSafeAreaInsets();
   const [stars, setStars] = useState(current);
 
@@ -64,7 +68,7 @@ export function RateSheet({
         >
           <View style={[styles.handle, { backgroundColor: colors.border }]} />
           <AppText weight="bold" size={18} align="center">
-            Rate this series
+            {heading ?? t("rate.series")}
           </AppText>
           <AppText size={13} color="textMuted" align="center" numberOfLines={1}>
             {title}
@@ -96,7 +100,7 @@ export function RateSheet({
             align="center"
             style={{ minHeight: 20, color: colors.gold }}
           >
-            {LABELS[stars]}
+            {stars ? t(LABELS[stars]) : ""}
           </AppText>
 
           <Pressable
@@ -119,7 +123,7 @@ export function RateSheet({
               style={StyleSheet.absoluteFill}
             />
             <AppText weight="semibold" size={15} color="onPrimary">
-              {current ? "Update rating" : "Submit rating"}
+              {current ? t("rate.update") : t("rate.submit")}
             </AppText>
           </Pressable>
         </Pressable>

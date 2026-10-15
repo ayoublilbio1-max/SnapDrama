@@ -30,6 +30,8 @@ import {
   type CoinEntry,
 } from "../data/wallet";
 import { useTheme } from "../hooks/useTheme";
+import { useT, type T } from "../i18n";
+import { canNavigate } from "../utils/navLock";
 
 /** DEMO coin shop — payments are simulated, the coins are just added (brief §8). Linked with VIP. */
 const PACKS = [
@@ -46,6 +48,7 @@ const GAP = 10;
 
 export default function CoinsScreen() {
   const colors = useTheme();
+  const t = useT();
   const insets = useSafeAreaInsets();
   const { width } = useWindowDimensions();
   const router = useRouter();
@@ -66,6 +69,9 @@ export default function CoinsScreen() {
     walletActions.buy(
       total,
       `Coin pack ${pick.coins}${pick.bonus ? ` + ${pick.bonus} bonus` : ""}`,
+      pick.bonus
+        ? { key: "hist.packBonus", params: { n: pick.coins, b: pick.bonus } }
+        : { key: "hist.pack", params: { n: pick.coins } },
     );
     Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success).catch(
       () => {},
@@ -79,7 +85,7 @@ export default function CoinsScreen() {
 
   return (
     <View style={{ flex: 1, backgroundColor: colors.background }}>
-      <ScreenHeader title="Coins" />
+      <ScreenHeader title={t("coins.title")} />
       <ScrollView
         contentContainerStyle={{
           paddingHorizontal: 16,
@@ -95,7 +101,7 @@ export default function CoinsScreen() {
             style={StyleSheet.absoluteFill}
           />
           <AppText size={13} color="onPrimary" style={{ opacity: 0.85 }}>
-            Your balance
+            {t("unlock.balance")}
           </AppText>
           <View style={styles.balanceRow}>
             <CoinIcon size={40} />
@@ -106,13 +112,13 @@ export default function CoinsScreen() {
             </Animated.View>
           </View>
           <AppText size={12} color="onPrimary" style={{ opacity: 0.85 }}>
-            Use coins to unlock episodes
+            {t("coins.useHint")}
           </AppText>
         </View>
 
         {/* link to VIP: watch without coins */}
         <Pressable
-          onPress={() => router.push("/vip")}
+          onPress={() => canNavigate("vip") && router.push("/vip")}
           style={({ pressed }) => [
             styles.vipLink,
             {
@@ -127,12 +133,12 @@ export default function CoinsScreen() {
           <Ionicons name="diamond" size={22} color={colors.gold} />
           <View style={{ flex: 1 }}>
             <AppText weight="semibold" size={15}>
-              {vip ? "You are VIP" : "Go VIP — no coins needed"}
+              {vip ? t("coins.youAreVip") : t("coins.goVip")}
             </AppText>
             <AppText size={12} color="textMuted">
               {vip
-                ? `Episodes unlock free · +${VIP_DAILY_COINS} coins every day`
-                : `Unlock every episode free + ${VIP_DAILY_COINS} coins a day`}
+                ? t("coins.vipOnHint", { n: VIP_DAILY_COINS })
+                : t("coins.vipOffHint", { n: VIP_DAILY_COINS })}
             </AppText>
           </View>
           <Ionicons name="chevron-forward" size={20} color={colors.gold} />
@@ -140,7 +146,7 @@ export default function CoinsScreen() {
 
         {/* packs */}
         <AppText weight="bold" size={18} style={styles.section}>
-          Get coins
+          {t("unlock.getCoins")}
         </AppText>
         <View style={styles.grid}>
           {PACKS.map((p) => (
@@ -160,12 +166,14 @@ export default function CoinsScreen() {
                 },
               ]}
               accessibilityRole="button"
-              accessibilityLabel={`${p.coins} coins${p.bonus ? ` plus ${p.bonus} bonus` : ""}, ${p.price}`}
+              accessibilityLabel={`${t("coins.n", { n: p.coins })}${p.bonus ? ` + ${t("coins.bonus", { n: p.bonus })}` : ""}, ${p.price}`}
             >
               {p.tag ? (
                 <View style={[styles.tag, { backgroundColor: colors.gold }]}>
                   <AppText weight="bold" size={10} color="onPrimary">
-                    {p.tag}
+                    {p.tag === "Popular"
+                      ? t("coins.tagPopular")
+                      : t("coins.tagBest")}
                   </AppText>
                 </View>
               ) : null}
@@ -180,7 +188,7 @@ export default function CoinsScreen() {
                 size={12}
                 style={{ color: colors.gold, minHeight: 17 }}
               >
-                {p.bonus ? `+${p.bonus} bonus` : " "}
+                {p.bonus ? t("coins.bonus", { n: p.bonus }) : " "}
               </AppText>
               <View style={[styles.price, { backgroundColor: colors.primary }]}>
                 <AppText weight="bold" size={14} color="onPrimary">
@@ -196,16 +204,16 @@ export default function CoinsScreen() {
           align="center"
           style={{ marginTop: 10 }}
         >
-          Demo mode — payments are simulated for this showcase.
+          {t("common.demoPayments")}
         </AppText>
 
         {/* history */}
         <AppText weight="bold" size={18} style={styles.section}>
-          Coin history
+          {t("coins.history")}
         </AppText>
         {history.length === 0 ? (
           <AppText size={14} color="textMuted">
-            No coins used yet.
+            {t("coins.noHistory")}
           </AppText>
         ) : (
           <View
@@ -224,13 +232,9 @@ export default function CoinsScreen() {
       <ConfirmModal
         visible={!!pick}
         icon="wallet-outline"
-        title={pick ? `Buy ${pick.coins + pick.bonus} coins?` : ""}
-        message={
-          pick
-            ? `${pick.price}. Demo mode: the payment is simulated and the coins are added to this phone.`
-            : ""
-        }
-        confirmLabel="Buy"
+        title={pick ? t("coins.buyTitle", { n: pick.coins + pick.bonus }) : ""}
+        message={pick ? t("coins.buyMsg", { price: pick.price }) : ""}
+        confirmLabel={t("coins.buy")}
         destructive={false}
         onConfirm={buy}
         onCancel={() => setPick(null)}
@@ -249,28 +253,19 @@ const ICONS: Record<
   unlock: "lock-open-outline",
 };
 
-function formatWhen(at: number) {
+function formatWhen(at: number, t: T) {
   const d = new Date(at);
   const pad = (v: number) => String(v).padStart(2, "0");
-  const months = [
-    "Jan",
-    "Feb",
-    "Mar",
-    "Apr",
-    "May",
-    "Jun",
-    "Jul",
-    "Aug",
-    "Sep",
-    "Oct",
-    "Nov",
-    "Dec",
-  ];
-  return `${months[d.getMonth()]} ${d.getDate()}, ${pad(d.getHours())}:${pad(d.getMinutes())}`;
+  try {
+    return `${d.toLocaleDateString(t.locale, { month: "short", day: "numeric" })}, ${pad(d.getHours())}:${pad(d.getMinutes())}`;
+  } catch {
+    return `${d.getDate()}/${d.getMonth() + 1}, ${pad(d.getHours())}:${pad(d.getMinutes())}`;
+  }
 }
 
 function HistoryRow({ item, last }: { item: CoinEntry; last: boolean }) {
   const colors = useTheme();
+  const t = useT();
   const plus = item.amount > 0;
   return (
     <View
@@ -296,10 +291,10 @@ function HistoryRow({ item, last }: { item: CoinEntry; last: boolean }) {
       </View>
       <View style={{ flex: 1 }}>
         <AppText weight="medium" size={14} numberOfLines={1}>
-          {item.label}
+          {item.meta ? t(item.meta.key, item.meta.params) : item.label}
         </AppText>
         <AppText size={12} color="textMuted">
-          {formatWhen(item.at)}
+          {formatWhen(item.at, t)}
         </AppText>
       </View>
       <AppText

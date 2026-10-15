@@ -2,6 +2,7 @@ import Ionicons from "@expo/vector-icons/Ionicons";
 import * as Haptics from "expo-haptics";
 import { Modal, Pressable, StyleSheet, View } from "react-native";
 import { useTheme } from "../hooks/useTheme";
+import { useT } from "../i18n";
 import { AppText } from "./AppText";
 
 type IconName = React.ComponentProps<typeof Ionicons>["name"];
@@ -24,13 +25,14 @@ export function ConfirmModal({
   title,
   message,
   icon = "trash-outline",
-  confirmLabel = "Delete",
-  cancelLabel = "Cancel",
+  confirmLabel,
+  cancelLabel,
   destructive = true,
   onConfirm,
   onCancel,
 }: ConfirmModalProps) {
   const colors = useTheme();
+  const t = useT();
   const accent = destructive ? colors.danger : colors.primary;
 
   const handleConfirm = () => {
@@ -94,7 +96,7 @@ export function ConfirmModal({
               ]}
             >
               <AppText weight="semibold" size={15}>
-                {cancelLabel}
+                {cancelLabel ?? t("common.cancel")}
               </AppText>
             </Pressable>
             <Pressable
@@ -109,7 +111,7 @@ export function ConfirmModal({
                 size={15}
                 color={destructive ? "onDanger" : "onPrimary"}
               >
-                {confirmLabel}
+                {confirmLabel ?? t("common.delete")}
               </AppText>
             </Pressable>
           </View>

@@ -1,19 +1,20 @@
 import Ionicons from "@expo/vector-icons/Ionicons";
 import {
-    StyleSheet,
-    TextInput,
-    View,
-    type StyleProp,
-    type ViewStyle,
+  StyleSheet,
+  TextInput,
+  View,
+  type StyleProp,
+  type ViewStyle,
 } from "react-native";
 import { useTheme } from "../hooks/useTheme";
+import { useT } from "../i18n";
 import { FONT } from "./AppText";
 
 /** Rounded search input (Search page + "search in this page" on list pages). */
 export function SearchField({
   value,
   onChange,
-  placeholder = "Search series",
+  placeholder,
   autoFocus = false,
   style,
 }: {
@@ -24,6 +25,7 @@ export function SearchField({
   style?: StyleProp<ViewStyle>;
 }) {
   const colors = useTheme();
+  const t = useT();
   return (
     <View
       style={[
@@ -37,7 +39,7 @@ export function SearchField({
         value={value}
         onChangeText={onChange}
         autoFocus={autoFocus}
-        placeholder={placeholder}
+        placeholder={placeholder ?? t("search.placeholder")}
         placeholderTextColor={colors.textMuted}
         returnKeyType="search"
         autoCorrect={false}
@@ -49,7 +51,7 @@ export function SearchField({
           size={18}
           color={colors.textMuted}
           onPress={() => onChange("")}
-          accessibilityLabel="Clear search"
+          accessibilityLabel={t("search.clear")}
         />
       )}
     </View>
@@ -65,7 +67,7 @@ export function matchesQuery(
   if (!q) return true;
   return (
     s.title.toLowerCase().includes(q) ||
-    s.tags.some((t) => t.toLowerCase().includes(q))
+    s.tags.some((tag) => tag.toLowerCase().includes(q))
   );
 }
 

@@ -28,11 +28,13 @@ import { useUserState } from "../../data/userStore";
 import { useVip, VIP_DAILY_COINS } from "../../data/vip";
 import { useBalance } from "../../data/wallet";
 import { useTheme } from "../../hooks/useTheme";
+import { useT } from "../../i18n";
 import { canNavigate } from "../../utils/navLock";
 
 /** Rewards tab (demo coins): balance, 7-day check-in, daily + one-time tasks, VIP / coin shop links. */
 export default function RewardsScreen() {
   const colors = useTheme();
+  const t = useT();
   const insets = useSafeAreaInsets();
   const router = useRouter();
   const balance = useBalance();
@@ -75,15 +77,15 @@ export default function RewardsScreen() {
     if (coins) celebrate(coins);
   };
 
-  const onTask = async (t: TaskDef, done: boolean) => {
+  const onTask = async (task: TaskDef, done: boolean) => {
     if (done) {
-      await rewardsActions.claim(t);
-      celebrate(t.coins);
+      await rewardsActions.claim(task);
+      celebrate(task.coins);
       return;
     }
-    if (!canNavigate(`task ${t.id}`)) return;
-    if (__DEV__) console.log(`[rewards] go → ${t.go} (${t.id})`);
-    router.navigate(t.go === "feed" ? "/for-you" : "/");
+    if (!canNavigate(`task ${task.id}`)) return;
+    if (__DEV__) console.log(`[rewards] go → ${task.go} (${task.id})`);
+    router.navigate(task.go === "feed" ? "/for-you" : "/");
   };
 
   const daily = TASKS.filter((t) => t.daily);
@@ -102,7 +104,7 @@ export default function RewardsScreen() {
         showsVerticalScrollIndicator={false}
       >
         <AppText weight="bold" size={26}>
-          Rewards
+          {t("tabs.rewards")}
         </AppText>
 
         {/* balance */}
@@ -113,7 +115,7 @@ export default function RewardsScreen() {
             { opacity: pressed ? 0.9 : 1 },
           ]}
           accessibilityRole="button"
-          accessibilityLabel={`Balance ${balance} coins, open coin shop`}
+          accessibilityLabel={t("rewards.balanceA11y", { n: balance })}
         >
           <LinearGradient
             colors={colors.gradient}
@@ -123,7 +125,7 @@ export default function RewardsScreen() {
           />
           <View style={{ flex: 1, gap: 4 }}>
             <AppText size={13} color="onPrimary" style={{ opacity: 0.85 }}>
-              My coins
+              {t("rewards.myCoins")}
             </AppText>
             <View style={styles.balanceRow}>
               <CoinIcon size={34} />
@@ -141,7 +143,7 @@ export default function RewardsScreen() {
           </View>
           <View style={[styles.shopPill, { backgroundColor: colors.overlay }]}>
             <AppText weight="semibold" size={13} color="onPrimary">
-              Coin shop
+              {t("profile.coinShop")}
             </AppText>
             <Ionicons
               name="chevron-forward"
@@ -160,12 +162,17 @@ export default function RewardsScreen() {
         >
           <View style={styles.cardHead}>
             <AppText weight="bold" size={17}>
-              Daily check-in
+              {t("rewards.checkInTitle")}
             </AppText>
             <AppText size={12} color="textMuted">
               {checkIn.done > 0
-                ? `${checkIn.done} day${checkIn.done > 1 ? "s" : ""} in a row`
-                : "Start your streak"}
+                ? t(
+                    checkIn.done > 1
+                      ? "rewards.streakMany"
+                      : "rewards.streakOne",
+                    { n: checkIn.done },
+                  )
+                : t("rewards.startStreak")}
             </AppText>
           </View>
           <View style={styles.days}>
@@ -209,7 +216,7 @@ export default function RewardsScreen() {
                     {coins}
                   </AppText>
                   <AppText size={10} color="textMuted">
-                    Day {day}
+                    {t("rewards.day", { n: day })}
                   </AppText>
                 </View>
               );
@@ -244,8 +251,8 @@ export default function RewardsScreen() {
               color={checkIn.doneToday ? "textMuted" : "onPrimary"}
             >
               {checkIn.doneToday
-                ? "Checked in today · come back tomorrow"
-                : `Check in · +${checkIn.nextCoins} coins`}
+                ? t("rewards.checkedIn")
+                : t("rewards.checkIn", { n: checkIn.nextCoins })}
             </AppText>
           </Pressable>
         </View>
@@ -266,13 +273,13 @@ export default function RewardsScreen() {
           <View style={{ flex: 1 }}>
             <AppText weight="semibold" size={15}>
               {vip
-                ? "VIP bonus is on"
-                : `VIP: +${VIP_DAILY_COINS} coins every day`}
+                ? t("rewards.vipOn")
+                : t("rewards.vipOff", { n: VIP_DAILY_COINS })}
             </AppText>
             <AppText size={12} color="textMuted">
               {vip
-                ? `+${VIP_DAILY_COINS} coins are added each day you open the app`
-                : "And every episode unlocks free"}
+                ? t("rewards.vipOnHint", { n: VIP_DAILY_COINS })
+                : t("rewards.vipOffHint")}
             </AppText>
           </View>
           <Ionicons name="chevron-forward" size={20} color={colors.gold} />
@@ -280,7 +287,7 @@ export default function RewardsScreen() {
 
         {/* tasks */}
         <AppText weight="bold" size={17} style={styles.section}>
-          Daily tasks
+          {t("rewards.daily")}
         </AppText>
         <View
           style={[
@@ -302,7 +309,7 @@ export default function RewardsScreen() {
         {once.length > 0 && (
           <>
             <AppText weight="bold" size={17} style={styles.section}>
-              One-time tasks
+              {t("rewards.once")}
             </AppText>
             <View
               style={[
@@ -329,7 +336,7 @@ export default function RewardsScreen() {
           align="center"
           style={{ marginTop: 18 }}
         >
-          Demo mode — coins are for this showcase only.
+          {t("rewards.demo")}
         </AppText>
       </ScrollView>
     </View>
@@ -348,6 +355,7 @@ function TaskRow({
   onPress: (t: TaskDef, done: boolean) => void;
 }) {
   const colors = useTheme();
+  const t = useT();
   return (
     <View
       style={[
@@ -363,7 +371,7 @@ function TaskRow({
       </View>
       <View style={{ flex: 1, gap: 2 }}>
         <AppText weight="medium" size={14} numberOfLines={1}>
-          {task.title}
+          {t(task.titleKey)}
         </AppText>
         <View style={styles.taskSub}>
           <CoinIcon size={14} glow={false} />
@@ -385,7 +393,7 @@ function TaskRow({
             color={colors.textMuted}
           />
           <AppText weight="medium" size={13} color="textMuted">
-            Done
+            {t("rewards.done")}
           </AppText>
         </View>
       ) : (
@@ -406,7 +414,7 @@ function TaskRow({
             size={13}
             style={{ color: view.done ? colors.onPrimary : colors.textAccent }}
           >
-            {view.done ? "Claim" : "Go"}
+            {view.done ? t("rewards.claim") : t("rewards.go")}
           </AppText>
         </Pressable>
       )}

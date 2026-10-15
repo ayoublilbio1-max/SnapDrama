@@ -11,6 +11,7 @@ import { episodeView, progressKey, useProgress } from "../data/progress";
 import type { Series } from "../data/types";
 import { episodeState, useUnlocked, type EpisodeState } from "../data/wallet";
 import { useTheme } from "../hooks/useTheme";
+import { useT } from "../i18n";
 import { AppText } from "./AppText";
 
 const PER_RANGE = 30; // tabs: 1-30, 31-60…
@@ -36,6 +37,7 @@ export const EpisodeGrid = memo(function EpisodeGrid({
   current?: number; // episode playing now (player sheet)
 }) {
   const colors = useTheme();
+  const t = useT();
   const progress = useProgress();
   const unlocked = useUnlocked();
   const { width } = useWindowDimensions();
@@ -116,10 +118,10 @@ export const EpisodeGrid = memo(function EpisodeGrid({
               accessibilityRole="button"
               accessibilityLabel={
                 free
-                  ? `Episode ${n}${watched ? ", watched" : ratio > 0 ? `, ${Math.round(ratio * 100)}% watched` : ""}`
+                  ? `${t("ep.label", { n })}${watched ? `, ${t("ep.watched")}` : ratio > 0 ? `, ${t("ep.percent", { n: Math.round(ratio * 100) })}` : ""}`
                   : state === "unlocked"
-                    ? `Episode ${n}, unlocked`
-                    : `Episode ${n}, locked, ${coinsPerEpisode} coins`
+                    ? `${t("ep.label", { n })}, ${t("ep.unlocked")}`
+                    : `${t("ep.label", { n })}, ${t("ep.locked")}, ${t("coins.n", { n: coinsPerEpisode })}`
               }
             >
               {isCurrent ? (
@@ -155,7 +157,7 @@ export const EpisodeGrid = memo(function EpisodeGrid({
                   style={[styles.corner, { backgroundColor: colors.primary }]}
                 >
                   <AppText weight="bold" size={8} color="onPrimary">
-                    FREE
+                    {t("ep.free")}
                   </AppText>
                 </View>
               ) : null}

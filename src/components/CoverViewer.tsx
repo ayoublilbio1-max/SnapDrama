@@ -2,25 +2,26 @@ import Ionicons from "@expo/vector-icons/Ionicons";
 import { Image } from "expo-image";
 import { useEffect } from "react";
 import {
-    Modal,
-    Pressable,
-    StyleSheet,
-    useWindowDimensions,
+  Modal,
+  Pressable,
+  StyleSheet,
+  useWindowDimensions,
 } from "react-native";
 import {
-    Gesture,
-    GestureDetector,
-    GestureHandlerRootView,
+  Gesture,
+  GestureDetector,
+  GestureHandlerRootView,
 } from "react-native-gesture-handler";
 import Animated, {
-    interpolate,
-    useAnimatedStyle,
-    useSharedValue,
-    withSpring,
-    withTiming,
+  interpolate,
+  useAnimatedStyle,
+  useSharedValue,
+  withSpring,
+  withTiming,
 } from "react-native-reanimated";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { darkColors } from "../constants/colors";
+import { useT } from "../i18n";
 
 export type Rect = { x: number; y: number; width: number; height: number };
 
@@ -44,6 +45,7 @@ export function CoverViewer({
   onClose: () => void;
 }) {
   const c = darkColors;
+  const t = useT();
   const insets = useSafeAreaInsets();
   const { width: W, height: H } = useWindowDimensions();
 
@@ -207,7 +209,7 @@ export function CoverViewer({
             onPress={close}
             hitSlop={10}
             style={[styles.closeBtn, { backgroundColor: c.overlay }]}
-            accessibilityLabel="Close"
+            accessibilityLabel={t("common.close")}
           >
             <Ionicons name="close" size={22} color={c.onPrimary} />
           </Pressable>

@@ -7,6 +7,7 @@ import { freeLabel } from "../data/catalog";
 import type { Series } from "../data/types";
 import { useIsSaved } from "../data/userStore";
 import { useTheme } from "../hooks/useTheme";
+import { useT } from "../i18n";
 import { AppText } from "./AppText";
 
 type Props = {
@@ -26,6 +27,7 @@ export const SeriesCard = memo(function SeriesCard({
   onPress,
 }: Props) {
   const colors = useTheme();
+  const t = useT();
   const saved = useIsSaved(series.id);
   const height = Math.round((width * 4) / 3);
 
@@ -53,7 +55,7 @@ export const SeriesCard = memo(function SeriesCard({
         />
         <View style={[styles.badge, { backgroundColor: colors.overlay }]}>
           <AppText weight="semibold" size={10} color="onPrimary">
-            {freeLabel(series)}
+            {freeLabel(series, t)}
           </AppText>
         </View>
         {saved && (
@@ -72,7 +74,7 @@ export const SeriesCard = memo(function SeriesCard({
         {variant === "deal" && (
           <View style={[styles.deal, { backgroundColor: colors.gold }]}>
             <AppText weight="bold" size={10} color="onPrimary">
-              DEAL
+              {t("card.deal")}
             </AppText>
           </View>
         )}

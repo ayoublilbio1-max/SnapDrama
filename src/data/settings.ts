@@ -7,8 +7,13 @@ import { Appearance } from "react-native";
  * Loaded SYNC at app start (getItemSync) so the chosen theme is applied before the first frame.
  */
 export type ThemePref = "system" | "light" | "dark";
+export type LangPref = "system" | "en" | "fr" | "es" | "de";
 type Settings = {
   theme: ThemePref;
+  language: LangPref; // 'system' = the phone's language (if en/fr/es/de)
+  startMuted: boolean; // every app start: videos begin muted (default off)
+  notifications: boolean; // local reminders (default on)
+  myStars: number; // "Rate us" (0 = not rated)
   name: string;
   avatar: string | null; // local photo uri
   userId: string; // fake demo ID shown on the profile
@@ -24,6 +29,10 @@ function newId() {
 function loadSync(): Settings {
   const base: Settings = {
     theme: "system",
+    language: "system",
+    startMuted: false,
+    notifications: true,
+    myStars: 0,
     name: "Guest",
     avatar: null,
     userId: newId(),
@@ -53,7 +62,8 @@ export function initSettings() {
   applyTheme(state.theme);
   if (__DEV__)
     console.log(
-      `[settings] theme ${state.theme} · name "${state.name}" · avatar ${state.avatar ? "yes" : "no"}`,
+      `[settings] theme ${state.theme} · language ${state.language} · start muted ${state.startMuted ? "on" : "off"} · ` +
+        `notifications ${state.notifications ? "on" : "off"} · name "${state.name}"`,
     );
 }
 
@@ -72,6 +82,11 @@ function subscribe(l: () => void) {
   };
 }
 
+/** Current settings outside React (notifications, mute start value). */
+export function getSettings(): Settings {
+  return state;
+}
+
 export function useSettings(): Settings {
   return useSyncExternalStore(subscribe, () => state);
 }
@@ -81,6 +96,24 @@ export const settingsActions = {
     applyTheme(theme);
     set({ ...state, theme });
     if (__DEV__) console.log(`[settings] theme → ${theme}`);
+  },
+  setLanguage(language: LangPref) {
+    set({ ...state, language });
+    if (__DEV__) console.log(`[settings] language → ${language}`);
+  },
+  setStartMuted(startMuted: boolean) {
+    set({ ...state, startMuted });
+    if (__DEV__)
+      console.log(`[settings] start muted → ${startMuted ? "on" : "off"}`);
+  },
+  setNotifications(notifications: boolean) {
+    set({ ...state, notifications });
+    if (__DEV__)
+      console.log(`[settings] notifications → ${notifications ? "on" : "off"}`);
+  },
+  setMyStars(myStars: number) {
+    set({ ...state, myStars });
+    if (__DEV__) console.log(`[settings] rated the app ${myStars}★`);
   },
   setName(name: string) {
     const clean = name.trim().slice(0, 24) || "Guest";

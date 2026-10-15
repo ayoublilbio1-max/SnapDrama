@@ -9,6 +9,7 @@ import {
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import type { Series } from "../../data/types";
 import { useTheme } from "../../hooks/useTheme";
+import { useT } from "../../i18n";
 import { AppText } from "../AppText";
 import { EpisodeGrid, type EpisodeState } from "../EpisodeGrid";
 
@@ -29,6 +30,7 @@ export function EpisodesSheet({
   onClose: () => void;
 }) {
   const colors = useTheme();
+  const t = useT();
   const insets = useSafeAreaInsets();
   const { height } = useWindowDimensions();
   return (
@@ -61,8 +63,8 @@ export function EpisodesSheet({
             {series.title}
           </AppText>
           <AppText size={13} color="textMuted" style={{ marginBottom: 14 }}>
-            {current > 0 ? `Watching EP ${current} · ` : ""}
-            {series.totalEpisodes} episodes
+            {current > 0 ? `${t("player.watchingEp", { n: current })} · ` : ""}
+            {t("common.episodes", { n: series.totalEpisodes })}
           </AppText>
           <ScrollView showsVerticalScrollIndicator={false}>
             <EpisodeGrid
