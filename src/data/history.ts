@@ -74,6 +74,17 @@ export const historyActions = {
     }
     Storage.setItem(KEY, JSON.stringify(state)).catch(() => {});
   },
+  /** My list → Watching → Edit → Remove. */
+  remove(ids: string[]) {
+    if (!ids.length) return;
+    const next = { ...state };
+    ids.forEach((id) => delete next[id]);
+    state = next;
+    emit();
+    Storage.setItem(KEY, JSON.stringify(state)).catch(() => {});
+    if (__DEV__)
+      console.log(`[history] removed ${ids.length}: ${ids.join(", ")}`);
+  },
 };
 
 /** Series the user started, newest first (Home "Continue watching"). */

@@ -34,6 +34,7 @@ import {
 } from "../../data/catalog";
 import { historyActions } from "../../data/history";
 import { progressActions } from "../../data/progress";
+import { rewardsActions } from "../../data/rewards";
 import type { Series } from "../../data/types";
 import { userActions } from "../../data/userStore";
 import { isUnlocked, useUnlocked } from "../../data/wallet";
@@ -150,12 +151,14 @@ export default function WatchScreen() {
   // history: save when the episode changes (trailer is not saved), then every 5 s (quietly)
   const activeItem = items[active];
   useEffect(() => {
-    if (series && activeItem?.kind === "episode")
+    if (series && activeItem?.kind === "episode") {
       historyActions.save(
         series.id,
         activeItem.n,
         active === startIndex ? startAt : 0,
       );
+      rewardsActions.episodeWatched(series.id, activeItem.n); // Rewards: "Watch N episodes"
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [active, series?.id]);
 

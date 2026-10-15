@@ -86,6 +86,14 @@ export const userActions = {
     if (__DEV__) console.log(`[user] ${now ? "saved" : "unsaved"} ${id}`);
     return now;
   },
+  /** My list → Saved → Edit → Remove (one save for all). */
+  unsaveMany(ids: string[]) {
+    if (!ids.length) return;
+    const saved = { ...state.saved };
+    ids.forEach((id) => delete saved[id]);
+    set({ ...state, saved });
+    if (__DEV__) console.log(`[user] unsaved ${ids.length}: ${ids.join(", ")}`);
+  },
   rate(id: string, stars: number) {
     set({ ...state, ratings: { ...state.ratings, [id]: stars } });
     if (__DEV__) console.log(`[user] rated ${id} ${stars}★`);

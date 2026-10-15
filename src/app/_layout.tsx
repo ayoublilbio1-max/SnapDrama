@@ -12,6 +12,7 @@ import { darkColors } from "../constants/colors";
 import { CatalogProvider, useCatalog } from "../data/catalog";
 import { preloadHistory } from "../data/history";
 import { preloadProgress } from "../data/progress";
+import { preloadRewards } from "../data/rewards";
 import { preloadUserState } from "../data/userStore";
 import { preloadVip } from "../data/vip";
 import { preloadWallet } from "../data/wallet";
@@ -25,6 +26,7 @@ preloadHistory(); // continue watching ready before Home
 preloadProgress(); // watched / started episodes
 preloadWallet(); // demo coins + unlocked episodes
 preloadVip(); // demo VIP plan (+ daily VIP coins)
+preloadRewards(); // check-in streak + tasks
 
 const t0 = Date.now();
 let splashHidden = false; // module-level guard → hideAsync() runs ONCE only
