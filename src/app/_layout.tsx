@@ -8,11 +8,13 @@ import { useEffect } from "react";
 import { AppState, Platform } from "react-native";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { KeyboardProvider } from "react-native-keyboard-controller";
+import { OfflineGate } from "../components/OfflineGate";
 import { darkColors } from "../constants/colors";
 import { CatalogProvider, useCatalog } from "../data/catalog";
 import { preloadHistory } from "../data/history";
 import { preloadProgress } from "../data/progress";
 import { preloadRewards } from "../data/rewards";
+import { initSettings } from "../data/settings";
 import { preloadUserState } from "../data/userStore";
 import { preloadVip } from "../data/vip";
 import { preloadWallet } from "../data/wallet";
@@ -27,6 +29,7 @@ preloadProgress(); // watched / started episodes
 preloadWallet(); // demo coins + unlocked episodes
 preloadVip(); // demo VIP plan (+ daily VIP coins)
 preloadRewards(); // check-in streak + tasks
+initSettings(); // chosen theme (System / Light / Dark) applied before the first frame
 
 const t0 = Date.now();
 let splashHidden = false; // module-level guard → hideAsync() runs ONCE only
@@ -135,6 +138,7 @@ export default function RootLayout() {
             />
           </Stack>
         </KeyboardProvider>
+        <OfflineGate />
       </CatalogProvider>
       <StatusBar style="auto" />
     </GestureHandlerRootView>
