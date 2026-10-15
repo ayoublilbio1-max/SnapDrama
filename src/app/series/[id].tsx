@@ -469,6 +469,10 @@ export default function SeriesScreen() {
           setUnlockN(0);
           router.push("/coins");
         }}
+        onGetVip={() => {
+          setUnlockN(0);
+          router.push("/vip");
+        }}
       />
       <DemoEpisodeModal visible={demoOpen} onClose={() => setDemoOpen(false)} />
       <InfoModal

@@ -4,6 +4,7 @@ import { LinearGradient } from "expo-linear-gradient";
 import { Pressable, StyleSheet, View } from "react-native";
 import { darkColors } from "../../constants/colors";
 import type { Series } from "../../data/types";
+import { useVip } from "../../data/vip";
 import { useBalance } from "../../data/wallet";
 import { withAlpha } from "../../utils/color";
 import { AppText } from "../AppText";
@@ -34,6 +35,7 @@ export function LockedCard({
 }) {
   const c = darkColors;
   const balance = useBalance();
+  const vip = !!useVip();
   return (
     <View style={{ height, backgroundColor: c.background }}>
       <Image
@@ -106,6 +108,13 @@ export function LockedCard({
                 Play episode {n}
               </AppText>
             </>
+          ) : vip ? (
+            <>
+              <Ionicons name="diamond" size={16} color={c.onPrimary} />
+              <AppText weight="bold" size={16} color="onPrimary">
+                Unlock free with VIP
+              </AppText>
+            </>
           ) : (
             <>
               <AppText weight="bold" size={16} color="onPrimary">
@@ -121,6 +130,17 @@ export function LockedCard({
           )}
         </Pressable>
         <View style={styles.balance}>
+          {vip ? (
+            <>
+              <Ionicons name="diamond" size={13} color={c.gold} />
+              <AppText weight="semibold" size={13} style={{ color: c.gold }}>
+                VIP
+              </AppText>
+              <AppText size={13} style={{ color: c.textMuted }}>
+                ·
+              </AppText>
+            </>
+          ) : null}
           <AppText size={13} style={{ color: c.textMuted }}>
             Balance
           </AppText>

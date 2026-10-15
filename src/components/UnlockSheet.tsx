@@ -5,15 +5,16 @@ import { LinearGradient } from "expo-linear-gradient";
 import { useEffect, useState } from "react";
 import { Modal, Pressable, StyleSheet, View } from "react-native";
 import Animated, {
-    useAnimatedStyle,
-    useSharedValue,
-    withDelay,
-    withSequence,
-    withSpring,
-    withTiming,
+  useAnimatedStyle,
+  useSharedValue,
+  withDelay,
+  withSequence,
+  withSpring,
+  withTiming,
 } from "react-native-reanimated";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import type { Series } from "../data/types";
+import { useVip } from "../data/vip";
 import { useBalance, walletActions } from "../data/wallet";
 import { useTheme } from "../hooks/useTheme";
 import { withAlpha } from "../utils/color";
@@ -24,6 +25,7 @@ import { CoinIcon } from "./CoinIcon";
  * Unlock sheet (brief §8): blurred cover, lock, "Unlock episode N — 50 coins", the balance,
  * Unlock (or Get coins when the balance is too low). Unlock takes the coins for real (demo coins),
  * with a coin animation + haptic, then offers "Play episode N".
+ * VIP active → the episode unlocks free (no coins). Not VIP → a link to the VIP page.
  */
 export function UnlockSheet({
   visible,
@@ -33,6 +35,7 @@ export function UnlockSheet({
   onClose,
   onPlay,
   onGetCoins,
+  onGetVip,
 }: {
   visible: boolean;
   series: Series | undefined;
@@ -41,10 +44,12 @@ export function UnlockSheet({
   onClose: () => void;
   onPlay: (n: number) => void;
   onGetCoins: () => void;
+  onGetVip: () => void;
 }) {
   const colors = useTheme();
   const insets = useSafeAreaInsets();
   const balance = useBalance();
+  const vip = !!useVip();
   const [done, setDone] = useState(false);
 
   const lock = useSharedValue(1);
@@ -67,11 +72,11 @@ export function UnlockSheet({
   }, [visible, n, lock, float]);
 
   if (!series) return null;
-  const enough = balance >= price;
+  const enough = vip || balance >= price;
   const missing = Math.max(0, price - balance);
 
   const unlock = () => {
-    const ok = walletActions.unlock(series, n, price);
+    const ok = walletActions.unlock(series, n, price, vip);
     if (!ok) {
       Haptics.notificationAsync(Haptics.NotificationFeedbackType.Warning).catch(
         () => {},
@@ -86,8 +91,10 @@ export function UnlockSheet({
       withTiming(0.6, { duration: 90 }),
       withSpring(1, { damping: 7, stiffness: 180 }),
     );
-    float.value = 0.001;
-    float.value = withDelay(60, withTiming(1, { duration: 900 }));
+    if (!vip) {
+      float.value = 0.001;
+      float.value = withDelay(60, withTiming(1, { duration: 900 }));
+    }
   };
 
   return (
@@ -180,12 +187,29 @@ export function UnlockSheet({
               <AppText size={14} color="textMuted">
                 {done ? "Paid" : "Price"}
               </AppText>
-              <View style={styles.coins}>
-                <CoinIcon size={18} glow={false} />
-                <AppText weight="bold" size={15} style={{ color: colors.gold }}>
-                  {price}
-                </AppText>
-              </View>
+              {vip ? (
+                <View style={styles.coins}>
+                  <Ionicons name="diamond" size={15} color={colors.gold} />
+                  <AppText
+                    weight="bold"
+                    size={15}
+                    style={{ color: colors.gold }}
+                  >
+                    Free with VIP
+                  </AppText>
+                </View>
+              ) : (
+                <View style={styles.coins}>
+                  <CoinIcon size={18} glow={false} />
+                  <AppText
+                    weight="bold"
+                    size={15}
+                    style={{ color: colors.gold }}
+                  >
+                    {price}
+                  </AppText>
+                </View>
+              )}
             </View>
             <View style={[styles.line, { backgroundColor: colors.border }]} />
             <View style={styles.boxRow}>
@@ -247,6 +271,13 @@ export function UnlockSheet({
                   Play episode {n}
                 </AppText>
               </>
+            ) : vip ? (
+              <>
+                <Ionicons name="diamond" size={16} color={colors.onPrimary} />
+                <AppText weight="bold" size={16} color="onPrimary">
+                  Unlock free with VIP
+                </AppText>
+              </>
             ) : enough ? (
               <>
                 <AppText weight="bold" size={16} color="onPrimary">
@@ -275,12 +306,34 @@ export function UnlockSheet({
             )}
           </Pressable>
 
-          {!done && enough ? (
-            <Pressable onPress={onGetCoins} hitSlop={8} style={styles.link}>
-              <AppText weight="medium" size={14} color="textAccent">
-                Get more coins
-              </AppText>
-            </Pressable>
+          {!done && !vip ? (
+            <View style={styles.links}>
+              {enough ? (
+                <Pressable onPress={onGetCoins} hitSlop={8} style={styles.link}>
+                  <AppText weight="medium" size={14} color="textAccent">
+                    Get more coins
+                  </AppText>
+                </Pressable>
+              ) : null}
+              <Pressable
+                onPress={onGetVip}
+                hitSlop={8}
+                style={[styles.link, styles.vipLink]}
+              >
+                <Ionicons
+                  name="diamond-outline"
+                  size={14}
+                  color={colors.gold}
+                />
+                <AppText
+                  weight="medium"
+                  size={14}
+                  style={{ color: colors.gold }}
+                >
+                  Or go VIP — no coins needed
+                </AppText>
+              </Pressable>
+            </View>
           ) : (
             <Pressable onPress={onClose} hitSlop={8} style={styles.link}>
               <AppText weight="medium" size={14} color="textMuted">
@@ -364,4 +417,11 @@ const styles = StyleSheet.create({
     paddingVertical: 3,
   },
   link: { alignSelf: "center", paddingVertical: 12 },
+  links: {
+    flexDirection: "row",
+    flexWrap: "wrap",
+    justifyContent: "center",
+    columnGap: 20,
+  },
+  vipLink: { flexDirection: "row", alignItems: "center", gap: 6 },
 });

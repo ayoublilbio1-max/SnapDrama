@@ -446,6 +446,10 @@ export default function WatchScreen() {
           setUnlockN(0);
           router.push("/coins");
         }}
+        onGetVip={() => {
+          setUnlockN(0);
+          router.push("/vip");
+        }}
       />
       <DemoEpisodeModal visible={noVideo} onClose={() => setNoVideo(false)} />
     </View>

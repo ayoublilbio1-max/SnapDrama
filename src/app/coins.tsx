@@ -1,35 +1,37 @@
 import Ionicons from "@expo/vector-icons/Ionicons";
 import * as Haptics from "expo-haptics";
 import { LinearGradient } from "expo-linear-gradient";
+import { useRouter } from "expo-router";
 import { useState } from "react";
 import {
-    Pressable,
-    ScrollView,
-    StyleSheet,
-    View,
-    useWindowDimensions,
+  Pressable,
+  ScrollView,
+  StyleSheet,
+  useWindowDimensions,
+  View,
 } from "react-native";
 import Animated, {
-    useAnimatedStyle,
-    useSharedValue,
-    withSequence,
-    withSpring,
-    withTiming,
+  useAnimatedStyle,
+  useSharedValue,
+  withSequence,
+  withSpring,
+  withTiming,
 } from "react-native-reanimated";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { AppText } from "../components/AppText";
 import { CoinIcon } from "../components/CoinIcon";
 import { ConfirmModal } from "../components/ConfirmModal";
 import { ScreenHeader } from "../components/ScreenHeader";
+import { useVip, VIP_DAILY_COINS } from "../data/vip";
 import {
-    useBalance,
-    useCoinHistory,
-    walletActions,
-    type CoinEntry,
+  useBalance,
+  useCoinHistory,
+  walletActions,
+  type CoinEntry,
 } from "../data/wallet";
 import { useTheme } from "../hooks/useTheme";
 
-/** DEMO coin shop — payments are simulated, the coins are just added (brief §8). */
+/** DEMO coin shop — payments are simulated, the coins are just added (brief §8). Linked with VIP. */
 const PACKS = [
   { id: "p100", coins: 100, bonus: 0, price: "$0.99", tag: "" },
   { id: "p300", coins: 300, bonus: 30, price: "$2.99", tag: "" },
@@ -46,6 +48,8 @@ export default function CoinsScreen() {
   const colors = useTheme();
   const insets = useSafeAreaInsets();
   const { width } = useWindowDimensions();
+  const router = useRouter();
+  const vip = useVip();
   const balance = useBalance();
   const history = useCoinHistory();
   const [pick, setPick] = useState<Pack | null>(null);
@@ -105,6 +109,34 @@ export default function CoinsScreen() {
             Use coins to unlock episodes
           </AppText>
         </View>
+
+        {/* link to VIP: watch without coins */}
+        <Pressable
+          onPress={() => router.push("/vip")}
+          style={({ pressed }) => [
+            styles.vipLink,
+            {
+              backgroundColor: colors.goldSoft,
+              borderColor: colors.gold,
+              opacity: pressed ? 0.8 : 1,
+            },
+          ]}
+          accessibilityRole="button"
+          accessibilityLabel="VIP"
+        >
+          <Ionicons name="diamond" size={22} color={colors.gold} />
+          <View style={{ flex: 1 }}>
+            <AppText weight="semibold" size={15}>
+              {vip ? "You are VIP" : "Go VIP — no coins needed"}
+            </AppText>
+            <AppText size={12} color="textMuted">
+              {vip
+                ? `Episodes unlock free · +${VIP_DAILY_COINS} coins every day`
+                : `Unlock every episode free + ${VIP_DAILY_COINS} coins a day`}
+            </AppText>
+          </View>
+          <Ionicons name="chevron-forward" size={20} color={colors.gold} />
+        </Pressable>
 
         {/* packs */}
         <AppText weight="bold" size={18} style={styles.section}>
@@ -290,6 +322,15 @@ const styles = StyleSheet.create({
     marginTop: 6,
   },
   balanceRow: { flexDirection: "row", alignItems: "center", gap: 12 },
+  vipLink: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 12,
+    borderRadius: 18,
+    borderWidth: 1,
+    padding: 14,
+    marginTop: 14,
+  },
   section: { marginTop: 24, marginBottom: 12 },
   grid: { flexDirection: "row", flexWrap: "wrap", gap: GAP },
   pack: {

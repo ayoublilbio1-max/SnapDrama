@@ -1,35 +1,29 @@
 import Ionicons from "@expo/vector-icons/Ionicons";
 import * as Haptics from "expo-haptics";
 import { LinearGradient } from "expo-linear-gradient";
-import Storage from "expo-sqlite/kv-store";
-import { useEffect, useState } from "react";
+import { useRouter } from "expo-router";
+import { useState } from "react";
 import { Pressable, ScrollView, StyleSheet, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { AppText } from "../components/AppText";
 import { CoinIcon } from "../components/CoinIcon";
 import { ConfirmModal } from "../components/ConfirmModal";
 import { ScreenHeader } from "../components/ScreenHeader";
+import {
+  VIP_PLANS as PLANS,
+  useVip,
+  VIP_DAILY_COINS,
+  vipActions,
+  type PlanId,
+} from "../data/vip";
+import { useBalance } from "../data/wallet";
 import { useTheme } from "../hooks/useTheme";
 
-/** DEMO VIP page — simulated payment. The chosen plan is saved on the phone only. */
-const PLANS = [
-  { id: "weekly", name: "Weekly", price: "$4.99", per: "/ week", note: "" },
-  {
-    id: "monthly",
-    name: "Monthly",
-    price: "$14.99",
-    per: "/ month",
-    note: "Most popular",
-  },
-  {
-    id: "yearly",
-    name: "Yearly",
-    price: "$79.99",
-    per: "/ year",
-    note: "Save 55%",
-  },
-] as const;
-type PlanId = (typeof PLANS)[number]["id"];
+/**
+ * DEMO VIP page — simulated payment, the plan is saved on the phone (src/data/vip.ts).
+ * VIP really works in the demo: locked episodes unlock free + daily bonus coins.
+ * Linked with the coin shop (pay per episode instead).
+ */
 
 const BENEFITS: {
   icon: React.ComponentProps<typeof Ionicons>["name"];
@@ -38,45 +32,32 @@ const BENEFITS: {
   { icon: "lock-open", text: "Unlock every episode of every series" },
   { icon: "ban", text: "No ads, ever" },
   { icon: "sparkles", text: "New episodes first" },
-  { icon: "gift", text: "100 bonus coins every day" },
+  { icon: "gift", text: `${VIP_DAILY_COINS} bonus coins every day` },
   { icon: "film", text: "Full HD quality" },
 ];
-
-const VIP_KEY = "vip.plan";
 
 export default function VipScreen() {
   const colors = useTheme();
   const insets = useSafeAreaInsets();
+  const router = useRouter();
+  const active = useVip();
+  const balance = useBalance();
   const [selected, setSelected] = useState<PlanId>("monthly");
-  const [active, setActive] = useState<PlanId | null>(null);
   const [confirm, setConfirm] = useState<"buy" | "cancel" | null>(null);
-
-  useEffect(() => {
-    Storage.getItem(VIP_KEY)
-      .then((v) => {
-        if (v && PLANS.some((p) => p.id === v)) setActive(v as PlanId);
-        if (__DEV__) console.log(`[vip] saved plan: ${v ?? "none"}`);
-      })
-      .catch(() => {});
-  }, []);
 
   const plan = PLANS.find((p) => p.id === selected)!;
 
   const activate = () => {
     setConfirm(null);
-    setActive(selected);
-    Storage.setItem(VIP_KEY, selected).catch(() => {});
+    vipActions.activate(selected);
     Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success).catch(
       () => {},
     );
-    if (__DEV__) console.log(`[vip] demo subscribe ${selected}`);
   };
 
   const cancel = () => {
     setConfirm(null);
-    setActive(null);
-    Storage.removeItem(VIP_KEY).catch(() => {});
-    if (__DEV__) console.log("[vip] demo cancel");
+    vipActions.cancel();
   };
 
   return (
@@ -199,6 +180,32 @@ export default function VipScreen() {
         >
           Demo mode — payments are simulated for this showcase.
         </AppText>
+
+        {/* link to the coin shop: pay per episode instead */}
+        <Pressable
+          onPress={() => router.push("/coins")}
+          style={({ pressed }) => [
+            styles.coinsLink,
+            {
+              backgroundColor: colors.surface,
+              borderColor: colors.border,
+              opacity: pressed ? 0.8 : 1,
+            },
+          ]}
+          accessibilityRole="button"
+          accessibilityLabel="Coin shop"
+        >
+          <CoinIcon size={30} glow={false} />
+          <View style={{ flex: 1 }}>
+            <AppText weight="semibold" size={15}>
+              {active ? "Your coins" : "Prefer to pay per episode?"}
+            </AppText>
+            <AppText size={12} color="textMuted">
+              Balance {balance} coins · coin packs & history
+            </AppText>
+          </View>
+          <Ionicons name="chevron-forward" size={20} color={colors.textMuted} />
+        </Pressable>
       </ScrollView>
 
       <ConfirmModal
@@ -250,6 +257,15 @@ const styles = StyleSheet.create({
     borderWidth: 1.5,
     padding: 16,
     marginBottom: 10,
+  },
+  coinsLink: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 12,
+    borderRadius: 18,
+    borderWidth: 1,
+    padding: 14,
+    marginTop: 22,
   },
   cta: {
     height: 54,

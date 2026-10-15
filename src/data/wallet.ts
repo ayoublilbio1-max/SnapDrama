@@ -28,6 +28,7 @@ const MAX_HISTORY = 100;
 
 let state: WalletState = { balance: 0, history: [], unlocked: {} };
 let loaded = false;
+let loading: Promise<void> | null = null;
 const listeners = new Set<() => void>();
 
 const unlockKey = (seriesId: string, n: number) => `${seriesId}:${n}`;
@@ -62,7 +63,12 @@ function set(next: WalletState) {
   persist();
 }
 
-async function load() {
+function load() {
+  if (!loading) loading = doLoad();
+  return loading;
+}
+
+async function doLoad() {
   if (loaded) return;
   loaded = true;
   const t0 = Date.now();
@@ -103,6 +109,11 @@ function subscribe(l: () => void) {
 /** Call once at app start (balance ready before the first unlock). */
 export function preloadWallet() {
   load();
+}
+
+/** Resolves when the saved balance is loaded (VIP daily bonus waits for it). */
+export function walletReady(): Promise<void> {
+  return load();
 }
 
 export function useBalance(): number {
@@ -149,9 +160,23 @@ export function playableEpisode(
 }
 
 export const walletActions = {
-  /** Takes the coins and marks the episode unlocked. Returns false if the balance is too low. */
-  unlock(series: Series, n: number, price: number): boolean {
+  /**
+   * Takes the coins and marks the episode unlocked. Returns false if the balance is too low.
+   * VIP: free (no coins, no history line).
+   */
+  unlock(series: Series, n: number, price: number, vip = false): boolean {
     if (isUnlocked(state.unlocked, series.id, n)) return true;
+    if (vip) {
+      set({
+        ...state,
+        unlocked: { ...state.unlocked, [unlockKey(series.id, n)]: Date.now() },
+      });
+      if (__DEV__)
+        console.log(
+          `[paywall] unlocked ${series.id} ep ${n} — VIP (free), balance ${state.balance}`,
+        );
+      return true;
+    }
     if (state.balance < price) {
       if (__DEV__)
         console.log(
