@@ -62,12 +62,13 @@ type Props = {
   active: boolean; // this page is on screen → plays
   nearby: boolean; // active ± 1 → has a player (preloaded), others = poster only (max 3 players)
   startAt: number; // seconds (resume)
-  onEnded: () => void;
-  onProgress: (n: number, time: number) => void;
+  onEnded: (n: number) => void;
+  onProgress: (n: number, time: number, duration: number) => void;
   onEpisodes: () => void;
   onShare: () => void;
   clean: boolean; // "Clear" mode: hide texts + buttons, only the video
   onToggleClean: () => void;
+  onSubtitles: () => void;
 };
 
 /** One full-screen page of the vertical player. */
@@ -109,6 +110,7 @@ function PlayerSurface({
   onShare,
   clean,
   onToggleClean,
+  onSubtitles,
 }: Props) {
   const c = darkColors;
   const tag = `${series.id} ${item.kind === "trailer" ? "trailer" : `ep ${item.n}`}`;
@@ -220,12 +222,12 @@ function PlayerSurface({
   useEventListener(player, "timeUpdate", ({ currentTime }) => {
     lastTime.current = currentTime;
     if (currentTime > 0.05) setFirstFrame(true);
-    if (activeRef.current) onProgress(item.n, currentTime);
+    if (activeRef.current) onProgress(item.n, currentTime, player.duration);
   });
 
   useEventListener(player, "playToEnd", () => {
     if (__DEV__) console.log(`[player] ${tag} ended`);
-    if (activeRef.current) onEnded();
+    if (activeRef.current) onEnded(item.n);
   });
 
   // ── gestures: tap = play/pause · double-tap = like · long-press = 2× ──
@@ -438,6 +440,12 @@ function PlayerSurface({
             onPress={onShare}
           />
           <SideButton
+            icon="language-outline"
+            color={c.onPrimary}
+            label="Subtitles"
+            onPress={onSubtitles}
+          />
+          <SideButton
             icon="eye-off-outline"
             color={c.onPrimary}
             label="Clear"
@@ -606,7 +614,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
   },
-  side: { position: "absolute", right: 10, alignItems: "center", gap: 16 },
+  side: { position: "absolute", right: 10, alignItems: "center", gap: 14 },
   showUi: {
     position: "absolute",
     right: 14,

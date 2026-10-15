@@ -1,10 +1,10 @@
 import {
-    Modal,
-    Pressable,
-    ScrollView,
-    StyleSheet,
-    View,
-    useWindowDimensions,
+  Modal,
+  Pressable,
+  ScrollView,
+  StyleSheet,
+  View,
+  useWindowDimensions,
 } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import type { Series } from "../../data/types";
@@ -69,6 +69,7 @@ export function EpisodesSheet({
               series={series}
               coinsPerEpisode={coinsPerEpisode}
               onPress={onPick}
+              current={current}
             />
           </ScrollView>
         </Pressable>

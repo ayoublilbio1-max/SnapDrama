@@ -1,13 +1,14 @@
 import Ionicons from "@expo/vector-icons/Ionicons";
 import { memo, useMemo, useState } from "react";
 import {
-    Pressable,
-    ScrollView,
-    StyleSheet,
-    View,
-    useWindowDimensions,
+  Pressable,
+  ScrollView,
+  StyleSheet,
+  View,
+  useWindowDimensions,
 } from "react-native";
 import { isEpisodeFree } from "../data/catalog";
+import { episodeView, progressKey, useProgress } from "../data/progress";
 import type { Series } from "../data/types";
 import { useTheme } from "../hooks/useTheme";
 import { AppText } from "./AppText";
@@ -20,18 +21,21 @@ export type EpisodeState = "free" | "locked";
 
 /**
  * Episode numbers 1..totalEpisodes (brief §8): free ones playable, the others locked with a price.
- * Only free episodes have a video; the app creates the locked ones itself.
+ * Watched = muted box + ✓ · started = thin progress bar at the bottom (YouTube style) · current = violet border.
  */
 export const EpisodeGrid = memo(function EpisodeGrid({
   series,
   coinsPerEpisode,
   onPress,
+  current = 0,
 }: {
   series: Series;
   coinsPerEpisode: number;
   onPress: (n: number, state: EpisodeState) => void;
+  current?: number; // episode playing now (player sheet)
 }) {
   const colors = useTheme();
+  const progress = useProgress();
   const { width } = useWindowDimensions();
   const total = series.totalEpisodes;
   const ranges = useMemo(() => {
@@ -40,7 +44,10 @@ export const EpisodeGrid = memo(function EpisodeGrid({
       r.push([a, Math.min(total, a + PER_RANGE - 1)]);
     return r;
   }, [total]);
-  const [range, setRange] = useState(0);
+  // open on the tab that contains the current episode
+  const [range, setRange] = useState(() =>
+    Math.max(0, Math.floor((Math.max(1, current) - 1) / PER_RANGE)),
+  );
   const [from, to] = ranges[Math.min(range, ranges.length - 1)] ?? [1, total];
   const tileW = Math.floor((width - 32 - GAP * (COLUMNS - 1)) / COLUMNS);
 
@@ -81,6 +88,10 @@ export const EpisodeGrid = memo(function EpisodeGrid({
       <View style={styles.grid}>
         {nums.map((n) => {
           const free = isEpisodeFree(series, n);
+          const { watched, ratio } = free
+            ? episodeView(progress[progressKey(series.id, n)])
+            : { watched: false, ratio: 0 };
+          const isCurrent = n === current;
           return (
             <Pressable
               key={n}
@@ -89,22 +100,48 @@ export const EpisodeGrid = memo(function EpisodeGrid({
                 styles.tile,
                 {
                   width: tileW,
-                  backgroundColor: colors.surface,
-                  borderColor: free ? colors.border : colors.goldSoft,
-                  opacity: pressed ? 0.7 : 1,
+                  backgroundColor: watched ? colors.surfaceAlt : colors.surface,
+                  borderColor: isCurrent
+                    ? colors.primary
+                    : free
+                      ? colors.border
+                      : colors.goldSoft,
+                  borderWidth: isCurrent ? 1.5 : 1,
+                  opacity: pressed ? 0.7 : watched && !isCurrent ? 0.6 : 1,
                 },
               ]}
               accessibilityRole="button"
               accessibilityLabel={
                 free
-                  ? `Episode ${n}`
+                  ? `Episode ${n}${watched ? ", watched" : ratio > 0 ? `, ${Math.round(ratio * 100)}% watched` : ""}`
                   : `Episode ${n}, locked, ${coinsPerEpisode} coins`
               }
             >
-              <AppText weight="semibold" size={16}>
-                {n}
-              </AppText>
-              {free ? (
+              {isCurrent ? (
+                <Ionicons name="stats-chart" size={14} color={colors.primary} />
+              ) : (
+                <AppText
+                  weight="semibold"
+                  size={16}
+                  color={watched ? "textMuted" : "text"}
+                >
+                  {n}
+                </AppText>
+              )}
+
+              {!free ? (
+                <View style={styles.lockCorner}>
+                  <Ionicons name="lock-closed" size={11} color={colors.gold} />
+                </View>
+              ) : watched ? (
+                <View style={styles.lockCorner}>
+                  <Ionicons
+                    name="checkmark-circle"
+                    size={13}
+                    color={colors.textMuted}
+                  />
+                </View>
+              ) : ratio === 0 ? (
                 <View
                   style={[styles.corner, { backgroundColor: colors.primary }]}
                 >
@@ -112,9 +149,22 @@ export const EpisodeGrid = memo(function EpisodeGrid({
                     FREE
                   </AppText>
                 </View>
-              ) : (
-                <View style={styles.lockCorner}>
-                  <Ionicons name="lock-closed" size={11} color={colors.gold} />
+              ) : null}
+
+              {/* started, not finished: thin bar at the bottom */}
+              {ratio > 0 && !watched && (
+                <View
+                  style={[styles.track, { backgroundColor: colors.border }]}
+                >
+                  <View
+                    style={[
+                      styles.fill,
+                      {
+                        width: `${Math.max(6, ratio * 100)}%`,
+                        backgroundColor: colors.primary,
+                      },
+                    ]}
+                  />
                 </View>
               )}
             </Pressable>
@@ -132,7 +182,6 @@ const styles = StyleSheet.create({
   tile: {
     height: 48,
     borderRadius: 12,
-    borderWidth: 1,
     alignItems: "center",
     justifyContent: "center",
     overflow: "hidden",
@@ -146,4 +195,6 @@ const styles = StyleSheet.create({
     borderBottomLeftRadius: 6,
   },
   lockCorner: { position: "absolute", top: 3, right: 4 },
+  track: { position: "absolute", left: 0, right: 0, bottom: 0, height: 3 },
+  fill: { height: 3 },
 });

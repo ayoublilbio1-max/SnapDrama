@@ -4,6 +4,7 @@ import { setStatusBarStyle } from "expo-status-bar";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import {
   FlatList,
+  Linking,
   Pressable,
   Share,
   StyleSheet,
@@ -20,6 +21,7 @@ import {
 } from "../../components/player/EpisodePage";
 import { EpisodesSheet } from "../../components/player/EpisodesSheet";
 import { LockedCard } from "../../components/player/LockedCard";
+import { FIVERR_URL } from "../../constants/app";
 import { darkColors } from "../../constants/colors";
 import {
   freeLabel,
@@ -28,6 +30,7 @@ import {
   useSeries,
 } from "../../data/catalog";
 import { historyActions } from "../../data/history";
+import { progressActions } from "../../data/progress";
 import type { Series } from "../../data/types";
 import { userActions } from "../../data/userStore";
 import { hasVideo } from "../../video/source";
@@ -105,6 +108,7 @@ export default function WatchScreen() {
     title: string;
     message: string;
   } | null>(null);
+  const [demoOpen, setDemoOpen] = useState(false);
   const listRef = useRef<FlatList<PlayerItem>>(null);
   const lastSave = useRef(0);
   const activeRef = useRef(active);
@@ -143,8 +147,9 @@ export default function WatchScreen() {
 
   // ── stable callbacks (they don't change on every page change → pages don't all re-render) ──
   const onProgress = useCallback(
-    (n: number, time: number) => {
+    (n: number, time: number, duration: number) => {
       if (!series || n <= 0) return;
+      progressActions.update(series.id, n, time, duration); // quiet, cheap
       const now = Date.now();
       if (now - lastSave.current < SAVE_EVERY_MS) return;
       lastSave.current = now;
@@ -162,12 +167,19 @@ export default function WatchScreen() {
     [items.length],
   );
 
-  const onEnded = useCallback(() => {
-    const next = activeRef.current + 1;
-    if (__DEV__)
-      console.log(`[player] auto-next → ${items[next]?.key ?? "end"}`);
-    goTo(next);
-  }, [goTo, items]);
+  const onEnded = useCallback(
+    (n: number) => {
+      if (series && n > 0) progressActions.markDone(series.id, n);
+      const next = activeRef.current + 1;
+      if (__DEV__)
+        console.log(`[player] auto-next → ${items[next]?.key ?? "end"}`);
+      goTo(next);
+    },
+    [goTo, items, series],
+  );
+
+  // player closes → save progress now so the series page shows the latest bars
+  useEffect(() => () => progressActions.flush(), []);
 
   const onViewable = useRef(
     ({ viewableItems }: { viewableItems: ViewToken[] }) => {
@@ -199,7 +211,16 @@ export default function WatchScreen() {
     }
   }, [series]);
 
-  const openSheet = useCallback(() => setSheet(true), []);
+  // brief §7: features not in the demo open a themed "not in the demo" popup
+  const onSubtitles = useCallback(() => {
+    if (__DEV__) console.log("[player] subtitles → not in the demo");
+    setDemoOpen(true);
+  }, []);
+
+  const openSheet = useCallback(() => {
+    progressActions.flush(); // the sheet shows up-to-date bars
+    setSheet(true);
+  }, []);
   const toggleClean = useCallback(() => {
     setClean((v) => {
       if (__DEV__) console.log(`[player] clear mode ${!v ? "on" : "off"}`);
@@ -251,6 +272,7 @@ export default function WatchScreen() {
           onShare={onShare}
           clean={clean}
           onToggleClean={toggleClean}
+          onSubtitles={onSubtitles}
         />
       );
     },
@@ -267,6 +289,7 @@ export default function WatchScreen() {
       onShare,
       clean,
       toggleClean,
+      onSubtitles,
       catalog.coinsPerEpisode,
       showUnlockNotice,
     ],
@@ -360,6 +383,22 @@ export default function WatchScreen() {
         coinsPerEpisode={catalog.coinsPerEpisode}
         onPick={onPick}
         onClose={() => setSheet(false)}
+      />
+      <InfoModal
+        visible={demoOpen}
+        icon="language-outline"
+        title="Not in the demo"
+        message="Subtitles in 50+ languages are part of the full app. This demo plays episodes without subtitles."
+        actionLabel="Contact the developer"
+        onAction={() => {
+          setDemoOpen(false);
+          if (__DEV__) console.log("[player] demo → open Fiverr");
+          Linking.openURL(FIVERR_URL).catch((e) => {
+            if (__DEV__)
+              console.log("[player] could not open Fiverr", String(e));
+          });
+        }}
+        onClose={() => setDemoOpen(false)}
       />
       <InfoModal
         visible={!!notice}
