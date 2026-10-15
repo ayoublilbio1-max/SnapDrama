@@ -13,6 +13,7 @@ import { CatalogProvider, useCatalog } from "../data/catalog";
 import { preloadHistory } from "../data/history";
 import { preloadProgress } from "../data/progress";
 import { preloadUserState } from "../data/userStore";
+import { preloadWallet } from "../data/wallet";
 import { useTheme } from "../hooks/useTheme";
 
 // Outside the component (brief §5): keep the splash until the app is ready.
@@ -21,6 +22,7 @@ SplashScreen.setOptions({ duration: 300, fade: true });
 preloadUserState(); // saves / ratings ready before the first series page
 preloadHistory(); // continue watching ready before Home
 preloadProgress(); // watched / started episodes
+preloadWallet(); // demo coins + unlocked episodes
 
 const t0 = Date.now();
 let splashHidden = false; // module-level guard → hideAsync() runs ONCE only

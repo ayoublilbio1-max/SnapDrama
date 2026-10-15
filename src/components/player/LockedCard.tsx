@@ -4,27 +4,36 @@ import { LinearGradient } from "expo-linear-gradient";
 import { Pressable, StyleSheet, View } from "react-native";
 import { darkColors } from "../../constants/colors";
 import type { Series } from "../../data/types";
+import { useBalance } from "../../data/wallet";
 import { withAlpha } from "../../utils/color";
 import { AppText } from "../AppText";
 import { CoinIcon } from "../CoinIcon";
 
-/** Page after the last free episode: blurred cover + lock + price + Unlock. */
+/**
+ * Page after the last free episode: blurred cover + lock + price + Unlock (→ Unlock sheet).
+ * Once unlocked: "Unlocked" + Play (→ "This is a demo" when the episode has no video).
+ */
 export function LockedCard({
   series,
   n,
   price,
   height,
+  unlocked,
   onUnlock,
+  onPlay,
   onEpisodes,
 }: {
   series: Series;
   n: number;
   price: number;
   height: number;
+  unlocked: boolean;
   onUnlock: () => void;
+  onPlay: () => void;
   onEpisodes: () => void;
 }) {
   const c = darkColors;
+  const balance = useBalance();
   return (
     <View style={{ height, backgroundColor: c.background }}>
       <Image
@@ -43,14 +52,20 @@ export function LockedCard({
         style={StyleSheet.absoluteFill}
       />
       <View style={styles.center}>
-        <View style={[styles.cover, { borderColor: c.glow }]}>
+        <View
+          style={[styles.cover, { borderColor: unlocked ? c.gold : c.glow }]}
+        >
           <Image
             source={{ uri: series.cover }}
             style={StyleSheet.absoluteFill}
             contentFit="cover"
           />
           <View style={[styles.lockBadge, { backgroundColor: c.overlay }]}>
-            <Ionicons name="lock-closed" size={30} color={c.gold} />
+            <Ionicons
+              name={unlocked ? "lock-open" : "lock-closed"}
+              size={30}
+              color={c.gold}
+            />
           </View>
         </View>
         <AppText
@@ -60,7 +75,7 @@ export function LockedCard({
           align="center"
           style={{ marginTop: 20 }}
         >
-          Episode {n} is locked
+          Episode {n} {unlocked ? "unlocked" : "is locked"}
         </AppText>
         <AppText
           size={14}
@@ -72,7 +87,7 @@ export function LockedCard({
         </AppText>
 
         <Pressable
-          onPress={onUnlock}
+          onPress={unlocked ? onPlay : onUnlock}
           style={({ pressed }) => [
             styles.unlock,
             { opacity: pressed ? 0.85 : 1 },
@@ -84,16 +99,36 @@ export function LockedCard({
             end={{ x: 1, y: 0.5 }}
             style={StyleSheet.absoluteFill}
           />
-          <AppText weight="bold" size={16} color="onPrimary">
-            Unlock
-          </AppText>
-          <View style={[styles.price, { backgroundColor: c.overlay }]}>
-            <CoinIcon size={20} glow={false} />
-            <AppText weight="bold" size={16} style={{ color: c.gold }}>
-              {price}
-            </AppText>
-          </View>
+          {unlocked ? (
+            <>
+              <Ionicons name="play" size={18} color={c.onPrimary} />
+              <AppText weight="bold" size={16} color="onPrimary">
+                Play episode {n}
+              </AppText>
+            </>
+          ) : (
+            <>
+              <AppText weight="bold" size={16} color="onPrimary">
+                Unlock
+              </AppText>
+              <View style={[styles.price, { backgroundColor: c.overlay }]}>
+                <CoinIcon size={20} glow={false} />
+                <AppText weight="bold" size={16} style={{ color: c.gold }}>
+                  {price}
+                </AppText>
+              </View>
+            </>
+          )}
         </Pressable>
+        <View style={styles.balance}>
+          <AppText size={13} style={{ color: c.textMuted }}>
+            Balance
+          </AppText>
+          <CoinIcon size={16} glow={false} />
+          <AppText weight="semibold" size={13} color="onPrimary">
+            {balance}
+          </AppText>
+        </View>
 
         <Pressable onPress={onEpisodes} hitSlop={8} style={styles.link}>
           <Ionicons name="albums-outline" size={16} color={c.textAccent} />
@@ -148,6 +183,12 @@ const styles = StyleSheet.create({
     borderRadius: 14,
     paddingHorizontal: 10,
     paddingVertical: 3,
+  },
+  balance: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 5,
+    marginTop: 12,
   },
   link: { flexDirection: "row", alignItems: "center", gap: 6, marginTop: 18 },
 });

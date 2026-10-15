@@ -13,6 +13,7 @@ import {
 } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { AppText } from "../../components/AppText";
+import { DemoEpisodeModal } from "../../components/DemoEpisodeModal";
 import type { EpisodeState } from "../../components/EpisodeGrid";
 import { InfoModal } from "../../components/InfoModal";
 import {
@@ -22,6 +23,7 @@ import {
 import { EpisodesSheet } from "../../components/player/EpisodesSheet";
 import { LockedCard } from "../../components/player/LockedCard";
 import { MuteButton } from "../../components/player/MuteButton";
+import { UnlockSheet } from "../../components/UnlockSheet";
 import { FIVERR_URL } from "../../constants/app";
 import { darkColors } from "../../constants/colors";
 import {
@@ -34,15 +36,20 @@ import { historyActions } from "../../data/history";
 import { progressActions } from "../../data/progress";
 import type { Series } from "../../data/types";
 import { userActions } from "../../data/userStore";
+import { isUnlocked, useUnlocked } from "../../data/wallet";
 import { hasVideo } from "../../video/source";
 
 const SAVE_EVERY_MS = 5000;
 
 /**
  * Pages of the player, top to bottom:
- * trailer (if the series has one) → free episodes with a video → one locked card.
+ * trailer (if the series has one) → free (or unlocked) episodes with a video → one locked card.
+ * An unlocked episode joins the pages only if it has a video (brief §8 rule).
  */
-function buildItems(series: Series): PlayerItem[] {
+function buildItems(
+  series: Series,
+  unlocked: Record<string, number>,
+): PlayerItem[] {
   const items: PlayerItem[] = [];
   if (series.trailer && hasVideo(series.trailer)) {
     // a trailer has no likes of its own → it shows the series' count
@@ -56,7 +63,11 @@ function buildItems(series: Series): PlayerItem[] {
     });
   }
   series.episodes
-    .filter((e) => isEpisodeFree(series, e.n) && hasVideo(e))
+    .filter(
+      (e) =>
+        (isEpisodeFree(series, e.n) || isUnlocked(unlocked, series.id, e.n)) &&
+        hasVideo(e),
+    )
     .sort((a, b) => a.n - b.n)
     .forEach((e) =>
       items.push({
@@ -91,7 +102,11 @@ export default function WatchScreen() {
   const { catalog } = useCatalog();
   const series = useSeries(params.id);
 
-  const items = useMemo(() => (series ? buildItems(series) : []), [series]);
+  const unlocked = useUnlocked();
+  const items = useMemo(
+    () => (series ? buildItems(series, unlocked) : []),
+    [series, unlocked],
+  );
   const startIndex = useMemo(() => {
     const ep = params.ep === undefined ? NaN : Number(params.ep);
     const i = items.findIndex((it) => it.n === ep && it.kind !== "locked");
@@ -105,11 +120,9 @@ export default function WatchScreen() {
   const [pageH, setPageH] = useState(0);
   const [sheet, setSheet] = useState(false);
   const [clean, setClean] = useState(false);
-  const [notice, setNotice] = useState<{
-    title: string;
-    message: string;
-  } | null>(null);
-  const [demoOpen, setDemoOpen] = useState(false);
+  const [demoOpen, setDemoOpen] = useState(false); // subtitles: not in the demo
+  const [unlockN, setUnlockN] = useState(0); // episode in the Unlock sheet (0 = closed)
+  const [noVideo, setNoVideo] = useState(false); // "This is a demo" popup
   const listRef = useRef<FlatList<PlayerItem>>(null);
   const lastSave = useRef(0);
   const activeRef = useRef(active);
@@ -189,15 +202,28 @@ export default function WatchScreen() {
     },
   ).current;
 
-  const showUnlockNotice = useCallback(
+  // brief §8: an episode plays only if it has a video; unlocked without video → "This is a demo"
+  const playUnlocked = useCallback(
+    (n: number) => {
+      const i = items.findIndex((it) => it.kind === "episode" && it.n === n);
+      if (i >= 0) {
+        goTo(i);
+        return;
+      }
+      if (__DEV__)
+        console.log(`[paywall] demo: no video for ${series?.id} ep ${n}`);
+      setNoVideo(true);
+    },
+    [items, goTo, series?.id],
+  );
+
+  const openUnlock = useCallback(
     (n: number) => {
       if (__DEV__) console.log(`[player] unlock tap ep ${n}`);
-      setNotice({
-        title: `Unlock episode ${n}`,
-        message: `${catalog.coinsPerEpisode} coins. The unlock sheet arrives with the coins step.`,
-      });
+      if (series && isUnlocked(unlocked, series.id, n)) playUnlocked(n);
+      else setUnlockN(n);
     },
-    [catalog.coinsPerEpisode],
+    [series, unlocked, playUnlocked],
   );
 
   const onShare = useCallback(async () => {
@@ -232,15 +258,15 @@ export default function WatchScreen() {
   const onPick = useCallback(
     (n: number, state: EpisodeState) => {
       setSheet(false);
-      if (state === "locked") {
-        showUnlockNotice(n);
+      if (state === "locked" || state === "unlocked") {
+        setTimeout(() => openUnlock(n), 250); // let the Episodes sheet slide away first
         return;
       }
       const i = items.findIndex((it) => it.kind === "episode" && it.n === n);
       if (__DEV__) console.log(`[player] pick ep ${n} → page ${i}`);
       if (i >= 0) goTo(i);
     },
-    [items, goTo, showUnlockNotice],
+    [items, goTo, openUnlock],
   );
 
   const renderItem = useCallback(
@@ -253,7 +279,9 @@ export default function WatchScreen() {
             n={item.n}
             price={catalog.coinsPerEpisode}
             height={pageH}
-            onUnlock={() => showUnlockNotice(item.n)}
+            unlocked={isUnlocked(unlocked, series.id, item.n)}
+            onUnlock={() => openUnlock(item.n)}
+            onPlay={() => playUnlocked(item.n)}
             onEpisodes={openSheet}
           />
         );
@@ -292,7 +320,9 @@ export default function WatchScreen() {
       toggleClean,
       onSubtitles,
       catalog.coinsPerEpisode,
-      showUnlockNotice,
+      unlocked,
+      openUnlock,
+      playUnlocked,
     ],
   );
 
@@ -402,13 +432,22 @@ export default function WatchScreen() {
         }}
         onClose={() => setDemoOpen(false)}
       />
-      <InfoModal
-        visible={!!notice}
-        icon="lock-closed-outline"
-        title={notice?.title ?? ""}
-        message={notice?.message ?? ""}
-        onClose={() => setNotice(null)}
+      <UnlockSheet
+        visible={unlockN > 0}
+        series={series}
+        n={unlockN}
+        price={catalog.coinsPerEpisode}
+        onClose={() => setUnlockN(0)}
+        onPlay={(n) => {
+          setUnlockN(0);
+          setTimeout(() => playUnlocked(n), 250); // let the sheet slide away first
+        }}
+        onGetCoins={() => {
+          setUnlockN(0);
+          router.push("/coins");
+        }}
       />
+      <DemoEpisodeModal visible={noVideo} onClose={() => setNoVideo(false)} />
     </View>
   );
 }

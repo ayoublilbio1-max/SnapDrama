@@ -16,14 +16,17 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { AppText } from "../../components/AppText";
 import { CoinIcon } from "../../components/CoinIcon";
 import { CoverViewer, type Rect } from "../../components/CoverViewer";
+import { DemoEpisodeModal } from "../../components/DemoEpisodeModal";
 import { EmptyState } from "../../components/EmptyState";
 import { EpisodeGrid, type EpisodeState } from "../../components/EpisodeGrid";
 import { InfoModal } from "../../components/InfoModal";
 import { RateSheet } from "../../components/RateSheet";
 import { ScreenHeader } from "../../components/ScreenHeader";
+import { UnlockSheet } from "../../components/UnlockSheet";
 import { freeLabel, useCatalog, useSeries } from "../../data/catalog";
 import { useResume } from "../../data/history";
 import { seriesStats, useUserState, userActions } from "../../data/userStore";
+import { playableEpisode } from "../../data/wallet";
 import { useTheme } from "../../hooks/useTheme";
 import { withAlpha } from "../../utils/color";
 import { formatCount } from "../../utils/format";
@@ -52,6 +55,26 @@ export default function SeriesScreen() {
   const coverRef = useRef<View>(null);
   const [coverFrom, setCoverFrom] = useState<Rect | null>(null);
   const [coverOpen, setCoverOpen] = useState(false);
+  const [unlockN, setUnlockN] = useState(0); // episode in the Unlock sheet (0 = closed)
+  const [demoOpen, setDemoOpen] = useState(false);
+
+  // brief §8: an episode plays only if it has a video; unlocked without video → "This is a demo"
+  const playUnlocked = useCallback(
+    (n: number) => {
+      if (!series) return;
+      if (playableEpisode(series, n)) {
+        router.push({
+          pathname: "/watch/[id]",
+          params: { id: series.id, ep: String(n) },
+        });
+        return;
+      }
+      if (__DEV__)
+        console.log(`[paywall] demo: no video for ${series.id} ep ${n}`);
+      setDemoOpen(true);
+    },
+    [series, router],
+  );
 
   const onEpisode = useCallback(
     (n: number, state: EpisodeState) => {
@@ -65,14 +88,13 @@ export default function SeriesScreen() {
         });
         return;
       }
-      // Temporary until the unlock sheet (coins step)
-      setNotice({
-        icon: "lock-closed-outline",
-        title: `Episode ${n} is locked`,
-        message: `Unlock for ${catalog.coinsPerEpisode} coins. The unlock sheet arrives with the coins step.`,
-      });
+      if (state === "unlocked") {
+        playUnlocked(n);
+        return;
+      }
+      setUnlockN(n);
     },
-    [series, catalog.coinsPerEpisode, router],
+    [series, router, playUnlocked],
   );
   const resume = useResume(series?.id);
 
@@ -433,6 +455,22 @@ export default function SeriesScreen() {
         from={coverFrom}
         onClose={() => setCoverOpen(false)}
       />
+      <UnlockSheet
+        visible={unlockN > 0}
+        series={series}
+        n={unlockN}
+        price={catalog.coinsPerEpisode}
+        onClose={() => setUnlockN(0)}
+        onPlay={(n) => {
+          setUnlockN(0);
+          setTimeout(() => playUnlocked(n), 250); // let the sheet slide away first
+        }}
+        onGetCoins={() => {
+          setUnlockN(0);
+          router.push("/coins");
+        }}
+      />
+      <DemoEpisodeModal visible={demoOpen} onClose={() => setDemoOpen(false)} />
       <InfoModal
         visible={!!notice}
         icon={notice?.icon}

@@ -7,9 +7,9 @@ import {
   View,
   useWindowDimensions,
 } from "react-native";
-import { isEpisodeFree } from "../data/catalog";
 import { episodeView, progressKey, useProgress } from "../data/progress";
 import type { Series } from "../data/types";
+import { episodeState, useUnlocked, type EpisodeState } from "../data/wallet";
 import { useTheme } from "../hooks/useTheme";
 import { AppText } from "./AppText";
 
@@ -17,10 +17,11 @@ const PER_RANGE = 30; // tabs: 1-30, 31-60…
 const COLUMNS = 5;
 const GAP = 8;
 
-export type EpisodeState = "free" | "locked";
+export type { EpisodeState };
 
 /**
- * Episode numbers 1..totalEpisodes (brief §8): free ones playable, the others locked with a price.
+ * Episode numbers 1..totalEpisodes (brief §8): free ones playable, the others locked with a price,
+ * unlocked ones (demo coins) with an open gold lock.
  * Watched = muted box + ✓ · started = thin progress bar at the bottom (YouTube style) · current = violet border.
  */
 export const EpisodeGrid = memo(function EpisodeGrid({
@@ -36,6 +37,7 @@ export const EpisodeGrid = memo(function EpisodeGrid({
 }) {
   const colors = useTheme();
   const progress = useProgress();
+  const unlocked = useUnlocked();
   const { width } = useWindowDimensions();
   const total = series.totalEpisodes;
   const ranges = useMemo(() => {
@@ -87,7 +89,8 @@ export const EpisodeGrid = memo(function EpisodeGrid({
 
       <View style={styles.grid}>
         {nums.map((n) => {
-          const free = isEpisodeFree(series, n);
+          const state = episodeState(series, n, unlocked);
+          const free = state === "free";
           const { watched, ratio } = free
             ? episodeView(progress[progressKey(series.id, n)])
             : { watched: false, ratio: 0 };
@@ -95,7 +98,7 @@ export const EpisodeGrid = memo(function EpisodeGrid({
           return (
             <Pressable
               key={n}
-              onPress={() => onPress(n, free ? "free" : "locked")}
+              onPress={() => onPress(n, state)}
               style={({ pressed }) => [
                 styles.tile,
                 {
@@ -103,9 +106,9 @@ export const EpisodeGrid = memo(function EpisodeGrid({
                   backgroundColor: watched ? colors.surfaceAlt : colors.surface,
                   borderColor: isCurrent
                     ? colors.primary
-                    : free
-                      ? colors.border
-                      : colors.goldSoft,
+                    : state === "locked"
+                      ? colors.goldSoft
+                      : colors.border,
                   borderWidth: isCurrent ? 1.5 : 1,
                   opacity: pressed ? 0.7 : watched && !isCurrent ? 0.6 : 1,
                 },
@@ -114,7 +117,9 @@ export const EpisodeGrid = memo(function EpisodeGrid({
               accessibilityLabel={
                 free
                   ? `Episode ${n}${watched ? ", watched" : ratio > 0 ? `, ${Math.round(ratio * 100)}% watched` : ""}`
-                  : `Episode ${n}, locked, ${coinsPerEpisode} coins`
+                  : state === "unlocked"
+                    ? `Episode ${n}, unlocked`
+                    : `Episode ${n}, locked, ${coinsPerEpisode} coins`
               }
             >
               {isCurrent ? (
@@ -129,9 +134,13 @@ export const EpisodeGrid = memo(function EpisodeGrid({
                 </AppText>
               )}
 
-              {!free ? (
+              {state === "locked" ? (
                 <View style={styles.lockCorner}>
                   <Ionicons name="lock-closed" size={11} color={colors.gold} />
+                </View>
+              ) : state === "unlocked" ? (
+                <View style={styles.lockCorner}>
+                  <Ionicons name="lock-open" size={11} color={colors.gold} />
                 </View>
               ) : watched ? (
                 <View style={styles.lockCorner}>
