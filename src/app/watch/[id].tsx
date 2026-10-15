@@ -21,6 +21,7 @@ import {
 } from "../../components/player/EpisodePage";
 import { EpisodesSheet } from "../../components/player/EpisodesSheet";
 import { LockedCard } from "../../components/player/LockedCard";
+import { MuteButton } from "../../components/player/MuteButton";
 import { FIVERR_URL } from "../../constants/app";
 import { darkColors } from "../../constants/colors";
 import {
@@ -373,6 +374,7 @@ export default function WatchScreen() {
           >
             {series.title}
           </AppText>
+          <MuteButton />
         </View>
       )}
 

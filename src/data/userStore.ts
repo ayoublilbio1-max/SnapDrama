@@ -67,6 +67,11 @@ export function preloadUserState() {
   load();
 }
 
+/** True if this series is in My list. Only this one card re-renders when it changes. */
+export function useIsSaved(id: string): boolean {
+  return useSyncExternalStore(subscribe, () => !!state.saved[id]);
+}
+
 export function useUserState(): UserState {
   return useSyncExternalStore(subscribe, () => state);
 }

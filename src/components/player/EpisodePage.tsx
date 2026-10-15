@@ -25,6 +25,8 @@ import {
 } from "../../data/userStore";
 import { withAlpha } from "../../utils/color";
 import { formatCount } from "../../utils/format";
+import { registerFeedControl } from "../../video/feedControl";
+import { isMuted, useMuted } from "../../video/mute";
 import {
   BUNNY_TIMEOUT_MS,
   getEpisodeSource,
@@ -69,6 +71,11 @@ type Props = {
   clean: boolean; // "Clear" mode: hide texts + buttons, only the video
   onToggleClean: () => void;
   onSubtitles: () => void;
+  /** 'feed' = For you tab: loops, no Episodes button, "Watch series" button, rank pill */
+  variant?: "player" | "feed";
+  rank?: number;
+  onWatchSeries?: () => void;
+  onOpenSeries?: () => void;
 };
 
 /** One full-screen page of the vertical player. */
@@ -111,7 +118,12 @@ function PlayerSurface({
   clean,
   onToggleClean,
   onSubtitles,
+  variant = "player",
+  rank,
+  onWatchSeries,
+  onOpenSeries,
 }: Props) {
+  const isFeed = variant === "feed";
   const c = darkColors;
   const tag = `${series.id} ${item.kind === "trailer" ? "trailer" : `ep ${item.n}`}`;
 
@@ -136,10 +148,17 @@ function PlayerSurface({
   activeRef.current = active;
 
   const player = useVideoPlayer(source, (p) => {
-    p.loop = false;
+    p.loop = variant === "feed"; // the feed replays the video until you swipe (TikTok style)
+    p.muted = isMuted();
     p.timeUpdateEventInterval = 0.25;
     if (resumeAt.current > 0) p.currentTime = resumeAt.current;
   });
+
+  // one sound switch for all videos (🔊 button in the top bar, see MuteButton.tsx)
+  const muted = useMuted();
+  useEffect(() => {
+    player.muted = muted;
+  }, [player, muted]);
 
   const { status } = useEvent(player, "statusChange", {
     status: player.status,
@@ -218,6 +237,19 @@ function PlayerSurface({
       setFast(false);
     }
   }, [active, player]);
+
+  // feed only: pause/resume straight away when the tab is left/entered (see feedControl.ts)
+  const userPausedRef = useRef(false);
+  userPausedRef.current = userPaused;
+  useEffect(() => {
+    if (!isFeed) return;
+    return registerFeedControl({
+      pause: () => player.pause(),
+      resume: () => {
+        if (activeRef.current && !userPausedRef.current) player.play();
+      },
+    });
+  }, [isFeed, player]);
 
   useEventListener(player, "timeUpdate", ({ currentTime }) => {
     lastTime.current = currentTime;
@@ -427,12 +459,14 @@ function PlayerSurface({
             label={formatCount(stats.saveCount)}
             onPress={() => userActions.toggleSave(series.id)}
           />
-          <SideButton
-            icon="albums-outline"
-            color={c.onPrimary}
-            label="Episodes"
-            onPress={onEpisodes}
-          />
+          {!isFeed && (
+            <SideButton
+              icon="albums-outline"
+              color={c.onPrimary}
+              label="Episodes"
+              onPress={onEpisodes}
+            />
+          )}
           <SideButton
             icon="arrow-redo-outline"
             color={c.onPrimary}
@@ -460,15 +494,30 @@ function PlayerSurface({
           style={[styles.info, { bottom: bottomInset + 44 }]}
           pointerEvents="box-none"
         >
-          <AppText
-            weight="bold"
-            size={17}
-            color="onPrimary"
-            numberOfLines={1}
-            style={{ textShadowColor: c.shade, textShadowRadius: 6 }}
+          {isFeed && rank ? (
+            <View style={[styles.rankPill, { backgroundColor: c.overlay }]}>
+              <Ionicons name="flame" size={12} color={c.gold} />
+              <AppText weight="bold" size={11} style={{ color: c.gold }}>
+                #{rank} Trending
+              </AppText>
+            </View>
+          ) : null}
+          <Pressable
+            onPress={onOpenSeries}
+            disabled={!onOpenSeries}
+            hitSlop={6}
           >
-            {series.title}
-          </AppText>
+            <AppText
+              weight="bold"
+              size={17}
+              color="onPrimary"
+              numberOfLines={1}
+              style={{ textShadowColor: c.shade, textShadowRadius: 6 }}
+            >
+              {series.title}
+              {onOpenSeries ? " ›" : ""}
+            </AppText>
+          </Pressable>
           <View style={styles.epRow}>
             <View style={[styles.epPill, { backgroundColor: c.primary }]}>
               <AppText weight="bold" size={11} color="onPrimary">
@@ -489,6 +538,26 @@ function PlayerSurface({
             >
               {series.description}
             </AppText>
+          ) : null}
+          {isFeed && onWatchSeries ? (
+            <Pressable
+              onPress={onWatchSeries}
+              style={({ pressed }) => [
+                styles.watchBtn,
+                { opacity: pressed ? 0.85 : 1 },
+              ]}
+            >
+              <LinearGradient
+                colors={c.gradient}
+                start={{ x: 0, y: 0.5 }}
+                end={{ x: 1, y: 0.5 }}
+                style={StyleSheet.absoluteFill}
+              />
+              <Ionicons name="play" size={16} color={c.onPrimary} />
+              <AppText weight="bold" size={14} color="onPrimary">
+                Watch series
+              </AppText>
+            </Pressable>
           ) : null}
         </View>
       )}
@@ -628,4 +697,24 @@ const styles = StyleSheet.create({
   info: { position: "absolute", left: 16, right: 90, gap: 6 },
   epRow: { flexDirection: "row", alignItems: "center", gap: 8 },
   epPill: { borderRadius: 8, paddingHorizontal: 7, paddingVertical: 1 },
+  rankPill: {
+    alignSelf: "flex-start",
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 4,
+    borderRadius: 10,
+    paddingHorizontal: 8,
+    paddingVertical: 2,
+  },
+  watchBtn: {
+    marginTop: 6,
+    alignSelf: "flex-start",
+    height: 40,
+    paddingHorizontal: 18,
+    borderRadius: 20,
+    overflow: "hidden",
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 6,
+  },
 });

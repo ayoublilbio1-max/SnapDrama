@@ -1,9 +1,11 @@
+import Ionicons from "@expo/vector-icons/Ionicons";
 import { Image } from "expo-image";
 import { memo } from "react";
 import { Pressable, StyleSheet, View } from "react-native";
 import type { RowStyle } from "../constants/home";
 import { freeLabel } from "../data/catalog";
 import type { Series } from "../data/types";
+import { useIsSaved } from "../data/userStore";
 import { useTheme } from "../hooks/useTheme";
 import { AppText } from "./AppText";
 
@@ -24,6 +26,7 @@ export const SeriesCard = memo(function SeriesCard({
   onPress,
 }: Props) {
   const colors = useTheme();
+  const saved = useIsSaved(series.id);
   const height = Math.round((width * 4) / 3);
 
   return (
@@ -53,6 +56,19 @@ export const SeriesCard = memo(function SeriesCard({
             {freeLabel(series)}
           </AppText>
         </View>
+        {saved && (
+          <View
+            style={[
+              styles.saved,
+              {
+                backgroundColor: colors.primary,
+                top: variant === "deal" ? 26 : 6,
+              },
+            ]}
+          >
+            <Ionicons name="bookmark" size={11} color={colors.onPrimary} />
+          </View>
+        )}
         {variant === "deal" && (
           <View style={[styles.deal, { backgroundColor: colors.gold }]}>
             <AppText weight="bold" size={10} color="onPrimary">
@@ -100,6 +116,15 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     paddingHorizontal: 6,
     paddingVertical: 1,
+  },
+  saved: {
+    position: "absolute",
+    right: 6,
+    width: 20,
+    height: 20,
+    borderRadius: 10,
+    alignItems: "center",
+    justifyContent: "center",
   },
   rank: {
     position: "absolute",
