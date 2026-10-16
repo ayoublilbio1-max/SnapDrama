@@ -52,7 +52,7 @@ async function ensureChannel() {
     name: tNow()("notif.channel"),
     importance: Notifications.AndroidImportance.HIGH,
     vibrationPattern: [0, 180],
-    lightColor: palette.violet,
+    lightColor: palette.magenta,
   });
 }
 

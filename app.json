@@ -33,7 +33,7 @@
         {
           "backgroundColor": "#09011c",
           "image": "./assets/images/splash-icon.png",
-          "imageWidth": 288
+          "imageWidth": 200
         }
       ],
       [
@@ -62,7 +62,7 @@
         "expo-notifications",
         {
           "icon": "./assets/images/notification-icon.png",
-          "color": "#7C3AED"
+          "color": "#E7237E"
         }
       ],
       [
@@ -83,7 +83,6 @@
       "eas": {
         "projectId": "ef46aeac-09f6-45b5-b3ea-8619cc8ec838"
       }
-    },
-    "owner": "ayoubghcoding"
+    }
   }
 }

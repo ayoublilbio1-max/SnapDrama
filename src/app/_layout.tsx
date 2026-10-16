@@ -1,5 +1,5 @@
 import * as NavigationBar from "expo-navigation-bar";
-import { Stack } from "expo-router";
+import { Stack, usePathname } from "expo-router";
 import * as SplashScreen from "expo-splash-screen";
 import { StatusBar } from "expo-status-bar";
 import * as SystemUI from "expo-system-ui";
@@ -21,6 +21,7 @@ import { preloadVip } from "../data/vip";
 import { preloadWallet } from "../data/wallet";
 import { useTheme } from "../hooks/useTheme";
 import { NotificationsGate } from "../notifications/NotificationsGate";
+import { navArrived } from "../utils/navLock";
 
 // Outside the component (brief §5): keep the splash until the app is ready.
 SplashScreen.preventAutoHideAsync().catch(() => {});
@@ -70,6 +71,12 @@ function SplashGate() {
 
 export default function RootLayout() {
   const colors = useTheme();
+  const pathname = usePathname();
+
+  // a page finished opening → taps are accepted again (double-tap guard, src/utils/navLock.ts)
+  useEffect(() => {
+    navArrived(pathname);
+  }, [pathname]);
 
   useEffect(() => {
     if (__DEV__) console.log(`[app] theme ${colors.scheme}`);

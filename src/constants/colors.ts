@@ -3,18 +3,17 @@
  * Screens use `const colors = useTheme()` and these token names.
  */
 
-// Brand palette (from the brief / logo)
+// Brand palette (new logo: magenta → red → sunset orange on deep night purple)
 export const palette = {
-  violet: "#7C3AED", // Electric Violet (gradient start)
-  indigo: "#6366F1", // Indigo (gradient end)
-  glow: "#8B5CF6", // Vibrant purple border / glow
+  magenta: "#E7237E", // Vibrant Magenta / Hot Pink — main accent, gradient start
+  strawberry: "#FF254C", // Bright Strawberry Red — glow, second accent
+  red: "#F31E37", // Vibrant Red — delete / destructive
+  orange: "#FF5622", // Sunset Orange-Red — gradient end
+  black: "#121212", // Matte Black — cards & containers (dark theme)
   deep: "#09011c", // App deep background (matches the logo background)
-  card: "#19112C", // Card & container background
   white: "#FFFFFF",
   slate: "#94A3B8", // Secondary text
-  lavender: "#A78BFA", // Muted accent text
-  canvas: "#D8C9F3", // Canvas (light surfaces)
-  danger: "#EF4444", // Delete / destructive
+  blush: "#FF8DBE", // Soft pink — accent text / icons on dark
 } as const;
 
 export type ThemeColors = {
@@ -52,29 +51,29 @@ export type ThemeColors = {
 export const darkColors: ThemeColors = {
   scheme: "dark",
   background: palette.deep,
-  surface: palette.card,
-  surfaceAlt: "#241A3D",
-  border: "rgba(139, 92, 246, 0.22)",
+  surface: palette.black,
+  surfaceAlt: "#1F1B23",
+  border: "rgba(231, 35, 126, 0.22)",
   text: palette.white,
   textMuted: palette.slate,
-  textAccent: palette.lavender,
-  primary: palette.violet,
-  primaryAlt: palette.indigo,
-  glow: palette.glow,
-  gradient: [palette.violet, palette.indigo],
+  textAccent: palette.blush,
+  primary: palette.magenta,
+  primaryAlt: palette.strawberry,
+  glow: palette.strawberry,
+  gradient: [palette.magenta, palette.orange],
   onPrimary: palette.white,
-  danger: palette.danger,
+  danger: palette.red,
   onDanger: palette.white,
   success: "#22C55E",
   onSuccess: palette.white,
-  overlay: "rgba(5, 0, 16, 0.72)",
-  tabBar: palette.card,
-  tabBarBorder: "rgba(139, 92, 246, 0.35)",
-  tabIcon: palette.lavender,
-  tabCutout: palette.violet,
-  tabInactive: "#6B6585",
-  skeleton: "#1D1433",
-  skeletonHighlight: "#2A1F47",
+  overlay: "rgba(5, 0, 12, 0.72)",
+  tabBar: palette.black,
+  tabBarBorder: "rgba(231, 35, 126, 0.35)",
+  tabIcon: palette.blush,
+  tabCutout: palette.magenta,
+  tabInactive: "#6E6670",
+  skeleton: "#1A171D",
+  skeletonHighlight: "#28232C",
   gold: "#FFC83D",
   goldGlow: "rgba(255, 200, 61, 0.55)",
   goldSoft: "rgba(255, 200, 61, 0.14)",
@@ -83,30 +82,30 @@ export const darkColors: ThemeColors = {
 
 export const lightColors: ThemeColors = {
   scheme: "light",
-  background: "#F6F2FD",
+  background: "#FFF5F8",
   surface: palette.white,
-  surfaceAlt: palette.canvas,
-  border: "#E3D8F6",
-  text: palette.card,
-  textMuted: "#64748B",
-  textAccent: palette.violet,
-  primary: palette.violet,
-  primaryAlt: palette.indigo,
-  glow: palette.glow,
-  gradient: [palette.violet, palette.indigo],
+  surfaceAlt: "#FCE4EE",
+  border: "#F5D2E1",
+  text: palette.black,
+  textMuted: "#6B6470",
+  textAccent: palette.magenta,
+  primary: palette.magenta,
+  primaryAlt: palette.strawberry,
+  glow: palette.strawberry,
+  gradient: [palette.magenta, palette.orange],
   onPrimary: palette.white,
-  danger: "#DC2626",
+  danger: palette.red,
   onDanger: palette.white,
   success: "#16A34A",
   onSuccess: palette.white,
-  overlay: "rgba(25, 17, 44, 0.45)",
+  overlay: "rgba(18, 18, 18, 0.45)",
   tabBar: palette.white,
   tabBarBorder: "transparent",
-  tabIcon: palette.card,
-  tabCutout: palette.violet,
-  tabInactive: "#9A93B5",
-  skeleton: "#EAE2F8",
-  skeletonHighlight: "#F4EFFC",
+  tabIcon: palette.black,
+  tabCutout: palette.magenta,
+  tabInactive: "#A39AA6",
+  skeleton: "#F8E6EE",
+  skeletonHighlight: "#FDF2F6",
   gold: "#B7791F",
   goldGlow: "rgba(245, 179, 1, 0.45)",
   goldSoft: "rgba(245, 179, 1, 0.16)",
