@@ -3,10 +3,11 @@ import Storage from "expo-sqlite/kv-store";
 import * as Updates from "expo-updates";
 import { DevSettings } from "react-native";
 import { cancelAllNotifications } from "../notifications";
+import { deleteAllDownloadFiles } from "./downloads";
 
 /**
  * Settings › Account › Delete account (demo): everything this phone saved is wiped
- * (coins, unlocked episodes, history, progress, My list, ratings, rewards, VIP, profile, settings)
+ * (coins, unlocked episodes, history, progress, My list, ratings, rewards, VIP, profile, settings, downloads)
  * and the app restarts fresh.
  */
 export async function deleteAllData() {
@@ -14,6 +15,7 @@ export async function deleteAllData() {
   try {
     await cancelAllNotifications();
     await Storage.clear();
+    deleteAllDownloadFiles();
     await Promise.all([Image.clearDiskCache(), Image.clearMemoryCache()]).catch(
       () => {},
     );

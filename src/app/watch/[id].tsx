@@ -1,4 +1,5 @@
 import Ionicons from "@expo/vector-icons/Ionicons";
+import * as Haptics from "expo-haptics";
 import { useFocusEffect, useLocalSearchParams, useRouter } from "expo-router";
 import { setStatusBarStyle } from "expo-status-bar";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
@@ -35,9 +36,11 @@ import {
 import { historyActions } from "../../data/history";
 import { progressActions } from "../../data/progress";
 import { rewardsActions } from "../../data/rewards";
+import { useSettings } from "../../data/settings";
 import type { Series } from "../../data/types";
 import { userActions } from "../../data/userStore";
-import { isUnlocked, useUnlocked } from "../../data/wallet";
+import { useVip } from "../../data/vip";
+import { isUnlocked, useUnlocked, walletActions } from "../../data/wallet";
 import { useT } from "../../i18n";
 import { canNavigate } from "../../utils/navLock";
 import { hasVideo } from "../../video/source";
@@ -231,6 +234,29 @@ export default function WatchScreen() {
     },
     [series, unlocked, playUnlocked],
   );
+
+  // Auto-unlock (switch in the Unlock sheet / Profile): reaching the locked card unlocks it by itself
+  const { autoUnlock } = useSettings();
+  const vip = !!useVip();
+  useEffect(() => {
+    if (!series || !autoUnlock || activeItem?.kind !== "locked") return;
+    const n = activeItem.n;
+    if (isUnlocked(unlocked, series.id, n)) return;
+    const ok = walletActions.unlock(series, n, catalog.coinsPerEpisode, vip);
+    if (__DEV__)
+      console.log(
+        `[paywall] auto-unlock ${series.id} ep ${n} → ${ok ? "unlocked" : "not enough coins → sheet"}`,
+      );
+    if (ok) {
+      Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success).catch(
+        () => {},
+      );
+      setTimeout(() => playUnlocked(n), 500);
+    } else {
+      setUnlockN(n);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [activeItem?.key, autoUnlock]);
 
   const onShare = useCallback(async () => {
     if (!series) return;

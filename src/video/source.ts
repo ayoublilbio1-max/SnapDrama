@@ -6,18 +6,21 @@ import type { VideoSource } from "../data/types";
  * - Bunny gives an error, or is not ready after BUNNY_TIMEOUT_MS (e.g. account unpaid / down) → R2 MP4, same second
  * - after one Bunny failure, use R2 directly for R2_ONLY_MS, then try Bunny again
  * - no hlsUrl → R2 · no mp4Url → Bunny only
+ * - downloaded on the phone (My list › Downloads) → the local file first: plays offline
  */
 export const BUNNY_TIMEOUT_MS = 6000;
 const R2_ONLY_MS = 10 * 60 * 1000;
 
 let bunnyFailedAt = 0;
 
-export type SourceChoice = { kind: "bunny" | "r2"; uri: string };
+export type SourceChoice = { kind: "bunny" | "r2" | "local"; uri: string };
 
 export function getEpisodeSource(
   v: VideoSource,
   forceR2 = false,
+  localUri?: string | null,
 ): SourceChoice | null {
+  if (localUri) return { kind: "local", uri: localUri };
   const bunnyBlocked = Date.now() - bunnyFailedAt < R2_ONLY_MS;
   if (v.hlsUrl && !forceR2 && !(bunnyBlocked && v.mp4Url))
     return { kind: "bunny", uri: v.hlsUrl };

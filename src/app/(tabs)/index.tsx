@@ -98,6 +98,10 @@ export default function HomeScreen() {
       if (__DEV__) console.log(`[home] filter ${id}`);
       if (id === "popular") return; // Popular = this page
       if (!canNavigate(`filter ${id}`)) return;
+      if (id === "rankings") {
+        router.push("/rankings");
+        return;
+      }
       if (id === "categories") {
         router.push("/categories");
         return;

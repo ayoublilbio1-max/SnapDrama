@@ -13,6 +13,7 @@ type Settings = {
   language: LangPref; // 'system' = the phone's language (if en/fr/es/de)
   startMuted: boolean; // every app start: videos begin muted (default off)
   notifications: boolean; // local reminders (default on)
+  autoUnlock: boolean; // player: unlock the next locked episode by itself (coins / VIP), default off
   myStars: number; // "Rate us" (0 = not rated)
   name: string;
   avatar: string | null; // local photo uri
@@ -32,6 +33,7 @@ function loadSync(): Settings {
     language: "system",
     startMuted: false,
     notifications: true,
+    autoUnlock: false,
     myStars: 0,
     name: "Guest",
     avatar: null,
@@ -110,6 +112,11 @@ export const settingsActions = {
     set({ ...state, notifications });
     if (__DEV__)
       console.log(`[settings] notifications → ${notifications ? "on" : "off"}`);
+  },
+  setAutoUnlock(autoUnlock: boolean) {
+    set({ ...state, autoUnlock });
+    if (__DEV__)
+      console.log(`[settings] auto-unlock → ${autoUnlock ? "on" : "off"}`);
   },
   setMyStars(myStars: number) {
     set({ ...state, myStars });

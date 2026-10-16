@@ -16,7 +16,8 @@ import Animated, {
   withTiming,
 } from "react-native-reanimated";
 import { darkColors } from "../../constants/colors";
-import type { Series, VideoSource } from "../../data/types";
+import { useDownloadUri } from "../../data/downloads";
+import type { Episode, Series, VideoSource } from "../../data/types";
 import {
   episodeLikes,
   seriesStats,
@@ -33,7 +34,9 @@ import {
   getEpisodeSource,
   markBunnyFailed,
 } from "../../video/source";
+import { getSpeed, useSpeed } from "../../video/speed";
 import { AppText } from "../AppText";
+import { PlayerMenu } from "./PlayerMenu";
 import { ProgressBar } from "./ProgressBar";
 
 export type PlayerItem =
@@ -134,12 +137,14 @@ function PlayerSurface({
   const [retry, setRetry] = useState(0);
   const [failed, setFailed] = useState(false);
   // eslint-disable-next-line react-hooks/exhaustive-deps
+  const localUri = useDownloadUri(series.id, item.n); // downloaded → plays from the phone (offline)
   const choice = useMemo(
-    () => getEpisodeSource(item.video, forceR2),
-    [item.video, forceR2, retry],
+    () => getEpisodeSource(item.video, forceR2, localUri),
+    [item.video, forceR2, retry, localUri],
   );
   const source = useMemo(
-    () => (choice ? { uri: choice.uri, useCaching: true } : null),
+    () =>
+      choice ? { uri: choice.uri, useCaching: choice.kind !== "local" } : null,
     [choice],
   );
   const resumeAt = useRef(startAt);
@@ -172,6 +177,26 @@ function PlayerSurface({
   const [firstFrame, setFirstFrame] = useState(false);
   const [userPaused, setUserPaused] = useState(false);
   const [fast, setFast] = useState(false);
+  const [menuOpen, setMenuOpen] = useState(false);
+  const [toast, setToast] = useState("");
+  const speed = useSpeed();
+  useEffect(() => {
+    if (!fast) player.playbackRate = speed;
+  }, [player, speed, fast]);
+  useEffect(() => {
+    if (!toast) return;
+    const id = setTimeout(() => setToast(""), 2200);
+    return () => clearTimeout(id);
+  }, [toast]);
+  const episode: Episode | null =
+    item.kind === "episode"
+      ? {
+          ...item.video,
+          n: item.n,
+          title: item.title,
+          likeCount: item.likeCount,
+        }
+      : null;
 
   // new source → measure again, show the poster until the first frame
   useEffect(() => {
@@ -235,7 +260,7 @@ function PlayerSurface({
       player.play();
     } else {
       player.pause();
-      player.playbackRate = 1;
+      player.playbackRate = getSpeed();
       setFast(false);
     }
   }, [active, player]);
@@ -323,7 +348,7 @@ function PlayerSurface({
 
   const onPressOut = () => {
     if (!fast) return;
-    player.playbackRate = 1;
+    player.playbackRate = getSpeed(); // back to the chosen speed (menu ⋯)
     setFast(false);
   };
 
@@ -477,16 +502,10 @@ function PlayerSurface({
             onPress={onShare}
           />
           <SideButton
-            icon="language-outline"
+            icon="ellipsis-horizontal-circle-outline"
             color={c.onPrimary}
-            label={t("player.subtitles")}
-            onPress={onSubtitles}
-          />
-          <SideButton
-            icon="eye-off-outline"
-            color={c.onPrimary}
-            label={t("player.clear")}
-            onPress={onToggleClean}
+            label={speed !== 1 ? `${speed}×` : t("menu.more")}
+            onPress={() => setMenuOpen(true)}
           />
         </View>
       )}
@@ -566,6 +585,28 @@ function PlayerSurface({
       )}
 
       {source && <ProgressBar player={player} bottom={bottomInset + 4} />}
+
+      {toast ? (
+        <View
+          style={[styles.toast, { backgroundColor: c.overlay }]}
+          pointerEvents="none"
+        >
+          <AppText weight="medium" size={13} color="onPrimary">
+            {toast}
+          </AppText>
+        </View>
+      ) : null}
+
+      <PlayerMenu
+        visible={menuOpen}
+        series={series}
+        episode={episode}
+        showAutoUnlock={!isFeed}
+        onSubtitles={onSubtitles}
+        onClear={onToggleClean}
+        onToast={setToast}
+        onClose={() => setMenuOpen(false)}
+      />
     </View>
   );
 }
@@ -695,6 +736,14 @@ const styles = StyleSheet.create({
     borderRadius: 20,
     alignItems: "center",
     justifyContent: "center",
+  },
+  toast: {
+    position: "absolute",
+    top: 120,
+    alignSelf: "center",
+    borderRadius: 16,
+    paddingHorizontal: 14,
+    paddingVertical: 7,
   },
   sideBtn: { alignItems: "center", gap: 2, minWidth: 56 },
   info: { position: "absolute", left: 16, right: 90, gap: 6 },

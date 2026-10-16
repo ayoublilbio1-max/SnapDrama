@@ -392,6 +392,13 @@ export default function ProfileScreen() {
             onChange={onStartMuted}
           />
           <SwitchRow
+            icon="lock-open-outline"
+            label={t("auto.title")}
+            hint={settings.autoUnlock ? t("auto.short") : t("auto.off")}
+            value={settings.autoUnlock}
+            onChange={(v) => settingsActions.setAutoUnlock(v)}
+          />
+          <SwitchRow
             icon="notifications-outline"
             label={t("profile.notifications")}
             hint={

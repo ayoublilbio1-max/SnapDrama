@@ -251,6 +251,7 @@ const ICONS: Record<
   reward: "gift-outline",
   buy: "cart-outline",
   unlock: "lock-open-outline",
+  ad: "play-circle-outline",
 };
 
 function formatWhen(at: number, t: T) {
@@ -302,7 +303,11 @@ function HistoryRow({ item, last }: { item: CoinEntry; last: boolean }) {
         size={15}
         style={{ color: plus ? colors.gold : colors.textMuted }}
       >
-        {plus ? `+${item.amount}` : `−${Math.abs(item.amount)}`}
+        {item.amount === 0
+          ? t("ads.free")
+          : plus
+            ? `+${item.amount}`
+            : `−${Math.abs(item.amount)}`}
       </AppText>
     </View>
   );

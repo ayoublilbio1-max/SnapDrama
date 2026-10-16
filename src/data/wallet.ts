@@ -11,7 +11,7 @@ import type { Episode, Series } from "./types";
  */
 export type CoinEntry = {
   id: string;
-  kind: "welcome" | "unlock" | "buy" | "reward";
+  kind: "welcome" | "unlock" | "buy" | "reward" | "ad";
   amount: number; // + received, − spent
   label: string; // English text (logs + old lines)
   meta?: { key: Key; params?: Record<string, string | number> }; // shown in the app language
@@ -22,6 +22,13 @@ type WalletState = {
   balance: number;
   history: CoinEntry[]; // newest first
   unlocked: Record<string, number>; // "seriesId:n" → time unlocked
+  ads?: { day: string; count: number }; // rewarded (fake) ads watched today
+};
+
+export const ADS_PER_DAY = 3;
+const dayKey = () => {
+  const d = new Date();
+  return `${d.getFullYear()}-${d.getMonth() + 1}-${d.getDate()}`;
 };
 
 export const WELCOME_COINS = 200;
@@ -139,6 +146,15 @@ export function useUnlocked(): Record<string, number> {
   return useSyncExternalStore(subscribe, () => state.unlocked);
 }
 
+/** Ads left today for "Watch an ad → unlock free". */
+export function useAdsLeft(): number {
+  return useSyncExternalStore(subscribe, () =>
+    state.ads?.day === dayKey()
+      ? Math.max(0, ADS_PER_DAY - state.ads.count)
+      : ADS_PER_DAY,
+  );
+}
+
 export function isUnlocked(
   unlocked: Record<string, number>,
   seriesId: string,
@@ -209,6 +225,33 @@ export const walletActions = {
     if (__DEV__)
       console.log(
         `[paywall] unlocked ${series.id} ep ${n} — ${price} coins, balance ${balance}`,
+      );
+    return true;
+  },
+  /** Rewarded ad watched (demo) → the episode unlocks free. Max ADS_PER_DAY a day. */
+  unlockWithAd(series: Series, n: number): boolean {
+    const today = dayKey();
+    const used = state.ads?.day === today ? state.ads.count : 0;
+    if (used >= ADS_PER_DAY) {
+      if (__DEV__)
+        console.log(`[paywall] no ads left today (${used}/${ADS_PER_DAY})`);
+      return false;
+    }
+    set({
+      ...state,
+      ads: { day: today, count: used + 1 },
+      history: [
+        entry("ad", 0, `Ad · ${series.title} · EP ${n}`, {
+          key: "hist.ad",
+          params: { title: series.title, n },
+        }),
+        ...state.history,
+      ],
+      unlocked: { ...state.unlocked, [unlockKey(series.id, n)]: Date.now() },
+    });
+    if (__DEV__)
+      console.log(
+        `[paywall] unlocked ${series.id} ep ${n} — ad (${used + 1}/${ADS_PER_DAY} today)`,
       );
     return true;
   },

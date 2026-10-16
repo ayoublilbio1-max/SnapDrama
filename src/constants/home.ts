@@ -76,6 +76,7 @@ export function heroSeries(trending: Series[]): Series[] {
 /** Filter chips under the header. "popular" = Home itself; the others open their own page. */
 export const FILTERS = [
   { id: "popular", label: "filter.popular" },
+  { id: "rankings", label: "filter.rankings" },
   { id: "new", label: "filter.new" },
   { id: "hot", label: "filter.hot" },
   { id: "categories", label: "filter.categories" },

@@ -3,7 +3,7 @@ import * as Haptics from "expo-haptics";
 import { Image } from "expo-image";
 import { LinearGradient } from "expo-linear-gradient";
 import { useEffect, useState } from "react";
-import { Modal, Pressable, StyleSheet, View } from "react-native";
+import { Modal, Pressable, StyleSheet, Switch, View } from "react-native";
 import Animated, {
   useAnimatedStyle,
   useSharedValue,
@@ -13,12 +13,14 @@ import Animated, {
   withTiming,
 } from "react-native-reanimated";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { settingsActions, useSettings } from "../data/settings";
 import type { Series } from "../data/types";
 import { useVip } from "../data/vip";
-import { useBalance, walletActions } from "../data/wallet";
+import { useAdsLeft, useBalance, walletActions } from "../data/wallet";
 import { useTheme } from "../hooks/useTheme";
 import { useT } from "../i18n";
 import { withAlpha } from "../utils/color";
+import { AdModal } from "./AdModal";
 import { AppText } from "./AppText";
 import { CoinIcon } from "./CoinIcon";
 
@@ -52,7 +54,11 @@ export function UnlockSheet({
   const insets = useSafeAreaInsets();
   const balance = useBalance();
   const vip = !!useVip();
+  const adsLeft = useAdsLeft();
+  const { autoUnlock } = useSettings();
   const [done, setDone] = useState(false);
+  const [byAd, setByAd] = useState(false);
+  const [adOpen, setAdOpen] = useState(false);
 
   const lock = useSharedValue(1);
   const float = useSharedValue(0);
@@ -68,6 +74,7 @@ export function UnlockSheet({
   useEffect(() => {
     if (visible) {
       setDone(false);
+      setByAd(false);
       lock.value = 1;
       float.value = 0;
     }
@@ -76,6 +83,17 @@ export function UnlockSheet({
   if (!series) return null;
   const enough = vip || balance >= price;
   const missing = Math.max(0, price - balance);
+
+  const onAdReward = () => {
+    setAdOpen(false);
+    if (!walletActions.unlockWithAd(series, n)) return;
+    setByAd(true);
+    setDone(true);
+    lock.value = withSequence(
+      withTiming(0.6, { duration: 90 }),
+      withSpring(1, { damping: 7, stiffness: 180 }),
+    );
+  };
 
   const unlock = () => {
     const ok = walletActions.unlock(series, n, price, vip);
@@ -189,7 +207,18 @@ export function UnlockSheet({
               <AppText size={14} color="textMuted">
                 {done ? t("unlock.paid") : t("unlock.price")}
               </AppText>
-              {vip ? (
+              {byAd ? (
+                <View style={styles.coins}>
+                  <Ionicons name="play-circle" size={16} color={colors.gold} />
+                  <AppText
+                    weight="bold"
+                    size={15}
+                    style={{ color: colors.gold }}
+                  >
+                    {t("ads.freeByAd")}
+                  </AppText>
+                </View>
+              ) : vip ? (
                 <View style={styles.coins}>
                   <Ionicons name="diamond" size={15} color={colors.gold} />
                   <AppText
@@ -308,6 +337,57 @@ export function UnlockSheet({
             )}
           </Pressable>
 
+          {/* rewarded ad (demo): unlock free, 3 a day */}
+          {!done && !vip ? (
+            <Pressable
+              disabled={adsLeft <= 0}
+              onPress={() => setAdOpen(true)}
+              style={({ pressed }) => [
+                styles.adBtn,
+                {
+                  borderColor: colors.gold,
+                  backgroundColor: colors.goldSoft,
+                  opacity: adsLeft <= 0 ? 0.45 : pressed ? 0.8 : 1,
+                },
+              ]}
+            >
+              <Ionicons
+                name="play-circle-outline"
+                size={18}
+                color={colors.gold}
+              />
+              <AppText
+                weight="semibold"
+                size={15}
+                style={{ color: colors.gold }}
+              >
+                {adsLeft > 0
+                  ? t("ads.watchBtn", { n: adsLeft })
+                  : t("ads.noneLeft")}
+              </AppText>
+            </Pressable>
+          ) : null}
+
+          {/* auto-unlock the next episodes (coins or VIP) */}
+          {!done ? (
+            <View style={[styles.autoRow, { borderColor: colors.border }]}>
+              <View style={{ flex: 1 }}>
+                <AppText weight="medium" size={14}>
+                  {t("auto.title")}
+                </AppText>
+                <AppText size={12} color="textMuted">
+                  {vip ? t("auto.hintVip") : t("auto.hint", { n: price })}
+                </AppText>
+              </View>
+              <Switch
+                value={autoUnlock}
+                onValueChange={(v) => settingsActions.setAutoUnlock(v)}
+                trackColor={{ false: colors.surfaceAlt, true: colors.primary }}
+                thumbColor={colors.onPrimary}
+              />
+            </View>
+          ) : null}
+
           {!done && !vip ? (
             <View style={styles.links}>
               {enough ? (
@@ -345,6 +425,11 @@ export function UnlockSheet({
           )}
         </Pressable>
       </Pressable>
+      <AdModal
+        visible={adOpen}
+        onReward={onAdReward}
+        onClose={() => setAdOpen(false)}
+      />
     </Modal>
   );
 }
@@ -419,6 +504,24 @@ const styles = StyleSheet.create({
     paddingVertical: 3,
   },
   link: { alignSelf: "center", paddingVertical: 12 },
+  adBtn: {
+    marginTop: 10,
+    height: 48,
+    borderRadius: 24,
+    borderWidth: 1.5,
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+    gap: 8,
+  },
+  autoRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 10,
+    marginTop: 12,
+    borderTopWidth: StyleSheet.hairlineWidth,
+    paddingTop: 10,
+  },
   links: {
     flexDirection: "row",
     flexWrap: "wrap",

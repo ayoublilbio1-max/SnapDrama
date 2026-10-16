@@ -17,6 +17,14 @@ import { SeriesCard } from "../../components/SeriesCard";
 import { TAB_BAR_SPACE } from "../../constants/layout";
 import { useCatalog } from "../../data/catalog";
 import {
+  downloadActions,
+  downloadKey,
+  formatSize,
+  totalSize,
+  useDownloads,
+  type DownloadItem,
+} from "../../data/downloads";
+import {
   historyActions,
   useContinueWatching,
   useHistory,
@@ -28,12 +36,12 @@ import { useTheme } from "../../hooks/useTheme";
 import { useT } from "../../i18n";
 import { canNavigate } from "../../utils/navLock";
 
-type Tab = "saved" | "watching";
+type Tab = "saved" | "watching" | "downloads";
 const COLUMNS = 3;
 const SIDE = 16;
 const GAP = 10;
 
-/** My list tab: Saved series (grid) + Watching (continue where you stopped). Edit → select → Remove. */
+/** My list tab: Saved series (grid) · Watching (continue where you stopped) · Downloads (offline). Edit → select → Remove. */
 export default function MyListScreen() {
   const colors = useTheme();
   const t = useT();
@@ -45,6 +53,7 @@ export default function MyListScreen() {
   const watching = useContinueWatching();
   const history = useHistory();
   const progress = useProgress();
+  const { items: dlItems } = useDownloads();
 
   const [tab, setTab] = useState<Tab>("saved");
   const [editing, setEditing] = useState(false);
@@ -60,7 +69,17 @@ export default function MyListScreen() {
         .filter((s): s is Series => !!s),
     [user.saved, catalog],
   );
-  const list = tab === "saved" ? saved : watching;
+  const downloads = useMemo(
+    () => Object.values(dlItems).sort((a, b) => b.at - a.at),
+    [dlItems],
+  );
+  // ids used by Edit / select / remove for the open segment
+  const listIds =
+    tab === "saved"
+      ? saved.map((s) => s.id)
+      : tab === "watching"
+        ? watching.map((s) => s.id)
+        : downloads.map((d) => downloadKey(d.seriesId, d.n));
 
   // leaving the tab ends Edit mode
   useFocusEffect(
@@ -125,7 +144,8 @@ export default function MyListScreen() {
     const ids = [...selected];
     setConfirm(false);
     if (tab === "saved") userActions.unsaveMany(ids);
-    else historyActions.remove(ids);
+    else if (tab === "watching") historyActions.remove(ids);
+    else downloadActions.remove(ids);
     Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success).catch(
       () => {},
     );
@@ -133,7 +153,21 @@ export default function MyListScreen() {
     setEditing(false);
   };
 
-  const allSelected = list.length > 0 && selected.size === list.length;
+  const playDownload = (d: DownloadItem) => {
+    const k = downloadKey(d.seriesId, d.n);
+    if (editing) {
+      toggle(k);
+      return;
+    }
+    if (!canNavigate(`download ${k}`)) return;
+    if (__DEV__) console.log(`[my-list] play download ${k}`);
+    router.push({
+      pathname: "/watch/[id]",
+      params: { id: d.seriesId, ep: String(d.n) },
+    });
+  };
+
+  const allSelected = listIds.length > 0 && selected.size === listIds.length;
   const cardW = Math.floor((width - SIDE * 2 - GAP * (COLUMNS - 1)) / COLUMNS);
 
   return (
@@ -143,7 +177,7 @@ export default function MyListScreen() {
         <AppText weight="bold" size={26} style={{ flex: 1 }}>
           {t("tabs.myList")}
         </AppText>
-        {list.length > 0 && (
+        {listIds.length > 0 && (
           <Pressable
             onPress={() => {
               setEditing((e) => !e);
@@ -173,9 +207,14 @@ export default function MyListScreen() {
           { backgroundColor: colors.surface, borderColor: colors.border },
         ]}
       >
-        {(["saved", "watching"] as const).map((tb) => {
+        {(["saved", "watching", "downloads"] as const).map((tb) => {
           const on = tb === tab;
-          const n = tb === "saved" ? saved.length : watching.length;
+          const n =
+            tb === "saved"
+              ? saved.length
+              : tb === "watching"
+                ? watching.length
+                : downloads.length;
           return (
             <Pressable
               key={tb}
@@ -184,10 +223,15 @@ export default function MyListScreen() {
             >
               <AppText
                 weight="semibold"
-                size={14}
+                size={13}
                 color={on ? "onPrimary" : "textMuted"}
+                numberOfLines={1}
               >
-                {tb === "saved" ? t("mylist.saved") : t("mylist.watching")}
+                {tb === "saved"
+                  ? t("mylist.saved")
+                  : tb === "watching"
+                    ? t("mylist.watching")
+                    : t("dl.tab")}
                 {n ? ` · ${n}` : ""}
               </AppText>
             </Pressable>
@@ -202,8 +246,82 @@ export default function MyListScreen() {
         }}
         showsVerticalScrollIndicator={false}
       >
-        {list.length === 0 ? (
+        {listIds.length === 0 ? (
           <Empty tab={tab} onDiscover={() => router.navigate("/")} />
+        ) : tab === "downloads" ? (
+          <View style={{ gap: 12 }}>
+            <AppText size={12} color="textMuted">
+              {t("dl.summary", {
+                n: downloads.length,
+                size: formatSize(totalSize(dlItems)),
+              })}
+            </AppText>
+            {downloads.map((d) => {
+              const k = downloadKey(d.seriesId, d.n);
+              const on = selected.has(k);
+              return (
+                <Pressable
+                  key={k}
+                  onPress={() => playDownload(d)}
+                  style={({ pressed }) => [
+                    styles.row,
+                    {
+                      backgroundColor: colors.surface,
+                      borderColor: on ? colors.primary : colors.border,
+                      opacity: pressed ? 0.85 : 1,
+                    },
+                  ]}
+                >
+                  {editing && (
+                    <Ionicons
+                      name={on ? "checkmark-circle" : "ellipse-outline"}
+                      size={24}
+                      color={on ? colors.primary : colors.textMuted}
+                    />
+                  )}
+                  <View
+                    style={[styles.thumb, { backgroundColor: colors.skeleton }]}
+                  >
+                    <Image
+                      source={{ uri: d.cover }}
+                      style={StyleSheet.absoluteFill}
+                      contentFit="cover"
+                      cachePolicy="memory-disk"
+                      recyclingKey={k}
+                    />
+                  </View>
+                  <View style={{ flex: 1, gap: 4 }}>
+                    <AppText weight="semibold" size={15} numberOfLines={2}>
+                      {d.title}
+                    </AppText>
+                    <View style={styles.dlMeta}>
+                      <Ionicons
+                        name="checkmark-circle"
+                        size={13}
+                        color={colors.success}
+                      />
+                      <AppText size={12} color="textMuted">
+                        {t("player.ep", { n: d.n })} · {formatSize(d.size)} ·{" "}
+                        {t("dl.offline")}
+                      </AppText>
+                    </View>
+                  </View>
+                  {!editing && (
+                    <View
+                      style={[styles.play, { backgroundColor: colors.primary }]}
+                    >
+                      <Ionicons
+                        name="play"
+                        size={16}
+                        color={colors.onPrimary}
+                        style={{ marginLeft: 2 }}
+                      />
+                    </View>
+                  )}
+                </Pressable>
+              );
+            })}
+          </View>
         ) : tab === "saved" ? (
           <View style={styles.grid}>
             {saved.map((s) => (
@@ -313,9 +431,7 @@ export default function MyListScreen() {
         >
           <Pressable
             onPress={() =>
-              setSelected(
-                allSelected ? new Set() : new Set(list.map((s) => s.id)),
-              )
+              setSelected(allSelected ? new Set() : new Set(listIds))
             }
             hitSlop={8}
             style={styles.selectAll}
@@ -354,12 +470,16 @@ export default function MyListScreen() {
         title={
           tab === "saved"
             ? t("mylist.removeSaved", { n: selected.size })
-            : t("mylist.removeWatching", { n: selected.size })
+            : tab === "watching"
+              ? t("mylist.removeWatching", { n: selected.size })
+              : t("dl.removeTitle", { n: selected.size })
         }
         message={
           tab === "saved"
             ? t("mylist.removeSavedMsg")
-            : t("mylist.removeWatchingMsg")
+            : tab === "watching"
+              ? t("mylist.removeWatchingMsg")
+              : t("dl.removeMsg")
         }
         confirmLabel={t("mylist.remove")}
         onConfirm={remove}
@@ -396,18 +516,30 @@ function Empty({ tab, onDiscover }: { tab: Tab; onDiscover: () => void }) {
         style={[styles.emptyIcon, { backgroundColor: colors.primary + "22" }]}
       >
         <Ionicons
-          name={tab === "saved" ? "bookmark-outline" : "play-circle-outline"}
+          name={
+            tab === "saved"
+              ? "bookmark-outline"
+              : tab === "watching"
+                ? "play-circle-outline"
+                : "download-outline"
+          }
           size={30}
           color={colors.scheme === "dark" ? colors.glow : colors.primary}
         />
       </View>
       <AppText weight="bold" size={18} align="center">
-        {tab === "saved" ? t("mylist.emptySaved") : t("mylist.emptyWatching")}
+        {tab === "saved"
+          ? t("mylist.emptySaved")
+          : tab === "watching"
+            ? t("mylist.emptyWatching")
+            : t("dl.empty")}
       </AppText>
       <AppText size={14} color="textMuted" align="center">
         {tab === "saved"
           ? t("mylist.emptySavedHint")
-          : t("mylist.emptyWatchingHint")}
+          : tab === "watching"
+            ? t("mylist.emptyWatchingHint")
+            : t("dl.emptyHint")}
       </AppText>
       <Pressable
         onPress={onDiscover}
@@ -452,7 +584,9 @@ const styles = StyleSheet.create({
     borderRadius: 18,
     alignItems: "center",
     justifyContent: "center",
+    paddingHorizontal: 4,
   },
+  dlMeta: { flexDirection: "row", alignItems: "center", gap: 4 },
   grid: { flexDirection: "row", flexWrap: "wrap", columnGap: GAP, rowGap: 16 },
   check: {
     position: "absolute",
