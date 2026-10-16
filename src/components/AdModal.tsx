@@ -5,10 +5,10 @@ import { LinearGradient } from "expo-linear-gradient";
 import { useEffect, useRef, useState } from "react";
 import { Linking, Modal, Pressable, StyleSheet, View } from "react-native";
 import Animated, {
-    Easing,
-    useAnimatedStyle,
-    useSharedValue,
-    withTiming,
+  Easing,
+  useAnimatedStyle,
+  useSharedValue,
+  withTiming,
 } from "react-native-reanimated";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { DEVELOPER, FIVERR_URL } from "../constants/app";
@@ -17,7 +17,7 @@ import { useT } from "../i18n";
 import { AppText } from "./AppText";
 
 // eslint-disable-next-line @typescript-eslint/no-require-imports
-const LOGO = require("../../assets/images/logo-mark-dark.webp");
+const LOGO = require("../../assets/images/icon.png"); // the app icon
 export const AD_SECONDS = 15;
 
 /**
@@ -203,7 +203,7 @@ const styles = StyleSheet.create({
     gap: 14,
     paddingHorizontal: 28,
   },
-  logo: { width: 96, height: 96, marginBottom: 6 },
+  logo: { width: 96, height: 96, borderRadius: 22, marginBottom: 6 },
   cta: {
     marginTop: 10,
     height: 50,
