@@ -1,4 +1,5 @@
 import Ionicons from "@expo/vector-icons/Ionicons";
+import * as Haptics from "expo-haptics";
 import { Image } from "expo-image";
 import { useFocusEffect } from "expo-router";
 import { memo, useCallback, useEffect, useMemo, useRef, useState } from "react";
@@ -11,6 +12,7 @@ import {
   type NativeScrollEvent,
   type NativeSyntheticEvent,
 } from "react-native";
+import type { ThemeColors } from "../constants/colors";
 import { freeLabel } from "../data/catalog";
 import type { Series } from "../data/types";
 import { useTheme } from "../hooks/useTheme";
@@ -125,41 +127,13 @@ export const HeroCarousel = memo(function HeroCarousel({
         <Animated.View
           style={{ width: cardW, transform: [{ scale }], opacity }}
         >
-          <Pressable
-            onPress={() => onOpen(item)}
-            accessibilityRole="button"
-            accessibilityLabel={item.title}
-          >
-            <View
-              style={[
-                styles.card,
-                {
-                  height: cardH,
-                  borderColor: colors.glow,
-                  backgroundColor: colors.skeleton,
-                  shadowColor: colors.glow,
-                },
-              ]}
-            >
-              <Image
-                source={{ uri: item.cover }}
-                style={StyleSheet.absoluteFill}
-                contentFit="cover"
-                transition={180}
-                cachePolicy="memory-disk"
-                recyclingKey={item.id}
-                priority={i < 3 ? "high" : "normal"}
-              />
-              <View style={[styles.play, { backgroundColor: colors.overlay }]}>
-                <Ionicons
-                  name="play"
-                  size={28}
-                  color={colors.onPrimary}
-                  style={{ marginLeft: 4 }}
-                />
-              </View>
-            </View>
-          </Pressable>
+          <HeroCard
+            item={item}
+            height={cardH}
+            colors={colors}
+            highPriority={i < 3}
+            onOpen={onOpen}
+          />
         </Animated.View>
       );
     },
@@ -236,6 +210,159 @@ export const HeroCarousel = memo(function HeroCarousel({
   );
 });
 
+/**
+ * One hero card with the tap effect: the card presses in, the play button pops and a violet ring
+ * spreads out of it (+ light haptic), then the series opens.
+ */
+function HeroCard({
+  item,
+  height,
+  colors,
+  highPriority,
+  onOpen,
+}: {
+  item: Series;
+  height: number;
+  colors: ThemeColors;
+  highPriority: boolean;
+  onOpen: (s: Series) => void;
+}) {
+  const press = useRef(new Animated.Value(1)).current; // card scale
+  const pop = useRef(new Animated.Value(1)).current; // play button scale
+  const ring = useRef(new Animated.Value(0)).current; // 0 → 1: ring grows + fades
+  const opening = useRef(false);
+
+  const pressIn = () => {
+    Animated.parallel([
+      Animated.spring(press, {
+        toValue: 0.96,
+        useNativeDriver: true,
+        speed: 40,
+        bounciness: 0,
+      }),
+      Animated.spring(pop, {
+        toValue: 0.86,
+        useNativeDriver: true,
+        speed: 40,
+        bounciness: 0,
+      }),
+    ]).start();
+  };
+  const pressOut = () => {
+    Animated.parallel([
+      Animated.spring(press, {
+        toValue: 1,
+        useNativeDriver: true,
+        speed: 18,
+        bounciness: 8,
+      }),
+      Animated.spring(pop, {
+        toValue: 1,
+        useNativeDriver: true,
+        speed: 18,
+        bounciness: 12,
+      }),
+    ]).start();
+  };
+  const onPress = () => {
+    if (opening.current) return;
+    opening.current = true;
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light).catch(() => {});
+    if (__DEV__) console.log(`[home] hero play ${item.id}`);
+    ring.setValue(0);
+    Animated.sequence([
+      Animated.spring(pop, {
+        toValue: 1.18,
+        useNativeDriver: true,
+        speed: 30,
+        bounciness: 10,
+      }),
+      Animated.spring(pop, {
+        toValue: 1,
+        useNativeDriver: true,
+        speed: 20,
+        bounciness: 6,
+      }),
+    ]).start();
+    Animated.timing(ring, {
+      toValue: 1,
+      duration: 420,
+      useNativeDriver: true,
+    }).start();
+    // open while the ring is still spreading → feels instant but you see the effect
+    setTimeout(() => {
+      onOpen(item);
+      opening.current = false;
+    }, 220);
+  };
+
+  const ringScale = ring.interpolate({
+    inputRange: [0, 1],
+    outputRange: [1, 2.6],
+  });
+  const ringOpacity = ring.interpolate({
+    inputRange: [0, 0.15, 1],
+    outputRange: [0, 0.75, 0],
+  });
+
+  return (
+    <Pressable
+      onPressIn={pressIn}
+      onPressOut={pressOut}
+      onPress={onPress}
+      accessibilityRole="button"
+      accessibilityLabel={item.title}
+    >
+      <Animated.View
+        style={[
+          styles.card,
+          {
+            height,
+            borderColor: colors.glow,
+            backgroundColor: colors.skeleton,
+            shadowColor: colors.glow,
+            transform: [{ scale: press }],
+          },
+        ]}
+      >
+        <Image
+          source={{ uri: item.cover }}
+          style={StyleSheet.absoluteFill}
+          contentFit="cover"
+          transition={180}
+          cachePolicy="memory-disk"
+          recyclingKey={item.id}
+          priority={highPriority ? "high" : "normal"}
+        />
+        <Animated.View
+          pointerEvents="none"
+          style={[
+            styles.ring,
+            {
+              borderColor: colors.glow,
+              opacity: ringOpacity,
+              transform: [{ scale: ringScale }],
+            },
+          ]}
+        />
+        <Animated.View
+          style={[
+            styles.play,
+            { backgroundColor: colors.overlay, transform: [{ scale: pop }] },
+          ]}
+        >
+          <Ionicons
+            name="play"
+            size={28}
+            color={colors.onPrimary}
+            style={{ marginLeft: 4 }}
+          />
+        </Animated.View>
+      </Animated.View>
+    </Pressable>
+  );
+}
+
 const styles = StyleSheet.create({
   root: { marginTop: 18 },
   card: {
@@ -255,6 +382,13 @@ const styles = StyleSheet.create({
     borderRadius: 29,
     alignItems: "center",
     justifyContent: "center",
+  },
+  ring: {
+    position: "absolute",
+    width: 58,
+    height: 58,
+    borderRadius: 29,
+    borderWidth: 3,
   },
   dots: {
     flexDirection: "row",
